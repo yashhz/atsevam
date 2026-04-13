@@ -7,13 +7,14 @@ import type {
 } from 'storefrontapi.generated';
 import {Aside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
-import {Header, HeaderMenu} from '~/components/Header';
+import {Header, MobileMenu} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import {Icon} from '~/components/ui/Icon';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -37,6 +38,7 @@ export function PageLayout({
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+
       {header && (
         <Header
           header={header}
@@ -45,7 +47,9 @@ export function PageLayout({
           publicStoreDomain={publicStoreDomain}
         />
       )}
-      <main>{children}</main>
+
+      <main className="av-main">{children}</main>
+
       <Footer
         footer={footer}
         header={header}
@@ -55,41 +59,45 @@ export function PageLayout({
   );
 }
 
+// ─── Cart Aside ───────────────────────────────────────────────────
+
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
-    <Aside type="cart" heading="CART">
-      <Suspense fallback={<p>Loading cart ...</p>}>
+    <Aside type="cart" heading="Your Cart">
+      <Suspense fallback={<p style={{padding: '1rem', color: 'var(--color-subtle)'}}>Loading cart…</p>}>
         <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
-          }}
+          {(cart) => <CartMain cart={cart} layout="aside" />}
         </Await>
       </Suspense>
     </Aside>
   );
 }
 
+// ─── Search Aside ─────────────────────────────────────────────────
+
 function SearchAside() {
   const queriesDatalistId = useId();
   return (
-    <Aside type="search" heading="SEARCH">
+    <Aside type="search" heading="Search">
       <div className="predictive-search">
-        <br />
         <SearchFormPredictive>
           {({fetchResults, goToSearch, inputRef}) => (
-            <>
+            <div style={{display: 'flex', gap: '0.5rem', marginBottom: '1rem'}}>
               <input
+                className="input"
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Search"
+                placeholder="Search products…"
                 ref={inputRef}
                 type="search"
                 list={queriesDatalistId}
+                style={{flex: 1}}
               />
-              &nbsp;
-              <button onClick={goToSearch}>Search</button>
-            </>
+              <button className="btn btn-primary" onClick={goToSearch}>
+                <Icon name="search" size={16} />
+              </button>
+            </div>
           )}
         </SearchFormPredictive>
 
@@ -98,7 +106,11 @@ function SearchAside() {
             const {articles, collections, pages, products, queries} = items;
 
             if (state === 'loading' && term.current) {
-              return <div>Loading...</div>;
+              return (
+                <p style={{fontSize: 'var(--text-sm)', color: 'var(--color-subtle)'}}>
+                  Searching…
+                </p>
+              );
             }
 
             if (!total) {
@@ -135,11 +147,10 @@ function SearchAside() {
                   <Link
                     onClick={closeSearch}
                     to={`${SEARCH_ENDPOINT}?q=${term.current}`}
+                    className="btn btn-ghost"
+                    style={{marginTop: '1rem'}}
                   >
-                    <p>
-                      View all results for <q>{term.current}</q>
-                      &nbsp; →
-                    </p>
+                    View all results for "{term.current}" →
                   </Link>
                 ) : null}
               </>
@@ -151,6 +162,8 @@ function SearchAside() {
   );
 }
 
+// ─── Mobile Menu Aside ────────────────────────────────────────────
+
 function MobileMenuAside({
   header,
   publicStoreDomain,
@@ -161,10 +174,9 @@ function MobileMenuAside({
   return (
     header.menu &&
     header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
-        <HeaderMenu
+      <Aside type="mobile" heading="Menu">
+        <MobileMenu
           menu={header.menu}
-          viewport="mobile"
           primaryDomainUrl={header.shop.primaryDomain.url}
           publicStoreDomain={publicStoreDomain}
         />
