@@ -47,19 +47,37 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   
   redirectIfHandleIsLocalized(request, {handle, data: product});
   
+  // Determine category from productType or tags
+  let category = 'Ethnic Wear';
+  if (product.productType) {
+    category = product.productType;
+  } else if (product.tags?.length > 0) {
+    // Only use tag if it matches our known categories
+    const knownCategories = ['Lehenga', 'Anarkali', 'Kurti', 'Co-ord'];
+    const matchedCategory = product.tags.find((tag: string) => 
+      knownCategories.some(cat => tag.toLowerCase().includes(cat.toLowerCase()))
+    );
+    if (matchedCategory) category = matchedCategory;
+  }
+  
   // Transform Shopify product to match display structure
   const transformedProduct: MockProductDetail = {
     id: product.id,
     title: product.title,
     handle: product.handle,
-    category: product.tags?.[0] || 'Lehenga Choli',
-    badge: (product.tags?.includes('new') ? 'new' : product.tags?.includes('sale') ? 'sale' : null) as 'new' | 'sale' | null,
+    category,
+    badge: (product.tags?.includes('new') ? 'new' : product.tags?.includes('sale') ? 'sale' : undefined) as 'new' | 'sale' | undefined,
     price: `₹${Math.round(parseFloat(product.selectedOrFirstAvailableVariant?.price.amount || '0')).toLocaleString('en-IN')}`,
     compareAtPrice: product.selectedOrFirstAvailableVariant?.compareAtPrice 
       ? `₹${Math.round(parseFloat(product.selectedOrFirstAvailableVariant.compareAtPrice.amount)).toLocaleString('en-IN')}`
-      : null,
-    rating: null,
+      : undefined,
+    rating: undefined,
     reviewCount: 0,
+    featuredImage: {
+      url: product.featuredImage?.url || product.images?.nodes?.[0]?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
+      altText: product.featuredImage?.altText || product.title,
+    },
+    description: product.description || '',
     images: product.images?.nodes?.map((img: any) => ({
       url: img.url,
       altText: img.altText || product.title,
@@ -117,6 +135,7 @@ async function fetchRelatedProducts(storefront: any, currentProduct: any) {
               id
               title
               handle
+              productType
               priceRange {
                 minVariantPrice {
                   amount
@@ -167,6 +186,7 @@ async function fetchRelatedProducts(storefront: any, currentProduct: any) {
               id
               title
               handle
+              productType
               priceRange {
                 minVariantPrice {
                   amount
@@ -216,6 +236,7 @@ async function fetchRelatedProducts(storefront: any, currentProduct: any) {
             id
             title
             handle
+            productType
             priceRange {
               minVariantPrice {
                 amount
@@ -257,14 +278,26 @@ function transformProducts(products: any[]) {
     const price = parseFloat(product.priceRange.minVariantPrice.amount);
     const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
       ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
-      : null;
+      : undefined;
+    
+    // Determine category from productType or tags
+    let category = 'Ethnic Wear';
+    if (product.productType) {
+      category = product.productType;
+    } else if (product.tags?.length > 0) {
+      const knownCategories = ['Lehenga', 'Anarkali', 'Kurti', 'Co-ord'];
+      const matchedCategory = product.tags.find((tag: string) => 
+        knownCategories.some(cat => tag.toLowerCase().includes(cat.toLowerCase()))
+      );
+      if (matchedCategory) category = matchedCategory;
+    }
 
     return {
       id: product.id,
       title: product.title,
       handle: product.handle,
       price: `₹${Math.round(price).toLocaleString('en-IN')}`,
-      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : null,
+      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
       featuredImage: {
         url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
         altText: product.featuredImage?.altText || product.title,
@@ -272,11 +305,11 @@ function transformProducts(products: any[]) {
       hoverImage: product.images.nodes[1] ? {
         url: product.images.nodes[1].url,
         altText: product.images.nodes[1].altText || product.title,
-      } : null,
-      category: product.tags[0] || 'Lehenga Choli',
-      badge: compareAtPrice && compareAtPrice > price ? 'sale' : null,
-      rating: null,
-      reviewCount: null,
+      } : undefined,
+      category,
+      badge: compareAtPrice && compareAtPrice > price ? 'sale' as const : undefined,
+      rating: undefined,
+      reviewCount: undefined,
     };
   });
 }
@@ -412,34 +445,24 @@ export default function Product() {
             <span className="av-pdp__tax-note">MRP inclusive of all taxes</span>
           </div>
 
-          {/* Urgency tags */}
-          <div className="av-pdp__urgency">
-            <span className="av-pdp__urgency-tag av-pdp__urgency-tag--stock">
-              <Icon name="star" size={12} strokeWidth={1.5} />
-              Only 3 left — selling fast
-            </span>
-            <span className="av-pdp__urgency-tag av-pdp__urgency-tag--shipping">
-              <Icon name="truck" size={12} strokeWidth={1.5} />
-              Free shipping on this order
-            </span>
-          </div>
-
-          {/* Size selector */}
-          <div className="av-pdp__sizes">
-            <div className="av-pdp__sizes-header">
-              <span className="av-pdp__sizes-label">Size</span>
-              <a href="/pages/size-guide" className="av-pdp__size-guide">
-                Size Guide <Icon name="arrow-right" size={12} strokeWidth={1.5} />
-              </a>
+          {/* Size selector - only show if multiple sizes */}
+          {mock.sizes.length > 1 && (
+            <div className="av-pdp__sizes">
+              <div className="av-pdp__sizes-header">
+                <span className="av-pdp__sizes-label">Size</span>
+                <a href="/pages/size-guide" className="av-pdp__size-guide">
+                  Size Guide <Icon name="arrow-right" size={12} strokeWidth={1.5} />
+                </a>
+              </div>
+              <div className="av-pdp__size-options">
+                {mock.sizes.map((size) => (
+                  <button key={size} className="av-pdp__size-btn av-pdp__size-btn--active">
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="av-pdp__size-options">
-              {mock.sizes.map((size) => (
-                <button key={size} className="av-pdp__size-btn av-pdp__size-btn--active">
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
 
           {/* Add to cart */}
           {useMock ? (
@@ -532,14 +555,38 @@ export default function Product() {
 
 function MockAddToCart() {
   const [added, setAdded] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const handleClick = () => {
+    setAdded(true);
+    setProgress(0);
+    
+    // Animate progress bar
+    const duration = 2000;
+    const steps = 60;
+    const increment = 100 / steps;
+    const stepDuration = duration / steps;
+    
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += increment;
+      if (currentProgress >= 100) {
+        clearInterval(interval);
+        setAdded(false);
+        setProgress(0);
+      } else {
+        setProgress(currentProgress);
+      }
+    }, stepDuration);
+  };
 
   return (
     <button
       className={`btn btn-primary btn-full btn-lg av-pdp__atc${added ? ' av-pdp__atc--added' : ''}`}
-      onClick={() => {
-        setAdded(true);
-        setTimeout(() => setAdded(false), 2000);
-      }}
+      onClick={handleClick}
+      style={{
+        '--progress': `${progress}%`,
+      } as React.CSSProperties}
     >
       {added ? (
         <>
@@ -629,8 +676,15 @@ const PRODUCT_FRAGMENT = `#graphql
     title
     vendor
     handle
+    productType
     descriptionHtml
     description
+    featuredImage {
+      url
+      altText
+      width
+      height
+    }
     encodedVariantExistence
     encodedVariantAvailability
     options {

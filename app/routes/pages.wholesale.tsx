@@ -1,0 +1,189 @@
+import type {Route} from './+types/pages.wholesale';
+import {Icon} from '~/components/ui/Icon';
+
+export const meta: Route.MetaFunction = () => [
+  {title: 'Wholesale & B2B — Avestam'},
+  {name: 'description', content: 'Partner with Avestam for wholesale ethnic wear. Special pricing for boutiques, retailers, and bulk orders.'},
+];
+
+const BENEFITS = [
+  {
+    icon: 'tag' as const,
+    title: 'Competitive Pricing',
+    text: 'Get special wholesale rates with volume discounts. The more you order, the more you save.',
+  },
+  {
+    icon: 'truck' as const,
+    title: 'Reliable Delivery',
+    text: 'Dedicated logistics support with tracking. Bulk orders delivered within 10-15 business days.',
+  },
+  {
+    icon: 'star' as const,
+    title: 'Quality Assurance',
+    text: 'Every piece is quality-checked before dispatch. We stand behind our craftsmanship.',
+  },
+  {
+    icon: 'user' as const,
+    title: 'Dedicated Support',
+    text: 'Personal account manager to help with orders, inventory planning, and product selection.',
+  },
+];
+
+const PRICING_TIERS = [
+  {tier: '10-49 pieces', discount: '15% off retail'},
+  {tier: '50-99 pieces', discount: '20% off retail'},
+  {tier: '100+ pieces', discount: '25% off retail'},
+  {tier: 'Custom orders', discount: 'Contact for quote'},
+];
+
+export default function Wholesale() {
+  return (
+    <div className="av-wholesale-page">
+      {/* Hero */}
+      <section className="av-wholesale-page__hero">
+        <div className="container">
+          <div className="av-wholesale-page__hero-content">
+            <h1 className="av-wholesale-page__title">Wholesale & B2B</h1>
+            <p className="av-wholesale-page__subtitle">
+              Partner with Avestam to bring handcrafted ethnic wear to your customers
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="container container--narrow">
+        {/* Intro */}
+        <section className="av-wholesale-page__intro">
+          <p className="av-wholesale-page__lead">
+            We work with boutiques, retailers, and fashion entrepreneurs across India to bring our handcrafted collections to more women.
+          </p>
+          <p>
+            Whether you're a brick-and-mortar store, an online retailer, or planning a pop-up, we offer flexible wholesale programs with competitive pricing, reliable delivery, and dedicated support.
+          </p>
+        </section>
+
+        {/* Benefits */}
+        <section className="av-wholesale-page__benefits">
+          <h2 className="av-wholesale-page__section-title">Why Partner with Avestam?</h2>
+          <div className="av-wholesale-page__benefits-grid">
+            {BENEFITS.map((benefit) => (
+              <div key={benefit.title} className="av-wholesale-page__benefit">
+                <div className="av-wholesale-page__benefit-icon">
+                  <Icon name={benefit.icon} size={24} />
+                </div>
+                <h3 className="av-wholesale-page__benefit-title">{benefit.title}</h3>
+                <p className="av-wholesale-page__benefit-text">{benefit.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Pricing */}
+        <section className="av-wholesale-page__pricing">
+          <h2 className="av-wholesale-page__section-title">Wholesale Pricing</h2>
+          <div className="av-wholesale-page__pricing-table">
+            {PRICING_TIERS.map((tier) => (
+              <div key={tier.tier} className="av-wholesale-page__pricing-row">
+                <span className="av-wholesale-page__pricing-tier">{tier.tier}</span>
+                <span className="av-wholesale-page__pricing-discount">{tier.discount}</span>
+              </div>
+            ))}
+          </div>
+          <p className="av-wholesale-page__pricing-note">
+            Prices exclude GST and shipping. Minimum order quantity: 10 pieces.
+          </p>
+        </section>
+
+        {/* How it Works */}
+        <section className="av-wholesale-page__process">
+          <h2 className="av-wholesale-page__section-title">How It Works</h2>
+          <div className="av-wholesale-page__steps">
+            <div className="av-wholesale-page__step">
+              <div className="av-wholesale-page__step-number">1</div>
+              <h3>Submit Inquiry</h3>
+              <p>Fill out the form below with your business details and requirements.</p>
+            </div>
+            <div className="av-wholesale-page__step">
+              <div className="av-wholesale-page__step-number">2</div>
+              <h3>Get Quote</h3>
+              <p>Our team will review and send you a customized quote within 24-48 hours.</p>
+            </div>
+            <div className="av-wholesale-page__step">
+              <div className="av-wholesale-page__step-number">3</div>
+              <h3>Place Order</h3>
+              <p>Approve the quote and place your order. We accept bank transfer and credit terms for established partners.</p>
+            </div>
+            <div className="av-wholesale-page__step">
+              <div className="av-wholesale-page__step-number">4</div>
+              <h3>Receive & Sell</h3>
+              <p>Your order ships within 10-15 days with full tracking and quality assurance.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Form */}
+        <section className="av-wholesale-page__form-section">
+          <h2 className="av-wholesale-page__section-title">Get Started</h2>
+          <form className="av-wholesale-form" onSubmit={(e) => e.preventDefault()}>
+            <div className="av-wholesale-form__row">
+              <div className="av-wholesale-form__field">
+                <label htmlFor="business-name">Business Name *</label>
+                <input type="text" id="business-name" name="businessName" required />
+              </div>
+              <div className="av-wholesale-form__field">
+                <label htmlFor="contact-name">Contact Person *</label>
+                <input type="text" id="contact-name" name="contactName" required />
+              </div>
+            </div>
+            <div className="av-wholesale-form__row">
+              <div className="av-wholesale-form__field">
+                <label htmlFor="email">Email *</label>
+                <input type="email" id="email" name="email" required />
+              </div>
+              <div className="av-wholesale-form__field">
+                <label htmlFor="phone">Phone *</label>
+                <input type="tel" id="phone" name="phone" required />
+              </div>
+            </div>
+            <div className="av-wholesale-form__field">
+              <label htmlFor="business-type">Business Type *</label>
+              <select id="business-type" name="businessType" required>
+                <option value="">Select type</option>
+                <option value="boutique">Boutique / Retail Store</option>
+                <option value="online">Online Retailer</option>
+                <option value="designer">Fashion Designer / Stylist</option>
+                <option value="event">Event Planner / Wedding Planner</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div className="av-wholesale-form__field">
+              <label htmlFor="quantity">Estimated Order Quantity *</label>
+              <select id="quantity" name="quantity" required>
+                <option value="">Select range</option>
+                <option value="10-49">10-49 pieces</option>
+                <option value="50-99">50-99 pieces</option>
+                <option value="100+">100+ pieces</option>
+              </select>
+            </div>
+            <div className="av-wholesale-form__field">
+              <label htmlFor="message">Tell us about your business and requirements</label>
+              <textarea id="message" name="message" rows={5}></textarea>
+            </div>
+            <button type="submit" className="btn btn-primary btn-lg">
+              Submit Inquiry
+            </button>
+          </form>
+        </section>
+
+        {/* Contact Info */}
+        <section className="av-wholesale-page__contact">
+          <p>Prefer to talk? Reach out directly:</p>
+          <p>
+            <strong>Email:</strong> <a href="mailto:wholesale@avestam.com">wholesale@avestam.com</a><br />
+            <strong>Phone:</strong> <a href="tel:+911234567890">+91 123 456 7890</a>
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}

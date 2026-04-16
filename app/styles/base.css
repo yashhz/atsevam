@@ -15,6 +15,14 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Force GPU acceleration for smoother rendering */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   font-family: var(--font-body);
   font-size: var(--text-base);
@@ -24,6 +32,10 @@ body {
   background-color: var(--color-off-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevent layout shifts */
+  overflow-x: hidden;
+  /* Enable smooth scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ─── TYPOGRAPHY ─────────────────────────────────────────────── */
@@ -52,6 +64,10 @@ a {
   color: inherit;
   text-decoration: none;
   transition: opacity var(--duration-fast) var(--ease-out);
+  /* Prevent tap delay */
+  touch-action: manipulation;
+  /* GPU acceleration */
+  transform: translateZ(0);
 }
 
 a:hover { opacity: 0.7; }
@@ -60,6 +76,12 @@ img, video {
   display: block;
   max-width: 100%;
   height: auto;
+  /* Prevent layout shift during image load */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 button {
@@ -67,6 +89,10 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+  /* Prevent tap delay on mobile */
+  touch-action: manipulation;
+  /* GPU acceleration for interactions */
+  transform: translateZ(0);
 }
 
 input, textarea, select {
@@ -99,20 +125,28 @@ ul, ol { list-style: none; }
   padding-block: var(--space-24);
 }
 
-/* ─── SECTION HEADING ────────────────────────────────────────── */
+/* ─── Section heading ────────────────────────────────────────── */
 /* The "— BESTSELLER SAREES —" style from Suta reference */
 
 .section-heading {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   font-family: var(--font-body);
-  font-size: var(--text-xs);
+  font-size: 0.6875rem; /* 11px on mobile */
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
   color: var(--color-charcoal);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .section-heading {
+    font-size: var(--text-xs);
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
 }
 
 .section-heading::before,
@@ -150,6 +184,11 @@ ul, ol { list-style: none; }
   border-radius: var(--radius-full);
 }
 
+/* Smooth momentum scrolling on iOS */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ─── FOCUS ──────────────────────────────────────────────────── */
 
 :focus-visible {
@@ -157,7 +196,20 @@ ul, ol { list-style: none; }
   outline-offset: 3px;
 }
 
+/* Remove focus outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* ─── UTILITY ────────────────────────────────────────────────── */
+
+/* GPU acceleration helper */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
 
 .sr-only {
   position: absolute;

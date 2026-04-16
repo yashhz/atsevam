@@ -30,6 +30,7 @@ export async function loader({context}: Route.LoaderArgs) {
             id
             title
             handle
+            productType
             priceRange {
               minVariantPrice {
                 amount
@@ -66,14 +67,27 @@ export async function loader({context}: Route.LoaderArgs) {
     const price = parseFloat(product.priceRange.minVariantPrice.amount);
     const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
       ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
-      : null;
+      : undefined;
+    
+    // Determine category from productType or tags
+    let category = 'Ethnic Wear';
+    if (product.productType) {
+      category = product.productType;
+    } else if (product.tags?.length > 0) {
+      // Only use tag if it matches our known categories
+      const knownCategories = ['Lehenga', 'Anarkali', 'Kurti', 'Co-ord'];
+      const matchedCategory = product.tags.find((tag: string) => 
+        knownCategories.some(cat => tag.toLowerCase().includes(cat.toLowerCase()))
+      );
+      if (matchedCategory) category = matchedCategory;
+    }
 
     return {
       id: product.id,
       title: product.title,
       handle: product.handle,
       price: `₹${Math.round(price).toLocaleString('en-IN')}`,
-      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : null,
+      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
       featuredImage: {
         url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
         altText: product.featuredImage?.altText || product.title,
@@ -81,11 +95,11 @@ export async function loader({context}: Route.LoaderArgs) {
       hoverImage: product.images.nodes[1] ? {
         url: product.images.nodes[1].url,
         altText: product.images.nodes[1].altText || product.title,
-      } : null,
-      category: product.tags[0] || 'Lehenga Choli',
-      badge: compareAtPrice && compareAtPrice > price ? 'sale' : null,
-      rating: null,
-      reviewCount: null,
+      } : undefined,
+      category,
+      badge: compareAtPrice && compareAtPrice > price ? 'sale' as const : undefined,
+      rating: undefined,
+      reviewCount: undefined,
     };
   };
 
@@ -149,7 +163,7 @@ function HeroBanner() {
       {/* Background image */}
       <div className="av-hero__bg">
         <img
-          src="https://picsum.photos/seed/avhero/1600/900"
+          src="/images/hero.png"
           alt="Avestam — The Festive Edit"
           className="av-hero__img"
           loading="eager"

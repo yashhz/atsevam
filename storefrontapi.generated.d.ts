@@ -384,7 +384,10 @@ export type HomepageProductsQueryVariables = StorefrontAPI.Exact<{
 export type HomepageProductsQuery = {
   products: {
     nodes: Array<
-      Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle' | 'tags'> & {
+      Pick<
+        StorefrontAPI.Product,
+        'id' | 'title' | 'handle' | 'productType' | 'tags'
+      > & {
         priceRange: {
           minVariantPrice: Pick<
             StorefrontAPI.MoneyV2,
@@ -797,7 +800,10 @@ export type RelatedByTagsQueryVariables = StorefrontAPI.Exact<{
 export type RelatedByTagsQuery = {
   products: {
     nodes: Array<
-      Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle' | 'tags'> & {
+      Pick<
+        StorefrontAPI.Product,
+        'id' | 'title' | 'handle' | 'productType' | 'tags'
+      > & {
         priceRange: {
           minVariantPrice: Pick<
             StorefrontAPI.MoneyV2,
@@ -823,7 +829,10 @@ export type RelatedByTypeQueryVariables = StorefrontAPI.Exact<{
 export type RelatedByTypeQuery = {
   products: {
     nodes: Array<
-      Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle' | 'tags'> & {
+      Pick<
+        StorefrontAPI.Product,
+        'id' | 'title' | 'handle' | 'productType' | 'tags'
+      > & {
         priceRange: {
           minVariantPrice: Pick<
             StorefrontAPI.MoneyV2,
@@ -849,7 +858,10 @@ export type RandomProductsQueryVariables = StorefrontAPI.Exact<{
 export type RandomProductsQuery = {
   products: {
     nodes: Array<
-      Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle' | 'tags'> & {
+      Pick<
+        StorefrontAPI.Product,
+        'id' | 'title' | 'handle' | 'productType' | 'tags'
+      > & {
         priceRange: {
           minVariantPrice: Pick<
             StorefrontAPI.MoneyV2,
@@ -895,11 +907,15 @@ export type ProductFragment = Pick<
   | 'title'
   | 'vendor'
   | 'handle'
+  | 'productType'
   | 'descriptionHtml'
   | 'description'
   | 'encodedVariantExistence'
   | 'encodedVariantAvailability'
 > & {
+  featuredImage?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+  >;
   options: Array<
     Pick<StorefrontAPI.ProductOption, 'name'> & {
       optionValues: Array<
@@ -1010,6 +1026,7 @@ export type ProductQuery = {
       | 'title'
       | 'vendor'
       | 'handle'
+      | 'productType'
       | 'descriptionHtml'
       | 'description'
       | 'encodedVariantExistence'
@@ -1020,6 +1037,9 @@ export type ProductQuery = {
           Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
         >;
       };
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+      >;
       options: Array<
         Pick<StorefrontAPI.ProductOption, 'name'> & {
           optionValues: Array<
@@ -1341,7 +1361,7 @@ interface GeneratedQueryTypes {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
-  '#graphql\n      query HomepageProducts {\n        products(first: 12, sortKey: BEST_SELLING) {\n          nodes {\n            id\n            title\n            handle\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            compareAtPriceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            featuredImage {\n              url\n              altText\n              width\n              height\n            }\n            images(first: 2) {\n              nodes {\n                url\n                altText\n              }\n            }\n            tags\n          }\n        }\n      }\n    ': {
+  '#graphql\n      query HomepageProducts {\n        products(first: 12, sortKey: BEST_SELLING) {\n          nodes {\n            id\n            title\n            handle\n            productType\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            compareAtPriceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            featuredImage {\n              url\n              altText\n              width\n              height\n            }\n            images(first: 2) {\n              nodes {\n                url\n                altText\n              }\n            }\n            tags\n          }\n        }\n      }\n    ': {
     return: HomepageProductsQuery;
     variables: HomepageProductsQueryVariables;
   };
@@ -1385,19 +1405,19 @@ interface GeneratedQueryTypes {
     return: PoliciesQuery;
     variables: PoliciesQueryVariables;
   };
-  '#graphql\n        query RelatedByTags($query: String!) {\n          products(first: 8, query: $query) {\n            nodes {\n              id\n              title\n              handle\n              priceRange {\n                minVariantPrice {\n                  amount\n                  currencyCode\n                }\n              }\n              compareAtPriceRange {\n                minVariantPrice {\n                  amount\n                }\n              }\n              featuredImage {\n                url\n                altText\n              }\n              images(first: 2) {\n                nodes {\n                  url\n                  altText\n                }\n              }\n              tags\n            }\n          }\n        }\n      ': {
+  '#graphql\n        query RelatedByTags($query: String!) {\n          products(first: 8, query: $query) {\n            nodes {\n              id\n              title\n              handle\n              productType\n              priceRange {\n                minVariantPrice {\n                  amount\n                  currencyCode\n                }\n              }\n              compareAtPriceRange {\n                minVariantPrice {\n                  amount\n                }\n              }\n              featuredImage {\n                url\n                altText\n              }\n              images(first: 2) {\n                nodes {\n                  url\n                  altText\n                }\n              }\n              tags\n            }\n          }\n        }\n      ': {
     return: RelatedByTagsQuery;
     variables: RelatedByTagsQueryVariables;
   };
-  '#graphql\n        query RelatedByType($productType: String!) {\n          products(first: 8, query: $productType) {\n            nodes {\n              id\n              title\n              handle\n              priceRange {\n                minVariantPrice {\n                  amount\n                  currencyCode\n                }\n              }\n              compareAtPriceRange {\n                minVariantPrice {\n                  amount\n                }\n              }\n              featuredImage {\n                url\n                altText\n              }\n              images(first: 2) {\n                nodes {\n                  url\n                  altText\n                }\n              }\n              tags\n            }\n          }\n        }\n      ': {
+  '#graphql\n        query RelatedByType($productType: String!) {\n          products(first: 8, query: $productType) {\n            nodes {\n              id\n              title\n              handle\n              productType\n              priceRange {\n                minVariantPrice {\n                  amount\n                  currencyCode\n                }\n              }\n              compareAtPriceRange {\n                minVariantPrice {\n                  amount\n                }\n              }\n              featuredImage {\n                url\n                altText\n              }\n              images(first: 2) {\n                nodes {\n                  url\n                  altText\n                }\n              }\n              tags\n            }\n          }\n        }\n      ': {
     return: RelatedByTypeQuery;
     variables: RelatedByTypeQueryVariables;
   };
-  '#graphql\n      query RandomProducts {\n        products(first: 8, sortKey: BEST_SELLING) {\n          nodes {\n            id\n            title\n            handle\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            compareAtPriceRange {\n              minVariantPrice {\n                amount\n              }\n            }\n            featuredImage {\n              url\n              altText\n            }\n            images(first: 2) {\n              nodes {\n                url\n                altText\n              }\n            }\n            tags\n          }\n        }\n      }\n    ': {
+  '#graphql\n      query RandomProducts {\n        products(first: 8, sortKey: BEST_SELLING) {\n          nodes {\n            id\n            title\n            handle\n            productType\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            compareAtPriceRange {\n              minVariantPrice {\n                amount\n              }\n            }\n            featuredImage {\n              url\n              altText\n            }\n            images(first: 2) {\n              nodes {\n                url\n                altText\n              }\n            }\n            tags\n          }\n        }\n      }\n    ': {
     return: RandomProductsQuery;
     variables: RandomProductsQueryVariables;
   };
-  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n      images(first: 10) {\n        nodes {\n          url\n          altText\n          width\n          height\n        }\n      }\n      tags\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    encodedVariantExistence\n    encodedVariantAvailability\n    options {\n      name\n      optionValues {\n        name\n        firstSelectableVariant { ...ProductVariant }\n        swatch {\n          color\n          image { previewImage { url } }\n        }\n      }\n    }\n    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    adjacentVariants(selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    seo { description title }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice { amount currencyCode }\n    id\n    image { __typename id url altText width height }\n    price { amount currencyCode }\n    product { title handle }\n    selectedOptions { name value }\n    sku\n    title\n    unitPrice { amount currencyCode }\n  }\n\n\n': {
+  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n      images(first: 10) {\n        nodes {\n          url\n          altText\n          width\n          height\n        }\n      }\n      tags\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    productType\n    descriptionHtml\n    description\n    featuredImage {\n      url\n      altText\n      width\n      height\n    }\n    encodedVariantExistence\n    encodedVariantAvailability\n    options {\n      name\n      optionValues {\n        name\n        firstSelectableVariant { ...ProductVariant }\n        swatch {\n          color\n          image { previewImage { url } }\n        }\n      }\n    }\n    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    adjacentVariants(selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    seo { description title }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice { amount currencyCode }\n    id\n    image { __typename id url altText width height }\n    price { amount currencyCode }\n    product { title handle }\n    selectedOptions { name value }\n    sku\n    title\n    unitPrice { amount currencyCode }\n  }\n\n\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };

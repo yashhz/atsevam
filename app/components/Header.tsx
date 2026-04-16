@@ -20,8 +20,8 @@ type Viewport = 'desktop' | 'mobile';
 
 // ─── Avestam nav — women's wear only, 4 categories + brand story
 const NAV_ITEMS = [
-  {title: 'Lehengas',    url: '/collections/lehenga'},
-  {title: 'Anarkalis',   url: '/collections/anarkalis'},
+  {title: 'Lehengas',    url: '/collections/lehengas'},
+  {title: 'Anarkalis',   url: '/collections/anarkali'},
   {title: 'Kurtis',      url: '/collections/kurtis'},
   {title: 'Co-ords',     url: '/collections/co-ords'},
   {title: 'Our Story',   url: '/pages/our-story'},
@@ -29,8 +29,8 @@ const NAV_ITEMS = [
 
 // Secondary tab bar — quick-access filters
 const CATEGORY_TABS = [
-  {title: 'Lehengas',  url: '/collections/lehenga'},
-  {title: 'Anarkalis', url: '/collections/anarkalis'},
+  {title: 'Lehengas',  url: '/collections/lehengas'},
+  {title: 'Anarkalis', url: '/collections/anarkali'},
   {title: 'Kurtis',    url: '/collections/kurtis'},
   {title: 'Co-ords',   url: '/collections/co-ords'},
 ];

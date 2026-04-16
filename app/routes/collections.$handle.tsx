@@ -30,6 +30,26 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   if (!handle) throw redirect('/collections');
 
+  // Redirect common singular categories to their plural equivalents
+  if (handle === 'kurti') throw redirect('/collections/kurtis');
+  if (handle === 'lehenga') throw redirect('/collections/lehengas');
+  if (handle === 'co-ord') throw redirect('/collections/co-ords');
+  if (handle === 'anarkalis') throw redirect('/collections/anarkali'); // Anarkali is usually singular locally
+  
+
+  // Map collection handles to display names
+  const getCategoryName = (collectionHandle: string): string => {
+    const categoryMap: Record<string, string> = {
+      'lehengas': 'Lehenga',
+      'anarkali': 'Anarkali',
+      'kurtis': 'Kurti',
+      'co-ords': 'Co-ord Set',
+      'bestsellers': 'Bestseller',
+      'new-arrivals': 'New Arrival',
+    };
+    return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
+  };
+
   // Try to fetch the specific collection
   const [{collection}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
@@ -85,14 +105,26 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       const price = parseFloat(product.priceRange.minVariantPrice.amount);
       const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
         ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
-        : null;
+        : undefined;
+      
+      // Determine badge based on tags and pricing
+      let badge: 'new' | 'sale' | 'bestseller' | 'top-rated' | undefined;
+      if (product.tags?.includes('new')) {
+        badge = 'new';
+      } else if (product.tags?.includes('bestseller')) {
+        badge = 'bestseller';
+      } else if (product.tags?.includes('top-rated')) {
+        badge = 'top-rated';
+      } else if (compareAtPrice && compareAtPrice > price) {
+        badge = 'sale';
+      }
 
       return {
         id: product.id,
         title: product.title,
         handle: product.handle,
         price: `₹${Math.round(price).toLocaleString('en-IN')}`,
-        compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : null,
+        compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
         featuredImage: {
           url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
           altText: product.featuredImage?.altText || product.title,
@@ -100,42 +132,17 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
         hoverImage: product.images?.nodes[1] ? {
           url: product.images.nodes[1].url,
           altText: product.images.nodes[1].altText || product.title,
-        } : null,
-        category: product.tags?.[0] || 'Lehenga Choli',
-        badge: compareAtPrice && compareAtPrice > price ? 'sale' as const : null,
-        rating: null,
-        reviewCount: null,
+        } : undefined,
+        category: getCategoryName(handle),
+        badge,
+        rating: undefined,
+        reviewCount: undefined,
+        tags: product.tags || [], // Include tags for filtering
       };
     });
 
-    // Build filters from all products
-    const allTags = products.nodes.flatMap((p: any) => p.tags || []);
-    const uniqueTags = [...new Set(allTags)] as string[];
-    
-    const filters = [
-      {
-        id: 'category',
-        label: 'Category',
-        options: uniqueTags
-          .filter((tag: string) => ['Lehenga Choli', 'Anarkali', 'Kurti', 'Co-ord'].some(cat => tag.includes(cat)))
-          .map((tag: string) => ({
-            value: tag.toLowerCase().replace(/\s+/g, '-'),
-            label: tag,
-            count: products.nodes.filter((p: any) => p.tags?.includes(tag)).length,
-          })),
-      },
-      {
-        id: 'color',
-        label: 'Color',
-        options: uniqueTags
-          .filter((tag: string) => ['Red', 'Green', 'Blue', 'Pink', 'Purple', 'Black', 'White', 'Yellow', 'Orange', 'Lavender', 'Dusty', 'Sky'].some(color => tag.includes(color)))
-          .map((tag: string) => ({
-            value: tag.toLowerCase().replace(/\s+/g, '-'),
-            label: tag,
-            count: products.nodes.filter((p: any) => p.tags?.includes(tag)).length,
-          })),
-      },
-    ].filter(f => f.options.length > 0);
+    // Build filters using our robust parse function
+    const filters = parseFilters(products.nodes);
 
     return {
       collection: {
@@ -156,14 +163,26 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     const price = parseFloat(product.priceRange.minVariantPrice.amount);
     const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
       ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
-      : null;
+      : undefined;
+    
+    // Determine badge based on tags and pricing
+    let badge: 'new' | 'sale' | 'bestseller' | 'top-rated' | undefined;
+    if (product.tags?.includes('new')) {
+      badge = 'new';
+    } else if (product.tags?.includes('bestseller')) {
+      badge = 'bestseller';
+    } else if (product.tags?.includes('top-rated')) {
+      badge = 'top-rated';
+    } else if (compareAtPrice && compareAtPrice > price) {
+      badge = 'sale';
+    }
 
     return {
       id: product.id,
       title: product.title,
       handle: product.handle,
       price: `₹${Math.round(price).toLocaleString('en-IN')}`,
-      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : null,
+      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
       featuredImage: {
         url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
         altText: product.featuredImage?.altText || product.title,
@@ -171,62 +190,20 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       hoverImage: product.images?.nodes[1] ? {
         url: product.images.nodes[1].url,
         altText: product.images.nodes[1].altText || product.title,
-      } : null,
-      category: product.tags?.[0] || 'Lehenga Choli',
-      badge: (compareAtPrice && compareAtPrice > price ? 'sale' : null) as 'sale' | 'new' | 'bestseller' | 'top-rated' | null,
-      rating: null,
-      reviewCount: null,
+      } : undefined,
+      category: getCategoryName(handle),
+      badge,
+      rating: undefined,
+      reviewCount: undefined,
+      tags: product.tags || [], // Include tags for filtering
     };
   });
 
-  // Extract unique filters from products
-  const allTags = collection.products.nodes.flatMap((p: any) => p.tags || []);
-  const uniqueTags = [...new Set(allTags)] as string[];
+  // Build filters using our robust parse function
+  const filters = parseFilters(collection.products.nodes);
   
-  console.log('DEBUG: All unique tags found:', uniqueTags);
-  console.log('DEBUG: Total products:', collection.products.nodes.length);
-  
-  // Build dynamic filters - more flexible matching
-  const categoryKeywords = ['Lehenga', 'Anarkali', 'Kurti', 'Co-ord', 'Choli', 'Saree', 'Gown'];
-  const colorKeywords = ['Red', 'Green', 'Blue', 'Pink', 'Purple', 'Black', 'White', 'Yellow', 'Orange', 'Lavender', 'Dusty', 'Sky', 'Maroon', 'Navy', 'Grey', 'Brown', 'Beige', 'Gold', 'Silver', 'Cream', 'Peach', 'Mint', 'Teal', 'Coral'];
-  
-  const filters = [
-    {
-      id: 'category',
-      label: 'Category',
-      options: uniqueTags
-        .filter((tag: string) => categoryKeywords.some(cat => tag.toLowerCase().includes(cat.toLowerCase())))
-        .map((tag: string) => ({
-          value: tag.toLowerCase().replace(/\s+/g, '-'),
-          label: tag,
-          count: collection.products.nodes.filter((p: any) => p.tags?.includes(tag)).length,
-        })),
-    },
-    {
-      id: 'color',
-      label: 'Color',
-      options: uniqueTags
-        .filter((tag: string) => colorKeywords.some(color => tag.toLowerCase().includes(color.toLowerCase())))
-        .map((tag: string) => ({
-          value: tag.toLowerCase().replace(/\s+/g, '-'),
-          label: tag,
-          count: collection.products.nodes.filter((p: any) => p.tags?.includes(tag)).length,
-        })),
-    },
-    {
-      id: 'work',
-      label: 'Work Type',
-      options: uniqueTags
-        .filter((tag: string) => tag.toLowerCase().includes('work') || tag.toLowerCase().includes('embroid'))
-        .map((tag: string) => ({
-          value: tag.toLowerCase().replace(/\s+/g, '-'),
-          label: tag,
-          count: collection.products.nodes.filter((p: any) => p.tags?.includes(tag)).length,
-        })),
-    },
-  ].filter(f => f.options.length > 0);
-  
-  console.log('DEBUG: Generated filters:', filters);
+  console.log('🔍 DEBUG: Generated filters:', filters);
+  console.log('🔍 DEBUG: Filters as JSON:', JSON.stringify(filters, null, 2));
 
   return {
     collection: {
@@ -258,14 +235,21 @@ const SORT_OPTIONS = [
 
 export default function Collection() {
   const {collection, products: allProducts, filters} = useLoaderData<typeof loader>();
+  
+  // CLIENT-SIDE DEBUG - You should see this in browser console
+  console.log('🔍 CLIENT: Filters received:', filters);
+  console.log('🔍 CLIENT: Number of filters:', filters?.length);
+  console.log('🔍 CLIENT: All products count:', allProducts?.length);
 
   // Filter state
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const [sortBy, setSortBy] = useState('featured');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [layout, setLayout] = useState<'grid' | 'list'>('grid');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const toggleFilter = useCallback((groupId: string, value: string) => {
+    setIsUpdating(true);
     setActiveFilters((prev) => {
       const current = prev[groupId] ?? [];
       const next = current.includes(value)
@@ -273,31 +257,47 @@ export default function Collection() {
         : [...current, value];
       return {...prev, [groupId]: next};
     });
+    // Reset updating state after transition
+    setTimeout(() => setIsUpdating(false), 300);
   }, []);
 
-  const clearAll = useCallback(() => setActiveFilters({}), []);
+  const clearAll = useCallback(() => {
+    setIsUpdating(true);
+    setActiveFilters({});
+    setTimeout(() => setIsUpdating(false), 300);
+  }, []);
 
   // Client-side filter + sort
   const products = useMemo(() => {
     let result = [...allProducts];
 
-    // Apply filters
+    // Apply filters - check actual product tags with prefixes
     Object.entries(activeFilters).forEach(([groupId, values]) => {
       if (values.length > 0) {
         result = result.filter((p) => {
-          if (groupId === 'category') {
-            return values.some(v => p.category.toLowerCase().replace(/\s+/g, '-') === v);
-          }
-          if (groupId === 'color') {
-            return values.some(v => p.category.toLowerCase().includes(v.replace(/-/g, ' ')));
-          }
-          return true;
+          // Get the product's actual tags from Shopify
+          const productTags = (p as any).tags || [];
+          
+          // Check if product has any of the selected filter values
+          return values.some(filterValue => {
+            // We mapped options to have exact tag as `value` without prefix,
+            // but we must check using the appropriate prefix format
+            return productTags.some((tag: string) => {
+              const tagLower = tag.toLowerCase();
+              if (groupId === 'tag') {
+                return tagLower === filterValue.toLowerCase();
+              }
+              const expectedCol = `${groupId}:${filterValue}`.toLowerCase();
+              const expectedScore = `${groupId}_${filterValue}`.toLowerCase();
+              return tagLower === expectedCol || tagLower === expectedScore;
+            });
+          });
         });
       }
     });
 
     // Sort
-    if (sortBy === 'newest')     result = result.filter((p) => p.badge === 'new' as any).concat(result.filter((p) => p.badge !== 'new'));
+    if (sortBy === 'newest')     result = result.filter((p) => p.badge === 'new').concat(result.filter((p) => p.badge !== 'new'));
     if (sortBy === 'price-asc')  result.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
     if (sortBy === 'price-desc') result.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
     if (sortBy === 'top-rated')  result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
@@ -328,6 +328,33 @@ export default function Collection() {
         </div>
         <p className="av-collection__count">{products.length} products</p>
       </div>
+
+      {/* Active filter chips - mobile only, above toolbar */}
+      {activeCount > 0 && (
+        <div className="av-collection__active-filters container">
+          <div className="av-filter-chips av-filter-chips--mobile">
+            {Object.entries(activeFilters).flatMap(([groupId, values]) =>
+              values.map((val) => {
+                const group = filters.find((f) => f.id === groupId);
+                const opt = group?.options.find((o) => o.value === val);
+                return (
+                  <button
+                    key={`${groupId}-${val}`}
+                    className="av-filter-chip"
+                    onClick={() => toggleFilter(groupId, val)}
+                  >
+                    {opt?.label ?? val}
+                    <Icon name="close" size={12} strokeWidth={2} />
+                  </button>
+                );
+              })
+            )}
+            <button className="av-filter-chip-clear" onClick={clearAll}>
+              Clear all
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Toolbar — sort + layout + mobile filter */}
       <div className="av-collection__toolbar container">
@@ -391,7 +418,7 @@ export default function Collection() {
           {products.length === 0 ? (
             <EmptyState onClear={clearAll} />
           ) : (
-            <div className={`av-collection__grid av-collection__grid--${layout}`}>
+            <div className={`av-collection__grid av-collection__grid--${layout}${isUpdating ? ' updating' : ''}`}>
               {products.map((product, i) => (
                 <ProductCard
                   key={product.id}
@@ -442,6 +469,81 @@ function EmptyState({onClear}: {onClear: () => void}) {
 
 function parsePrice(price: string): number {
   return Number(price.replace(/[₹,\s]/g, '')) || 0;
+}
+
+function parseFilters(productsNodes: any[]) {
+  const tagsByPrefix: Record<string, Set<string>> = {};
+  const filterConfig: Record<string, string> = {
+    'color': 'Color',
+    'fabric': 'Fabric',
+    'work': 'Work Type',
+    'stitching': 'Stitching',
+    'sleeve': 'Sleeve',
+    'neck': 'Neck Type',
+    'set': 'Set Type',
+    'size': 'Size',
+    'tag': 'Tags',
+  };
+
+  // Group tags
+  productsNodes.forEach((p: any) => {
+    (p.tags || []).forEach((rawTag: string) => {
+      const tag = rawTag.trim();
+      let prefix = 'tag';
+      let value = tag;
+
+      if (tag.includes(':')) {
+        const parts = tag.split(':');
+        prefix = parts[0].trim().toLowerCase();
+        value = parts.slice(1).join(':').trim();
+      } else if (tag.includes('_')) {
+        const parts = tag.split('_');
+        prefix = parts[0].trim().toLowerCase();
+        value = parts.slice(1).join('_').trim();
+      }
+
+      if (!tagsByPrefix[prefix]) {
+        tagsByPrefix[prefix] = new Set();
+      }
+      tagsByPrefix[prefix].add(value);
+    });
+  });
+
+  // Calculate counts and format output
+  return Object.keys(tagsByPrefix)
+    // Only sort known configured prefixes first
+    .sort((a, b) => {
+      const iA = Object.keys(filterConfig).indexOf(a);
+      const iB = Object.keys(filterConfig).indexOf(b);
+      if (iA >= 0 && iB >= 0) return iA - iB;
+      if (iA >= 0) return -1;
+      if (iB >= 0) return 1;
+      return a.localeCompare(b);
+    })
+    .map((prefix) => ({
+      id: prefix,
+      label: filterConfig[prefix] || prefix.charAt(0).toUpperCase() + prefix.slice(1),
+      options: Array.from(tagsByPrefix[prefix])
+        .sort()
+        .map((value: string) => {
+          return {
+            value: value, 
+            label: value,
+            count: productsNodes.filter((p: any) => {
+              const productTags = p.tags || [];
+              return productTags.some((t: string) => {
+                const tLower = t.toLowerCase();
+                const expectedCol = `${prefix}:${value}`.toLowerCase();
+                const expectedScore = `${prefix}_${value}`.toLowerCase();
+                if (prefix === 'tag') {
+                   return tLower === value.toLowerCase();
+                }
+                return tLower === expectedCol || tLower === expectedScore;
+              });
+            }).length,
+          };
+        }),
+    }));
 }
 
 // ─── GraphQL ──────────────────────────────────────────────────────

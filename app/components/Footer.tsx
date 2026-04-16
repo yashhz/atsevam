@@ -24,8 +24,8 @@ const FOOTER_LINKS = {
     {title: 'Terms of Service',    url: '/policies/terms-of-service'},
   ],
   'Shop': [
-    {title: 'Lehengas',            url: '/collections/lehenga'},
-    {title: 'Anarkalis',           url: '/collections/anarkalis'},
+    {title: 'Lehengas',            url: '/collections/lehengas'},
+    {title: 'Anarkalis',           url: '/collections/anarkali'},
     {title: 'Kurtis',              url: '/collections/kurtis'},
     {title: 'Co-ord Sets',         url: '/collections/co-ords'},
     {title: 'New Arrivals',        url: '/collections/new-arrivals'},
@@ -33,10 +33,10 @@ const FOOTER_LINKS = {
 };
 
 const SOCIAL_LINKS = [
-  {name: 'Instagram', url: 'https://instagram.com', icon: 'IG'},
+  {name: 'Instagram', url: 'https://instagram.com/atsevaam', icon: 'IG'},
   {name: 'Pinterest', url: 'https://pinterest.com', icon: 'PT'},
-  {name: 'Facebook',  url: 'https://facebook.com',  icon: 'FB'},
-  {name: 'YouTube',   url: 'https://youtube.com',   icon: 'YT'},
+  {name: 'Facebook',  url: 'https://www.facebook.com/atsevaam',  icon: 'FB'},
+  {name: 'YouTube',   url: 'https://www.youtube.com/@atsevam1',   icon: 'YT'},
 ];
 
 export function Footer({footer: footerPromise, header, publicStoreDomain}: FooterProps) {

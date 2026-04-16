@@ -28,7 +28,7 @@ export type ActionResponse = {
 };
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Addresses'}];
+  return [{title: 'My Addresses — Avestam'}];
 };
 
 export async function loader({context}: Route.LoaderArgs) {
@@ -261,24 +261,21 @@ export default function Addresses() {
   const {defaultAddress, addresses} = customer;
 
   return (
-    <div className="account-addresses">
-      <h2>Addresses</h2>
-      <br />
-      <div>
-        <div>
-          <legend>Create address</legend>
+    <div className="av-account-section">
+      <h2 className="av-account-section__title">My Addresses</h2>
+      <div className="av-account-addresses">
+        <div className="av-account-addresses__new">
+          <h3 className="av-account-addresses__subtitle">Add New Address</h3>
           <NewAddressForm key={addresses.nodes.length} />
         </div>
-        <br />
-        <hr />
-        <br />
-        {!addresses.nodes.length ? (
-          <p>You have no addresses saved.</p>
-        ) : (
-          <ExistingAddresses
-            addresses={addresses}
-            defaultAddress={defaultAddress}
-          />
+        {addresses.nodes.length > 0 && (
+          <div className="av-account-addresses__existing">
+            <h3 className="av-account-addresses__subtitle">Saved Addresses</h3>
+            <ExistingAddresses
+              addresses={addresses}
+              defaultAddress={defaultAddress}
+            />
+          </div>
         )}
       </div>
     </div>
@@ -307,13 +304,14 @@ function NewAddressForm() {
       defaultAddress={null}
     >
       {({stateForMethod}) => (
-        <div>
+        <div className="av-account-form__buttons">
           <button
             disabled={stateForMethod('POST') !== 'idle'}
             formMethod="POST"
             type="submit"
+            className="btn btn-primary"
           >
-            {stateForMethod('POST') !== 'idle' ? 'Creating' : 'Create'}
+            {stateForMethod('POST') !== 'idle' ? 'Creating...' : 'Add Address'}
           </button>
         </div>
       )}
@@ -326,8 +324,7 @@ function ExistingAddresses({
   defaultAddress,
 }: Pick<CustomerFragment, 'addresses' | 'defaultAddress'>) {
   return (
-    <div>
-      <legend>Existing addresses</legend>
+    <div className="av-account-addresses__list">
       {addresses.nodes.map((address) => (
         <AddressForm
           key={address.id}
@@ -336,20 +333,22 @@ function ExistingAddresses({
           defaultAddress={defaultAddress}
         >
           {({stateForMethod}) => (
-            <div>
+            <div className="av-account-form__buttons">
               <button
                 disabled={stateForMethod('PUT') !== 'idle'}
                 formMethod="PUT"
                 type="submit"
+                className="btn btn-primary"
               >
-                {stateForMethod('PUT') !== 'idle' ? 'Saving' : 'Save'}
+                {stateForMethod('PUT') !== 'idle' ? 'Saving...' : 'Save'}
               </button>
               <button
                 disabled={stateForMethod('DELETE') !== 'idle'}
                 formMethod="DELETE"
                 type="submit"
+                className="btn btn-secondary"
               >
-                {stateForMethod('DELETE') !== 'idle' ? 'Deleting' : 'Delete'}
+                {stateForMethod('DELETE') !== 'idle' ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           )}

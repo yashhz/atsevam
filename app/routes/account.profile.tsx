@@ -16,7 +16,7 @@ export type ActionResponse = {
 };
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Profile'}];
+  return [{title: 'My Profile — Avestam'}];
 };
 
 export async function loader({context}: Route.LoaderArgs) {
@@ -86,46 +86,43 @@ export default function AccountProfile() {
   const customer = action?.customer ?? account?.customer;
 
   return (
-    <div className="account-profile">
-      <h2>My profile</h2>
-      <br />
-      <Form method="PUT">
-        <legend>Personal information</legend>
-        <fieldset>
-          <label htmlFor="firstName">First name</label>
-          <input
-            id="firstName"
-            name="firstName"
-            type="text"
-            autoComplete="given-name"
-            placeholder="First name"
-            aria-label="First name"
-            defaultValue={customer.firstName ?? ''}
-            minLength={2}
-          />
-          <label htmlFor="lastName">Last name</label>
-          <input
-            id="lastName"
-            name="lastName"
-            type="text"
-            autoComplete="family-name"
-            placeholder="Last name"
-            aria-label="Last name"
-            defaultValue={customer.lastName ?? ''}
-            minLength={2}
-          />
+    <div className="av-account-section">
+      <h2 className="av-account-section__title">My Profile</h2>
+      <Form method="PUT" className="av-account-form">
+        <fieldset className="av-account-form__fieldset">
+          <legend className="av-account-form__legend">Personal Information</legend>
+          <div className="av-account-form__field">
+            <label htmlFor="firstName">First name</label>
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              autoComplete="given-name"
+              placeholder="First name"
+              aria-label="First name"
+              defaultValue={customer.firstName ?? ''}
+              minLength={2}
+            />
+          </div>
+          <div className="av-account-form__field">
+            <label htmlFor="lastName">Last name</label>
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              autoComplete="family-name"
+              placeholder="Last name"
+              aria-label="Last name"
+              defaultValue={customer.lastName ?? ''}
+              minLength={2}
+            />
+          </div>
         </fieldset>
-        {action?.error ? (
-          <p>
-            <mark>
-              <small>{action.error}</small>
-            </mark>
-          </p>
-        ) : (
-          <br />
+        {action?.error && (
+          <p className="av-account-form__error">{action.error}</p>
         )}
-        <button type="submit" disabled={state !== 'idle'}>
-          {state !== 'idle' ? 'Updating' : 'Update'}
+        <button type="submit" className="btn btn-primary" disabled={state !== 'idle'}>
+          {state !== 'idle' ? 'Updating...' : 'Update Profile'}
         </button>
       </Form>
     </div>

@@ -13,8 +13,9 @@ import type {
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Search`}];
+export const meta: Route.MetaFunction = ({data}) => {
+  const term = data?.term || '';
+  return [{title: term ? `Search: ${term} — Avestam` : `Search — Avestam`}];
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {
@@ -41,37 +42,52 @@ export default function SearchPage() {
   if (type === 'predictive') return null;
 
   return (
-    <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
-        {({inputRef}) => (
-          <>
-            <input
-              defaultValue={term}
-              name="q"
-              placeholder="Search…"
-              ref={inputRef}
-              type="search"
-            />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
+    <div className="av-search-page">
+      <div className="container">
+        <div className="av-search-page__header">
+          <h1 className="av-search-page__title">Search</h1>
+          <SearchForm>
+            {({inputRef}) => (
+              <div className="av-search-page__form">
+                <input
+                  defaultValue={term}
+                  name="q"
+                  placeholder="Search for products, collections..."
+                  ref={inputRef}
+                  type="search"
+                  className="av-search-page__input"
+                />
+                <button type="submit" className="btn btn-primary">
+                  Search
+                </button>
+              </div>
+            )}
+          </SearchForm>
+        </div>
+
+        {error && <p className="av-search-page__error">{error}</p>}
+        
+        {!term || !result?.total ? (
+          <div className="av-search-page__empty">
+            <p>No results found. Try a different search term.</p>
+          </div>
+        ) : (
+          <div className="av-search-page__results">
+            <p className="av-search-page__count">
+              Found {result.total} {result.total === 1 ? 'result' : 'results'} for "{term}"
+            </p>
+            <SearchResults result={result} term={term}>
+              {({articles, pages, products, term}) => (
+                <div className="av-search-page__sections">
+                  <SearchResults.Products products={products} term={term} />
+                  <SearchResults.Pages pages={pages} term={term} />
+                  <SearchResults.Articles articles={articles} term={term} />
+                </div>
+              )}
+            </SearchResults>
+          </div>
         )}
-      </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {!term || !result?.total ? (
-        <SearchResults.Empty />
-      ) : (
-        <SearchResults result={result} term={term}>
-          {({articles, pages, products, term}) => (
-            <div>
-              <SearchResults.Products products={products} term={term} />
-              <SearchResults.Pages pages={pages} term={term} />
-              <SearchResults.Articles articles={articles} term={term} />
-            </div>
-          )}
-        </SearchResults>
-      )}
+      </div>
       <Analytics.SearchView data={{searchTerm: term, searchResults: result}} />
     </div>
   );

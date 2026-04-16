@@ -33,10 +33,10 @@ const img = (seed: number, w = 600, h = 750) =>
 // ─── Categories ───────────────────────────────────────────────────
 
 export const MOCK_CATEGORIES: MockCategory[] = [
-  {id: '1', title: 'Lehengas',    handle: 'lehengas',     image: {url: img(10, 400, 400), altText: 'Lehengas'}},
-  {id: '2', title: 'Anarkalis',   handle: 'anarkalis',    image: {url: img(20, 400, 400), altText: 'Anarkalis'}},
-  {id: '3', title: 'Kurtis',      handle: 'kurtis',       image: {url: img(30, 400, 400), altText: 'Kurtis'}},
-  {id: '4', title: 'Co-ord Sets', handle: 'co-ords',      image: {url: img(40, 400, 400), altText: 'Co-ord Sets'}},
+  {id: '1', title: 'Lehengas',    handle: 'lehengas',     image: {url: '/images/lehenga.jpg', altText: 'Lehengas'}},
+  {id: '2', title: 'Anarkalis',   handle: 'anarkali',     image: {url: '/images/anarkali.jpg', altText: 'Anarkalis'}},
+  {id: '3', title: 'Kurtis',      handle: 'kurtis',       image: {url: '/images/kurti.jpg', altText: 'Kurtis'}},
+  {id: '4', title: 'Co-ord Sets', handle: 'co-ords',      image: {url: '/images/coord.jpg', altText: 'Co-ord Sets'}},
 ];
 
 // ─── Bestsellers ──────────────────────────────────────────────────
