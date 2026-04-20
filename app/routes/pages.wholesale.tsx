@@ -125,7 +125,7 @@ export default function Wholesale() {
         <section className="av-wholesale-page__form-section">
           <h2 className="av-wholesale-page__section-title">Get Started</h2>
           <p className="av-wholesale-page__form-intro">
-            Interested in wholesale partnership? Email us at <a href="mailto:wholesale@atsevam.com">wholesale@atsevam.com</a> with your business details and requirements.
+            Interested in wholesale partnership? Email us at <a href="mailto:atsevam1@gmail.com">atsevam1@gmail.com</a> with your business details and requirements.
           </p>
           <p className="av-wholesale-page__note">
             We'll respond within 24-48 hours with pricing information and next steps.
@@ -137,7 +137,10 @@ export default function Wholesale() {
           <h2 className="av-wholesale-page__section-title">Get in Touch</h2>
           <p>Ready to partner with us? Contact our wholesale team:</p>
           <p>
-            <strong>Email:</strong> <a href="mailto:wholesale@atsevam.com">wholesale@atsevam.com</a>
+            <strong>Email:</strong> <a href="mailto:atsevam1@gmail.com">atsevam1@gmail.com</a>
+          </p>
+          <p>
+            <strong>Phone:</strong> <a href="tel:+919979905952">+91 99799 05952</a>
           </p>
           <p className="av-wholesale-page__note">
             We'll respond within 24-48 hours with pricing information and next steps.

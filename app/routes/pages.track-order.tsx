@@ -102,7 +102,7 @@ export default function TrackOrder() {
               <h3>Check Your Email</h3>
               <p>We sent a tracking link when your order shipped</p>
               <p className="av-track-order-page__note">
-                Look for an email from support@atsevam.com
+                Look for an email from atsevam1@gmail.com
               </p>
             </div>
           </div>

@@ -25,7 +25,7 @@ const FAQS = [
       },
       {
         q: 'What if my order is delayed?',
-        a: 'If your order is delayed beyond 7 business days, please contact us at support@atsevam.com with your order number.',
+        a: 'If your order is delayed beyond 7 business days, please contact us at atsevam1@gmail.com or +91 99799 05952 with your order number.',
       },
     ],
   },
@@ -67,7 +67,7 @@ const FAQS = [
       },
       {
         q: 'Can I customize a design?',
-        a: 'For bulk orders (10+ pieces), we offer customization. Contact us at wholesale@atsevam.com for details.',
+        a: 'For bulk orders (10+ pieces), we offer customization. Contact us at atsevam1@gmail.com or +91 99799 05952 for details.',
       },
     ],
   },

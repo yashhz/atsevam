@@ -53,7 +53,13 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
           {/* Logo */}
           <NavLink to="/" prefetch="intent" className="av-header__logo" end>
-            <span className="av-header__logo-text">ATSEVAM</span>
+            <img 
+              src="/images/logo.svg" 
+              alt="Atsevam" 
+              className="av-header__logo-img"
+              width="150"
+              height="45"
+            />
           </NavLink>
 
           {/* Desktop nav */}

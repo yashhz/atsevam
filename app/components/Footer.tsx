@@ -48,7 +48,13 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
 
             {/* Brand column - wider */}
             <div className="av-footer__brand av-footer__brand--wide">
-              <p className="av-footer__logo">ATSEVAM</p>
+              <img 
+                src="/images/logo.svg" 
+                alt="Atsevam" 
+                className="av-footer__logo-img"
+                width="150"
+                height="45"
+              />
               <p className="av-footer__tagline">
                 Handcrafted ethnic wear celebrating India's artisanal heritage.
               </p>
@@ -67,7 +73,10 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
                 ))}
               </div>
               <p className="av-footer__contact-info">
-                <strong>Email:</strong> <a href="mailto:support@atsevam.com">support@atsevam.com</a>
+                <strong>Email:</strong> <a href="mailto:atsevam1@gmail.com">atsevam1@gmail.com</a>
+              </p>
+              <p className="av-footer__contact-info">
+                <strong>Phone:</strong> <a href="tel:+919979905952">+91 99799 05952</a>
               </p>
             </div>
 

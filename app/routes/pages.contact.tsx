@@ -6,13 +6,12 @@ export const meta = () => [
   {name: 'description', content: 'Get in touch with Atsevam for any questions, concerns, or feedback.'},
 ];
 
-// TODO: Replace with actual WhatsApp number
-const WHATSAPP_NUMBER = '919876543210'; // Format: country code + number (no + or spaces)
+// WhatsApp number for contact form
+const WHATSAPP_NUMBER = '919979905952'; // Format: country code + number (no + or spaces)
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     subject: '',
     message: '',
@@ -26,8 +25,7 @@ export default function Contact() {
 *New Contact Form Inquiry*
 
 *Name:* ${formData.name}
-*Email:* ${formData.email}
-${formData.phone ? `*Phone:* ${formData.phone}` : ''}
+*Phone:* ${formData.phone}
 *Subject:* ${formData.subject}
 
 *Message:*
@@ -79,26 +77,17 @@ ${formData.message}
                   />
                 </div>
                 <div className="av-contact-form__field">
-                  <label htmlFor="email">Email *</label>
+                  <label htmlFor="phone">Phone *</label>
                   <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    value={formData.email}
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    value={formData.phone}
                     onChange={handleChange}
-                    required 
+                    required
+                    placeholder="+91 99799 05952"
                   />
                 </div>
-              </div>
-              <div className="av-contact-form__field">
-                <label htmlFor="phone">Phone (optional)</label>
-                <input 
-                  type="tel" 
-                  id="phone" 
-                  name="phone" 
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
               </div>
               <div className="av-contact-form__field">
                 <label htmlFor="subject">Subject *</label>
@@ -146,10 +135,23 @@ ${formData.message}
                 </div>
                 <div>
                   <p className="av-contact-info__label">Email</p>
-                  <a href="mailto:support@atsevam.com" className="av-contact-info__value">
-                    support@atsevam.com
+                  <a href="mailto:atsevam1@gmail.com" className="av-contact-info__value">
+                    atsevam1@gmail.com
                   </a>
                   <p className="av-contact-info__note">We respond within 24 hours</p>
+                </div>
+              </div>
+
+              <div className="av-contact-info__item">
+                <div className="av-contact-info__icon">
+                  <Icon name="phone" size={20} />
+                </div>
+                <div>
+                  <p className="av-contact-info__label">Phone</p>
+                  <a href="tel:+919979905952" className="av-contact-info__value">
+                    +91 99799 05952
+                  </a>
+                  <p className="av-contact-info__note">Mon-Sat, 10 AM - 7 PM IST</p>
                 </div>
               </div>
 

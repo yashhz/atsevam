@@ -161,7 +161,7 @@ export default function SizeGuide() {
           <ul className="av-size-guide__tips">
             <li>If you're between sizes, we recommend sizing up for a comfortable fit.</li>
             <li>All measurements are in inches and approximate. Slight variations may occur due to handcrafted nature.</li>
-            <li>For custom sizing or alterations, contact us at support@atsevam.com</li>
+            <li>For custom sizing or alterations, contact us at atsevam1@gmail.com or +91 99799 05952</li>
             <li>Check individual product pages for specific measurements and fit notes.</li>
           </ul>
         </section>

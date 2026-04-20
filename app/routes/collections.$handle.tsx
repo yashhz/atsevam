@@ -318,73 +318,32 @@ export default function Collection() {
         </span>
       </div>
 
-      {/* Collection header */}
+      {/* Collection header — Myntra-style: Title - count on same line */}
       <div className="av-collection__header container">
         <div>
-          <h1 className="av-collection__title">{collection.title}</h1>
-          {collection.description && (
-            <p className="av-collection__desc">{collection.description}</p>
-          )}
+          <h1 className="av-collection__title">
+            {collection.title}
+            <span className="av-collection__title-count"> - {products.length} items</span>
+          </h1>
         </div>
-        <p className="av-collection__count">{products.length} products</p>
       </div>
 
-      {/* Active filter chips - mobile only, above toolbar */}
-      {activeCount > 0 && (
-        <div className="av-collection__active-filters container">
-          <div className="av-filter-chips av-filter-chips--mobile">
-            {Object.entries(activeFilters).flatMap(([groupId, values]) =>
-              values.map((val) => {
-                const group = filters.find((f) => f.id === groupId);
-                const opt = group?.options.find((o) => o.value === val);
-                return (
-                  <button
-                    key={`${groupId}-${val}`}
-                    className="av-filter-chip"
-                    onClick={() => toggleFilter(groupId, val)}
-                  >
-                    {opt?.label ?? val}
-                    <Icon name="close" size={12} strokeWidth={2} />
-                  </button>
-                );
-              })
-            )}
-            <button className="av-filter-chip-clear" onClick={clearAll}>
-              Clear all
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Toolbar — sort + layout + mobile filter */}
+      {/* Toolbar — sort + layout */}
       <div className="av-collection__toolbar container">
+        <div className="av-collection__toolbar-left">
+          <span className="av-collection__toolbar-label">FILTERS</span>
+        </div>
+
+        {/* Mobile: Filter button */}
         <MobileFilterTrigger
           activeCount={activeCount}
           onClick={() => setMobileFilterOpen(true)}
         />
 
         <div className="av-collection__toolbar-right">
-          {/* Layout toggle */}
-          <div className="av-layout-toggle">
-            <button
-              className={`av-layout-toggle__btn${layout === 'grid' ? ' active' : ''}`}
-              onClick={() => setLayout('grid')}
-              aria-label="Grid view"
-            >
-              <Icon name="menu" size={16} strokeWidth={1.5} />
-            </button>
-            <button
-              className={`av-layout-toggle__btn${layout === 'list' ? ' active' : ''}`}
-              onClick={() => setLayout('list')}
-              aria-label="List view"
-            >
-              <Icon name="arrow-right" size={16} strokeWidth={1.5} />
-            </button>
-          </div>
-
           {/* Sort */}
           <div className="av-sort">
-            <label className="av-sort__label" htmlFor="sort-select">Sort</label>
+            <label className="av-sort__label" htmlFor="sort-select">Sort by:</label>
             <select
               id="sort-select"
               className="av-sort__select"
@@ -401,20 +360,64 @@ export default function Collection() {
       </div>
 
       {/* Main layout: sidebar + grid */}
-      <div className="av-collection__body container">
-        {/* Sticky filter sidebar — desktop only */}
-        <div className="av-collection__sidebar">
-          <FilterSidebar
-            filters={filters}
-            activeFilters={activeFilters}
-            onFilterChange={toggleFilter}
-            onClearAll={clearAll}
-            totalCount={products.length}
-          />
-        </div>
+      <div className="av-collection__body">
+        {/* Myntra-style left sidebar with filters */}
+        <aside className="av-collection__sidebar-myntra">
+          <div className="av-filter-sidebar-myntra">
+            {/* Clear all — shown when filters active */}
+            {activeCount > 0 && (
+              <div className="av-filter-sidebar-myntra__header">
+                <button className="av-filter-clear-myntra" onClick={clearAll}>
+                  CLEAR ALL ({activeCount})
+                </button>
+              </div>
+            )}
+
+            {/* Filter groups - all open, scrollable */}
+            <div className="av-filter-groups-myntra">
+              {filters.map((group) => {
+                const isColorFilter = group.id === 'color';
+                return (
+                  <div key={group.id} className="av-filter-group-myntra">
+                    <h4 className="av-filter-group-myntra__title">
+                      {group.label.toUpperCase()}
+                    </h4>
+                    <div className="av-filter-options-myntra">
+                      {group.options.slice(0, 8).map((opt) => {
+                        const checked = activeFilters[group.id]?.includes(opt.value);
+                        return (
+                          <label key={opt.value} className="av-filter-option-myntra">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => toggleFilter(group.id, opt.value)}
+                            />
+                            {isColorFilter && (
+                              <span 
+                                className="av-filter-color-swatch" 
+                                style={{backgroundColor: getColorHex(opt.value)}}
+                              />
+                            )}
+                            <span className="av-filter-option-myntra__label">{opt.label}</span>
+                            <span className="av-filter-option-myntra__count">({opt.count})</span>
+                          </label>
+                        );
+                      })}
+                      {group.options.length > 8 && (
+                        <button className="av-filter-show-more">
+                          + {group.options.length - 8} more
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </aside>
 
         {/* Product grid */}
-        <div className="av-collection__grid-wrap">
+        <div className="av-collection__grid-wrap av-collection__grid-wrap--with-sidebar">
           {products.length === 0 ? (
             <EmptyState onClear={clearAll} />
           ) : (
@@ -469,6 +472,33 @@ function EmptyState({onClear}: {onClear: () => void}) {
 
 function parsePrice(price: string): number {
   return Number(price.replace(/[₹,\s]/g, '')) || 0;
+}
+
+// Color mapping for color swatches
+function getColorHex(colorName: string): string {
+  const colorMap: Record<string, string> = {
+    'red': '#E74C3C',
+    'pink': '#FF69B4',
+    'blue': '#3498DB',
+    'green': '#27AE60',
+    'yellow': '#F1C40F',
+    'orange': '#E67E22',
+    'purple': '#9B59B6',
+    'black': '#2C3E50',
+    'white': '#ECF0F1',
+    'grey': '#95A5A6',
+    'gray': '#95A5A6',
+    'brown': '#8B4513',
+    'beige': '#F5F5DC',
+    'gold': '#FFD700',
+    'silver': '#C0C0C0',
+    'maroon': '#800000',
+    'navy': '#000080',
+    'olive': '#808000',
+    'teal': '#008080',
+    'cream': '#FFFDD0',
+  };
+  return colorMap[colorName.toLowerCase()] || '#95A5A6';
 }
 
 function parseFilters(productsNodes: any[]) {

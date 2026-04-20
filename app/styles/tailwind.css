@@ -3,11 +3,12 @@
  * CSS-first config. All design tokens wired into Tailwind utilities.
  */
 
+/* ─── GOOGLE FONTS ──────────────────────────────────────────────── */
+/* Must be first - @import must precede all other statements */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+
 @import 'tailwindcss';
 @import './tokens.css';
-
-/* ─── GOOGLE FONTS ──────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
 
 /* ─── TAILWIND THEME EXTENSION ──────────────────────────────────── */
 @theme {
