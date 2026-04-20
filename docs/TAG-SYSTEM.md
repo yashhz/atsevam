@@ -1,8 +1,8 @@
-# Avestam Tag System Documentation
+# Atsevam Tag System Documentation
 
 ## Overview
 
-Avestam uses a **prefixed tag system** for structured product filtering. Tags follow the format `prefix:value` which allows automatic filter generation and accurate filtering without code changes.
+Atsevam uses a **prefixed tag system** for structured product filtering. Tags follow the format `prefix:value` which allows automatic filter generation and accurate filtering without code changes.
 
 ## Tag Structure
 

@@ -15,7 +15,7 @@ import type {
 
 export const meta: Route.MetaFunction = ({data}) => {
   const term = data?.term || '';
-  return [{title: term ? `Search: ${term} — Avestam` : `Search — Avestam`}];
+  return [{title: term ? `Search: ${term} — Atsevam` : `Search — Atsevam`}];
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {

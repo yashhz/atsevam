@@ -3,8 +3,8 @@ import {Link} from 'react-router';
 import {Icon} from '~/components/ui/Icon';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Our Story — Avestam'},
-  {name: 'description', content: 'The story behind Avestam — handcrafted ethnic wear celebrating India\'s artisanal heritage.'},
+  {title: 'Our Story — Atsevam'},
+  {name: 'description', content: 'The story behind Atsevam — handcrafted ethnic wear celebrating India\'s artisanal heritage.'},
 ];
 
 const img = (seed: number, w = 800, h = 600) =>
@@ -34,11 +34,11 @@ const VALUES = [
 ];
 
 const MILESTONES = [
-  {year: '2018', text: 'Avestam was founded with a single lehenga design and a dream to bring artisanal ethnic wear to modern women.'},
+  {year: '2018', text: 'Atsevam was founded with a single lehenga design and a dream to bring artisanal ethnic wear to modern women.'},
   {year: '2019', text: 'Expanded to Anarkalis and Kurtis. Partnered with 50+ artisan families across Rajasthan and Gujarat.'},
   {year: '2021', text: 'Launched our Co-ord Sets line, bridging traditional craft with contemporary silhouettes.'},
   {year: '2023', text: 'Crossed 10,000 happy customers. Featured in Vogue India, Femina, and Harper\'s Bazaar.'},
-  {year: '2024', text: 'Introduced our B2B wholesale program, empowering boutiques across India to carry Avestam.'},
+  {year: '2024', text: 'Introduced our B2B wholesale program, empowering boutiques across India to carry Atsevam.'},
   {year: 'Now',  text: 'A growing family of 5,000+ artisans, 4 collections, and a commitment to keeping craft alive.'},
 ];
 
@@ -51,7 +51,7 @@ export default function OurStory() {
         <div className="av-story__hero-bg">
           <img
             src={img(1, 1600, 700)}
-            alt="Avestam artisans at work"
+            alt="Atsevam artisans at work"
             className="av-story__hero-img"
             loading="eager"
           />
@@ -67,13 +67,13 @@ export default function OurStory() {
       <section className="av-story__opening section">
         <div className="container container--narrow">
           <p className="av-story__lead">
-            Avestam was born from a simple belief — that the most beautiful things in the world are made by human hands.
+            Atsevam was born from a simple belief — that the most beautiful things in the world are made by human hands.
           </p>
           <p className="av-story__body">
             In a world of fast fashion and mass production, we chose a different path. We went to the villages of Rajasthan, the workshops of Gujarat, and the ateliers of Lucknow — and we listened. We listened to artisans who had spent decades perfecting the art of zari embroidery, thread chain stitch, and block printing. We heard their stories, learned their techniques, and made a promise: to give their craft the audience it deserves.
           </p>
           <p className="av-story__body">
-            Today, Avestam is more than a clothing brand. It is a bridge between the hands that create and the women who wear — a celebration of India's living textile heritage, reimagined for the modern wardrobe.
+            Today, Atsevam is more than a clothing brand. It is a bridge between the hands that create and the women who wear — a celebration of India's living textile heritage, reimagined for the modern wardrobe.
           </p>
         </div>
       </section>
@@ -89,7 +89,7 @@ export default function OurStory() {
               <p className="av-story__section-tag">The Craft</p>
               <h2 className="av-story__section-title">Every Thread Tells a Story</h2>
               <p className="av-story__body">
-                A single Avestam lehenga can take up to 45 days to complete. The embroidery alone — intricate zari work, heavy thread chain stitch, or delicate sequin placement — is done entirely by hand, stitch by stitch, by artisans who have trained for years.
+                A single Atsevam lehenga can take up to 45 days to complete. The embroidery alone — intricate zari work, heavy thread chain stitch, or delicate sequin placement — is done entirely by hand, stitch by stitch, by artisans who have trained for years.
               </p>
               <p className="av-story__body">
                 We work directly with artisan cooperatives, ensuring fair wages, safe working conditions, and the preservation of techniques that might otherwise be lost to time.
@@ -144,7 +144,7 @@ export default function OurStory() {
         <div className="container">
           <div className="av-story__split-inner">
             <div className="av-story__split-image">
-              <img src={img(3, 700, 900)} alt="Woman wearing Avestam anarkali" loading="lazy" />
+              <img src={img(3, 700, 900)} alt="Woman wearing Atsevam anarkali" loading="lazy" />
             </div>
             <div className="av-story__split-content">
               <p className="av-story__section-tag">The Woman</p>

@@ -2,8 +2,8 @@ import type {Route} from './+types/pages.wholesale';
 import {Icon} from '~/components/ui/Icon';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Wholesale & B2B — Avestam'},
-  {name: 'description', content: 'Partner with Avestam for wholesale ethnic wear. Special pricing for boutiques, retailers, and bulk orders.'},
+  {title: 'Wholesale & B2B — Atsevam'},
+  {name: 'description', content: 'Partner with Atsevam for wholesale ethnic wear. Special pricing for boutiques, retailers, and bulk orders.'},
 ];
 
 const BENEFITS = [
@@ -45,7 +45,7 @@ export default function Wholesale() {
           <div className="av-wholesale-page__hero-content">
             <h1 className="av-wholesale-page__title">Wholesale & B2B</h1>
             <p className="av-wholesale-page__subtitle">
-              Partner with Avestam to bring handcrafted ethnic wear to your customers
+              Partner with Atsevam to bring handcrafted ethnic wear to your customers
             </p>
           </div>
         </div>
@@ -64,7 +64,7 @@ export default function Wholesale() {
 
         {/* Benefits */}
         <section className="av-wholesale-page__benefits">
-          <h2 className="av-wholesale-page__section-title">Why Partner with Avestam?</h2>
+          <h2 className="av-wholesale-page__section-title">Why Partner with Atsevam?</h2>
           <div className="av-wholesale-page__benefits-grid">
             {BENEFITS.map((benefit) => (
               <div key={benefit.title} className="av-wholesale-page__benefit">
@@ -121,66 +121,26 @@ export default function Wholesale() {
           </div>
         </section>
 
-        {/* Contact Form */}
+        {/* Contact Info */}
         <section className="av-wholesale-page__form-section">
           <h2 className="av-wholesale-page__section-title">Get Started</h2>
-          <form className="av-wholesale-form" onSubmit={(e) => e.preventDefault()}>
-            <div className="av-wholesale-form__row">
-              <div className="av-wholesale-form__field">
-                <label htmlFor="business-name">Business Name *</label>
-                <input type="text" id="business-name" name="businessName" required />
-              </div>
-              <div className="av-wholesale-form__field">
-                <label htmlFor="contact-name">Contact Person *</label>
-                <input type="text" id="contact-name" name="contactName" required />
-              </div>
-            </div>
-            <div className="av-wholesale-form__row">
-              <div className="av-wholesale-form__field">
-                <label htmlFor="email">Email *</label>
-                <input type="email" id="email" name="email" required />
-              </div>
-              <div className="av-wholesale-form__field">
-                <label htmlFor="phone">Phone *</label>
-                <input type="tel" id="phone" name="phone" required />
-              </div>
-            </div>
-            <div className="av-wholesale-form__field">
-              <label htmlFor="business-type">Business Type *</label>
-              <select id="business-type" name="businessType" required>
-                <option value="">Select type</option>
-                <option value="boutique">Boutique / Retail Store</option>
-                <option value="online">Online Retailer</option>
-                <option value="designer">Fashion Designer / Stylist</option>
-                <option value="event">Event Planner / Wedding Planner</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div className="av-wholesale-form__field">
-              <label htmlFor="quantity">Estimated Order Quantity *</label>
-              <select id="quantity" name="quantity" required>
-                <option value="">Select range</option>
-                <option value="10-49">10-49 pieces</option>
-                <option value="50-99">50-99 pieces</option>
-                <option value="100+">100+ pieces</option>
-              </select>
-            </div>
-            <div className="av-wholesale-form__field">
-              <label htmlFor="message">Tell us about your business and requirements</label>
-              <textarea id="message" name="message" rows={5}></textarea>
-            </div>
-            <button type="submit" className="btn btn-primary btn-lg">
-              Submit Inquiry
-            </button>
-          </form>
+          <p className="av-wholesale-page__form-intro">
+            Interested in wholesale partnership? Email us at <a href="mailto:wholesale@atsevam.com">wholesale@atsevam.com</a> with your business details and requirements.
+          </p>
+          <p className="av-wholesale-page__note">
+            We'll respond within 24-48 hours with pricing information and next steps.
+          </p>
         </section>
 
         {/* Contact Info */}
         <section className="av-wholesale-page__contact">
-          <p>Prefer to talk? Reach out directly:</p>
+          <h2 className="av-wholesale-page__section-title">Get in Touch</h2>
+          <p>Ready to partner with us? Contact our wholesale team:</p>
           <p>
-            <strong>Email:</strong> <a href="mailto:wholesale@avestam.com">wholesale@avestam.com</a><br />
-            <strong>Phone:</strong> <a href="tel:+911234567890">+91 123 456 7890</a>
+            <strong>Email:</strong> <a href="mailto:wholesale@atsevam.com">wholesale@atsevam.com</a>
+          </p>
+          <p className="av-wholesale-page__note">
+            We'll respond within 24-48 hours with pricing information and next steps.
           </p>
         </section>
       </div>

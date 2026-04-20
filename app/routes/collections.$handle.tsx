@@ -14,7 +14,7 @@ import {
 } from '~/lib/mock';
 
 export const meta: Route.MetaFunction = ({data}) => [
-  {title: `Avestam | ${data?.collection?.title ?? 'Collection'}`},
+  {title: `Atsevam | ${data?.collection?.title ?? 'Collection'}`},
 ];
 
 export async function loader(args: Route.LoaderArgs) {

@@ -1,11 +1,53 @@
 import {Icon} from '~/components/ui/Icon';
+import {useState} from 'react';
 
 export const meta = () => [
-  {title: 'Contact Us — Avestam'},
-  {name: 'description', content: 'Get in touch with Avestam for any questions, concerns, or feedback.'},
+  {title: 'Contact Us — Atsevam'},
+  {name: 'description', content: 'Get in touch with Atsevam for any questions, concerns, or feedback.'},
 ];
 
+// TODO: Replace with actual WhatsApp number
+const WHATSAPP_NUMBER = '919876543210'; // Format: country code + number (no + or spaces)
+
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Build WhatsApp message
+    const whatsappMessage = `
+*New Contact Form Inquiry*
+
+*Name:* ${formData.name}
+*Email:* ${formData.email}
+${formData.phone ? `*Phone:* ${formData.phone}` : ''}
+*Subject:* ${formData.subject}
+
+*Message:*
+${formData.message}
+    `.trim();
+
+    // Encode message for URL
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    
+    // Open WhatsApp
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <div className="av-contact-page">
       <div className="container">
@@ -20,38 +62,75 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="av-contact-page__form-section">
             <h2 className="av-contact-page__section-title">Send us a message</h2>
-            <form className="av-contact-form" onSubmit={(e) => e.preventDefault()}>
+            <p className="av-contact-page__form-note">
+              Fill out the form below and we'll connect with you on WhatsApp
+            </p>
+            <form className="av-contact-form" onSubmit={handleSubmit}>
               <div className="av-contact-form__row">
                 <div className="av-contact-form__field">
-                  <label htmlFor="name">Name</label>
-                  <input type="text" id="name" name="name" required />
+                  <label htmlFor="name">Name *</label>
+                  <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    value={formData.name}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
                 <div className="av-contact-form__field">
-                  <label htmlFor="email">Email</label>
-                  <input type="email" id="email" name="email" required />
+                  <label htmlFor="email">Email *</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    value={formData.email}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
               </div>
               <div className="av-contact-form__field">
                 <label htmlFor="phone">Phone (optional)</label>
-                <input type="tel" id="phone" name="phone" />
+                <input 
+                  type="tel" 
+                  id="phone" 
+                  name="phone" 
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
               </div>
               <div className="av-contact-form__field">
-                <label htmlFor="subject">Subject</label>
-                <select id="subject" name="subject" required>
+                <label htmlFor="subject">Subject *</label>
+                <select 
+                  id="subject" 
+                  name="subject" 
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Select a topic</option>
-                  <option value="order">Order Inquiry</option>
-                  <option value="product">Product Question</option>
-                  <option value="return">Returns & Exchanges</option>
-                  <option value="wholesale">Wholesale / B2B</option>
-                  <option value="other">Other</option>
+                  <option value="Order Inquiry">Order Inquiry</option>
+                  <option value="Product Question">Product Question</option>
+                  <option value="Returns & Exchanges">Returns & Exchanges</option>
+                  <option value="Wholesale / B2B">Wholesale / B2B</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div className="av-contact-form__field">
-                <label htmlFor="message">Message</label>
-                <textarea id="message" name="message" rows={6} required></textarea>
+                <label htmlFor="message">Message *</label>
+                <textarea 
+                  id="message" 
+                  name="message" 
+                  rows={6} 
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                ></textarea>
               </div>
               <button type="submit" className="btn btn-primary btn-lg">
-                Send Message
+                <Icon name="phone" size={18} strokeWidth={2} />
+                Send via WhatsApp
               </button>
             </form>
           </div>
@@ -67,22 +146,10 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="av-contact-info__label">Email</p>
-                  <a href="mailto:support@avestam.com" className="av-contact-info__value">
-                    support@avestam.com
+                  <a href="mailto:support@atsevam.com" className="av-contact-info__value">
+                    support@atsevam.com
                   </a>
-                </div>
-              </div>
-
-              <div className="av-contact-info__item">
-                <div className="av-contact-info__icon">
-                  <Icon name="phone" size={20} />
-                </div>
-                <div>
-                  <p className="av-contact-info__label">Phone</p>
-                  <a href="tel:+911234567890" className="av-contact-info__value">
-                    +91 123 456 7890
-                  </a>
-                  <p className="av-contact-info__note">Mon-Sat, 10 AM - 6 PM IST</p>
+                  <p className="av-contact-info__note">We respond within 24 hours</p>
                 </div>
               </div>
 
@@ -105,10 +172,20 @@ export default function Contact() {
                 <div>
                   <p className="av-contact-info__label">Address</p>
                   <p className="av-contact-info__value">
-                    123 Fashion Street<br />
-                    Mumbai, Maharashtra 400001<br />
+                    Atsevam Fashion<br />
+                    The Polaris Textile City<br />
+                    39-46, Parvat Gam, Shakti Nagar<br />
+                    Surat, Gujarat 395012<br />
                     India
                   </p>
+                  <a 
+                    href="https://maps.app.goo.gl/m7PHpKAGLjuQneMD6" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="av-contact-info__link"
+                  >
+                    View on Google Maps →
+                  </a>
                 </div>
               </div>
             </div>

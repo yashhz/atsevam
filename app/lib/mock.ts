@@ -1,5 +1,5 @@
 /**
- * AVESTAM — Mock Data
+ * ATSEVAM — Mock Data
  * Mirrors the exact shape of Shopify Storefront API responses.
  * Swap these out by replacing loader return values with real API calls.
  */
@@ -66,7 +66,7 @@ export const MOCK_NEW_ARRIVALS: MockProduct[] = [
 export const MOCK_TESTIMONIALS = [
   {id: 't1', name: 'Priya S.',    location: 'Mumbai',    rating: 5, text: 'The lehenga was absolutely stunning. The embroidery is so intricate and the fabric quality is exceptional. Got so many compliments at the wedding!', product: 'Zardozi Bridal Lehenga',     image: img(301, 80, 80)},
   {id: 't2', name: 'Ananya R.',   location: 'Delhi',     rating: 5, text: 'Ordered the Anarkali for Diwali and it arrived beautifully packaged. The fit was perfect and the colors are exactly as shown. Will definitely order again.', product: 'Threadwork Anarkali Suit', image: img(302, 80, 80)},
-  {id: 't3', name: 'Meera K.',    location: 'Bangalore', rating: 5, text: 'Such a beautiful piece. The craftsmanship is evident in every detail. Avestam truly understands ethnic wear.', product: 'Lavender Net Lehenga',       image: img(303, 80, 80)},
+  {id: 't3', name: 'Meera K.',    location: 'Bangalore', rating: 5, text: 'Such a beautiful piece. The craftsmanship is evident in every detail. Atsevam truly understands ethnic wear.', product: 'Lavender Net Lehenga',       image: img(303, 80, 80)},
   {id: 't4', name: 'Divya M.',    location: 'Chennai',   rating: 5, text: 'The kurti is so comfortable and elegant. Perfect for both office and casual outings. The fabric is breathable and the stitching is flawless.', product: 'Embroidered Georgette Kurti', image: img(304, 80, 80)},
 ];
 

@@ -8,7 +8,7 @@ type SelectedPolicies = keyof Pick<
 >;
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `${data?.policy.title ?? 'Policy'} — Avestam`}];
+  return [{title: `${data?.policy.title ?? 'Policy'} — Atsevam`}];
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {

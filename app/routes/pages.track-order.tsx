@@ -3,8 +3,8 @@ import {useState} from 'react';
 import {Icon} from '~/components/ui/Icon';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Track Order — Avestam'},
-  {name: 'description', content: 'Track your Avestam order status and delivery information.'},
+  {title: 'Track Order — Atsevam'},
+  {name: 'description', content: 'Track your Atsevam order status and delivery information.'},
 ];
 
 export default function TrackOrder() {
@@ -102,7 +102,7 @@ export default function TrackOrder() {
               <h3>Check Your Email</h3>
               <p>We sent a tracking link when your order shipped</p>
               <p className="av-track-order-page__note">
-                Look for an email from support@avestam.com
+                Look for an email from support@atsevam.com
               </p>
             </div>
           </div>

@@ -1,4 +1,4 @@
-# Shopify Setup Guide for Avestam
+# Shopify Setup Guide for Atsevam
 
 This guide tells you exactly what you need to do in Shopify to make your site work properly. No technical jargon, just simple steps.
 

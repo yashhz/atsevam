@@ -20,7 +20,7 @@ import {MOCK_PRODUCT_DETAIL} from '~/lib/mock';
 import type {MockProductDetail} from '~/lib/mock';
 
 export const meta: Route.MetaFunction = ({data}) => [
-  {title: `Avestam | ${data?.product?.title ?? 'Product'}`},
+  {title: `Atsevam | ${data?.product?.title ?? 'Product'}`},
   {rel: 'canonical', href: `/products/${data?.product?.handle}`},
 ];
 

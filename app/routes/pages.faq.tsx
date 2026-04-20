@@ -3,8 +3,8 @@ import {useState} from 'react';
 import {Icon} from '~/components/ui/Icon';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'FAQ — Avestam'},
-  {name: 'description', content: 'Frequently asked questions about Avestam products, shipping, returns, and more.'},
+  {title: 'FAQ — Atsevam'},
+  {name: 'description', content: 'Frequently asked questions about Atsevam products, shipping, returns, and more.'},
 ];
 
 const FAQS = [
@@ -25,7 +25,7 @@ const FAQS = [
       },
       {
         q: 'What if my order is delayed?',
-        a: 'If your order is delayed beyond 7 business days, please contact us at support@avestam.com with your order number.',
+        a: 'If your order is delayed beyond 7 business days, please contact us at support@atsevam.com with your order number.',
       },
     ],
   },
@@ -62,12 +62,12 @@ const FAQS = [
         a: 'Yes! Every piece is handcrafted by skilled artisans. This means each item is unique and may have slight variations.',
       },
       {
-        q: 'How do I care for my Avestam garment?',
+        q: 'How do I care for my Atsevam garment?',
         a: 'We recommend dry cleaning for embroidered pieces. For everyday kurtis and co-ords, gentle hand wash or machine wash on delicate cycle.',
       },
       {
         q: 'Can I customize a design?',
-        a: 'For bulk orders (10+ pieces), we offer customization. Contact us at wholesale@avestam.com for details.',
+        a: 'For bulk orders (10+ pieces), we offer customization. Contact us at wholesale@atsevam.com for details.',
       },
     ],
   },
@@ -123,7 +123,7 @@ export default function FAQ() {
         <header className="av-faq-page__header">
           <h1 className="av-faq-page__title">Frequently Asked Questions</h1>
           <p className="av-faq-page__subtitle">
-            Everything you need to know about shopping with Avestam
+            Everything you need to know about shopping with Atsevam
           </p>
         </header>
 

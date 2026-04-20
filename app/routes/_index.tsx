@@ -14,7 +14,7 @@ import {
 } from '~/lib/mock';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Avestam — Handcrafted Ethnic Wear'},
+  {title: 'Atsevam — Handcrafted Ethnic Wear'},
   {name: 'description', content: 'Premium handcrafted ethnic wear — Bridal Lehengas, Anarkalis, Kurtis and Co-ords.'},
 ];
 
@@ -125,7 +125,7 @@ export default function Homepage() {
       <HeroBanner />
       <CategoryGrid categories={categories} />
       <BrandStrip />
-      <Carousel title="Bestsellers" viewAllUrl="/collections/bestsellers">
+      <Carousel title="Bestsellers" viewAllUrl="/collections/all">
         {bestsellers.map((p, i) => (
           <div key={p.id} className="av-carousel__item">
             <ProductCard product={p} loading={i < 3 ? 'eager' : 'lazy'} />
@@ -141,7 +141,7 @@ export default function Homepage() {
         imageSeed={400}
         align="left"
       />
-      <Carousel title="New Arrivals" viewAllUrl="/collections/new-arrivals">
+      <Carousel title="New Arrivals" viewAllUrl="/collections/all">
         {newArrivals.map((p) => (
           <div key={p.id} className="av-carousel__item">
             <ProductCard product={p} />
@@ -164,7 +164,7 @@ function HeroBanner() {
       <div className="av-hero__bg">
         <img
           src="/images/hero.png"
-          alt="Avestam — The Festive Edit"
+          alt="Atsevam — The Festive Edit"
           className="av-hero__img"
           loading="eager"
           fetchPriority="high"
@@ -179,7 +179,7 @@ function HeroBanner() {
         <p className="av-hero__sub">
           Handcrafted for the moments that matter.
         </p>
-        <Link to="/collections/bridal-festive" className="btn btn-secondary btn-lg av-hero__cta">
+        <Link to="/collections/lehengas" className="btn btn-secondary btn-lg av-hero__cta">
           Shop Now
         </Link>
       </div>

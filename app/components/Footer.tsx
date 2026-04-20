@@ -1,6 +1,6 @@
-import {Suspense} from 'react';
-import {Await, NavLink, Link} from 'react-router';
+import {NavLink} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
+import {Icon} from '~/components/ui/Icon';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -33,10 +33,9 @@ const FOOTER_LINKS = {
 };
 
 const SOCIAL_LINKS = [
-  {name: 'Instagram', url: 'https://instagram.com/atsevaam', icon: 'IG'},
-  {name: 'Pinterest', url: 'https://pinterest.com', icon: 'PT'},
-  {name: 'Facebook',  url: 'https://www.facebook.com/atsevaam',  icon: 'FB'},
-  {name: 'YouTube',   url: 'https://www.youtube.com/@atsevam1',   icon: 'YT'},
+  {name: 'Instagram', url: 'https://instagram.com/atsevaam', icon: 'instagram'},
+  {name: 'Facebook',  url: 'https://www.facebook.com/atsevaam',  icon: 'facebook'},
+  {name: 'YouTube',   url: 'https://www.youtube.com/@atsevam1',   icon: 'youtube'},
 ];
 
 export function Footer({footer: footerPromise, header, publicStoreDomain}: FooterProps) {
@@ -47,9 +46,9 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
         <div className="container">
           <div className="av-footer__grid">
 
-            {/* Brand column */}
-            <div className="av-footer__brand">
-              <p className="av-footer__logo">AVESTAM</p>
+            {/* Brand column - wider */}
+            <div className="av-footer__brand av-footer__brand--wide">
+              <p className="av-footer__logo">ATSEVAM</p>
               <p className="av-footer__tagline">
                 Handcrafted ethnic wear celebrating India's artisanal heritage.
               </p>
@@ -63,10 +62,13 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
                     className="av-footer__social-link"
                     aria-label={s.name}
                   >
-                    {s.icon}
+                    <Icon name={s.icon as any} size={20} strokeWidth={1.5} />
                   </a>
                 ))}
               </div>
+              <p className="av-footer__contact-info">
+                <strong>Email:</strong> <a href="mailto:support@atsevam.com">support@atsevam.com</a>
+              </p>
             </div>
 
             {/* Link columns */}
@@ -85,25 +87,6 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
               </div>
             ))}
 
-            {/* Newsletter column */}
-            <div className="av-footer__newsletter">
-              <p className="av-footer__col-heading">Newsletter</p>
-              <p className="av-footer__newsletter-text">
-                New arrivals, exclusive offers, and styling inspiration — straight to your inbox.
-              </p>
-              <form className="av-footer__newsletter-form" onSubmit={(e) => e.preventDefault()}>
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="av-footer__newsletter-input"
-                  aria-label="Email address"
-                />
-                <button type="submit" className="btn btn-primary">
-                  Subscribe
-                </button>
-              </form>
-            </div>
-
           </div>
         </div>
       </div>
@@ -113,7 +96,7 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
         <div className="container">
           <div className="av-footer__bottom-inner">
             <p className="av-footer__copyright">
-              © {new Date().getFullYear()} Avestam. All rights reserved.
+              © {new Date().getFullYear()} Atsevam. All rights reserved.
             </p>
             <p className="av-footer__made-with">
               Crafted with love ♥

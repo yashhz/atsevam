@@ -18,7 +18,7 @@ interface HeaderProps {
 
 type Viewport = 'desktop' | 'mobile';
 
-// ─── Avestam nav — women's wear only, 4 categories + brand story
+// ─── Atsevam nav — women's wear only, 4 categories + brand story
 const NAV_ITEMS = [
   {title: 'Lehengas',    url: '/collections/lehengas'},
   {title: 'Anarkalis',   url: '/collections/anarkali'},
@@ -53,7 +53,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
           {/* Logo */}
           <NavLink to="/" prefetch="intent" className="av-header__logo" end>
-            <span className="av-header__logo-text">AVESTAM</span>
+            <span className="av-header__logo-text">ATSEVAM</span>
           </NavLink>
 
           {/* Desktop nav */}
