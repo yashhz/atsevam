@@ -159,12 +159,14 @@ ul, ol { list-style: none; }
 
 /* Large section heading variant (for homepage hero sections) */
 .section-heading--large {
+  font-family: var(--font-display); /* Playfair Display - same as hero */
   font-size: 2.25rem;
   font-weight: 600;
   letter-spacing: -0.03em;
   text-transform: none;
   margin-bottom: 1rem;
   gap: 0;
+  color: var(--color-charcoal);
 }
 
 .section-heading--large::before,

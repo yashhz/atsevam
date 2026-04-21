@@ -19,10 +19,33 @@ import {ProductCard} from '~/components/ProductCard';
 import {MOCK_PRODUCT_DETAIL} from '~/lib/mock';
 import type {MockProductDetail} from '~/lib/mock';
 
-export const meta: Route.MetaFunction = ({data}) => [
-  {title: `Atsevam | ${data?.product?.title ?? 'Product'}`},
-  {rel: 'canonical', href: `/products/${data?.product?.handle}`},
-];
+export const meta: Route.MetaFunction = ({data}) => {
+  const product = data?.product;
+  if (!product) return [{title: 'Product Not Found — Atsevam'}];
+  
+  const title = product.title;
+  const description = product.description || `Shop ${title} at Atsevam. Premium handcrafted ethnic wear with traditional craftsmanship.`;
+  const image = product.featuredImage?.url;
+  
+  return [
+    {title: `${title} — Atsevam | Premium Ethnic Wear`},
+    {name: 'description', content: description.substring(0, 160)},
+    
+    // Open Graph / Facebook
+    {property: 'og:type', content: 'product'},
+    {property: 'og:title', content: title},
+    {property: 'og:description', content: description.substring(0, 160)},
+    {property: 'og:image', content: image},
+    
+    // Twitter
+    {name: 'twitter:card', content: 'summary_large_image'},
+    {name: 'twitter:title', content: title},
+    {name: 'twitter:description', content: description.substring(0, 160)},
+    {name: 'twitter:image', content: image},
+    
+    {rel: 'canonical', href: `/products/${product.handle}`},
+  ];
+};
 
 export async function loader(args: Route.LoaderArgs) {
   const deferredData = loadDeferredData(args);

@@ -39,15 +39,22 @@ export const MOCK_CATEGORIES: MockCategory[] = [
   {id: '4', title: 'Co-ord Sets', handle: 'co-ords',      image: {url: '/images/coord.jpg', altText: 'Co-ord Sets'}},
 ];
 
-// Featured categories for homepage (main hero categories)
-export const MOCK_FEATURED_CATEGORIES: MockCategory[] = [
-  {id: '1', title: 'Lehengas',      handle: 'lehengas',              image: {url: '/images/lehenga.jpg', altText: 'Bridal & Festive Lehengas'}},
-  {id: '2', title: 'Anarkalis',     handle: 'anarkali',              image: {url: '/images/anarkali.jpg', altText: 'Elegant Anarkali Suits'}},
-  {id: '3', title: 'Kurtis',        handle: 'kurtis',                image: {url: '/images/kurti.jpg', altText: 'Designer Kurtis'}},
-  {id: '4', title: 'Co-ord Sets',   handle: 'co-ords',               image: {url: '/images/coord.jpg', altText: 'Trendy Co-ord Sets'}},
-  {id: '5', title: 'Western Wear',  handle: 'western-dresses',       image: {url: '/images/western dresses/image (12).png', altText: 'Western Dresses & Tops'}},
-  {id: '6', title: 'Sarees',        handle: 'sarees',                image: {url: '/images/lehenga.jpg', altText: 'Traditional Sarees'}},
-  {id: '7', title: 'Navratri',      handle: 'navratri-lehenga-choli', image: {url: '/images/lehenga.jpg', altText: 'Navratri Special Collection'}},
+// Traditional ethnic wear categories
+export const MOCK_TRADITIONAL_CATEGORIES: MockCategory[] = [
+  {id: '1', title: 'Lehengas',    handle: 'lehengas',     image: {url: '/images/lehenga.jpg', altText: 'Bridal & Festive Lehengas'}},
+  {id: '2', title: 'Anarkalis',   handle: 'anarkali',     image: {url: '/images/anarkali.jpg', altText: 'Elegant Anarkali Suits'}},
+  {id: '3', title: 'Kurtis',      handle: 'kurtis',       image: {url: '/images/kurti.jpg', altText: 'Designer Kurtis'}},
+  {id: '4', title: 'Co-ord Sets', handle: 'co-ords',      image: {url: '/images/coord.jpg', altText: 'Trendy Co-ord Sets'}},
+  {id: '5', title: 'Sarees',      handle: 'sarees',       image: {url: '/images/lehenga.jpg', altText: 'Traditional Sarees'}},
+  {id: '6', title: 'Navratri',    handle: 'navratri-lehenga-choli', image: {url: '/images/lehenga.jpg', altText: 'Navratri Special Collection'}},
+];
+
+// Western wear categories
+export const MOCK_WESTERN_CATEGORIES: MockCategory[] = [
+  {id: '1', title: 'Dresses',        handle: 'western-dresses',       image: {url: '/images/western dresses/image (12).png', altText: 'Western Dresses'}},
+  {id: '2', title: 'Tops & Tunics',  handle: 'western-tops-tunics',   image: {url: '/images/western tops/western top.png', altText: 'Tops & Tunics'}},
+  {id: '3', title: 'Pants & Skirts', handle: 'western-pants-skirts',  image: {url: '/images/skirts/image (13).png', altText: 'Pants & Skirts'}},
+  {id: '4', title: 'Swimwear',       handle: 'western-swimwear',      image: {url: '/images/swim suit/swim suit 2.jpg', altText: 'Swimwear'}},
 ];
 
 // Shop by occasion

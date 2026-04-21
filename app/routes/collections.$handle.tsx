@@ -7,9 +7,39 @@ import {ProductCard} from '~/components/ProductCard';
 import {FilterSidebar, MobileFilterTrigger, MobileFilterDrawer} from '~/components/FilterSidebar';
 import {Icon} from '~/components/ui/Icon';
 
-export const meta: Route.MetaFunction = ({data}) => [
-  {title: `Atsevam | ${data?.collection?.title ?? 'Collection'}`},
-];
+export const meta: Route.MetaFunction = ({data}) => {
+  const collection = data?.collection;
+  const title = collection?.title || 'Collection';
+  const handle = collection?.handle || '';
+  
+  // Category-specific descriptions
+  const descriptions: Record<string, string> = {
+    'lehengas': 'Shop premium bridal and festive lehengas at Atsevam. Handcrafted with intricate embroidery, zari work, and traditional craftsmanship. Perfect for weddings, receptions, and special occasions.',
+    'anarkali': 'Explore elegant Anarkali suits and dresses. Designer Anarkali collection with beautiful embroidery and premium fabrics. Perfect for festive occasions and celebrations.',
+    'kurtis': 'Browse designer kurtis and kurtas for women. Comfortable, stylish ethnic wear perfect for daily wear and casual occasions. Premium fabrics with modern designs.',
+    'co-ords': 'Trendy co-ord sets and matching sets. Modern ethnic wear with contemporary designs. Perfect for parties, casual outings, and festive occasions.',
+    'western-dresses': 'Shop western dresses, tops, and tunics. Modern fashion with elegant designs. Perfect for parties and casual wear.',
+    'sarees': 'Traditional sarees with modern designs. Premium fabrics and beautiful drapes. Perfect for weddings and festive occasions.',
+    'navratri-lehenga-choli': 'Navratri special lehenga choli collection. Vibrant colors and traditional designs perfect for Garba and Dandiya nights.',
+  };
+  
+  const description = descriptions[handle] || `Shop ${title} collection at Atsevam. Premium handcrafted ethnic wear with traditional craftsmanship.`;
+  
+  return [
+    {title: `${title} — Atsevam | Premium Ethnic Wear`},
+    {name: 'description', content: description},
+    {name: 'keywords', content: `${title.toLowerCase()}, ${handle}, ethnic wear, indian wear, atsevam`},
+    
+    // Open Graph
+    {property: 'og:title', content: `${title} — Atsevam`},
+    {property: 'og:description', content: description},
+    {property: 'og:type', content: 'product.group'},
+    
+    // Twitter
+    {name: 'twitter:title', content: `${title} — Atsevam`},
+    {name: 'twitter:description', content: description},
+  ];
+};
 
 export async function loader(args: Route.LoaderArgs) {
   const deferredData = loadDeferredData(args);

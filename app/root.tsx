@@ -62,6 +62,8 @@ export function links() {
       href: 'https://shop.app',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+    {rel: 'apple-touch-icon', sizes: '180x180', href: favicon},
   ];
 }
 
@@ -149,10 +151,23 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        
+        {/* SEO Meta Tags */}
+        <meta name="application-name" content="Atsevam" />
+        <meta name="apple-mobile-web-app-title" content="Atsevam" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        
+        {/* Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        
+        {/* Styles */}
         <link rel="stylesheet" href={tailwindCss} />
         <link rel="stylesheet" href={appStyles} />
+        
         <Meta />
         <Links />
       </head>

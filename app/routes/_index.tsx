@@ -4,14 +4,35 @@ import {ProductCard} from '~/components/ProductCard';
 import {Carousel} from '~/components/Carousel';
 import {Icon} from '~/components/ui/Icon';
 import {
-  MOCK_FEATURED_CATEGORIES,
+  MOCK_TRADITIONAL_CATEGORIES,
+  MOCK_WESTERN_CATEGORIES,
   MOCK_OCCASIONS,
   MOCK_TESTIMONIALS,
 } from '~/lib/mock';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Atsevam — Handcrafted Ethnic Wear'},
-  {name: 'description', content: 'Premium handcrafted ethnic wear — Bridal Lehengas, Anarkalis, Kurtis and Co-ords.'},
+  {title: 'Atsevam — Lehengas, Anarkalis, Kurtis & Western Wear | Premium Ethnic Fashion'},
+  {name: 'description', content: 'Shop premium handcrafted ethnic wear at Atsevam. Explore our collection of Bridal Lehengas, Anarkali Suits, Designer Kurtis, Co-ord Sets, Western Wear, Sarees & Navratri Special. Handcrafted by 5000+ artisans across India. Free shipping on orders above ₹1,999.'},
+  {name: 'keywords', content: 'lehengas, anarkali suits, kurtis, ethnic wear, indian wear, bridal lehenga, designer kurtis, co-ord sets, western wear, sarees, navratri collection, handcrafted ethnic wear, indian fashion'},
+  
+  // Open Graph / Facebook
+  {property: 'og:type', content: 'website'},
+  {property: 'og:title', content: 'Atsevam — Premium Ethnic Wear | Lehengas, Anarkalis, Kurtis'},
+  {property: 'og:description', content: 'Shop premium handcrafted ethnic wear. Bridal Lehengas, Anarkali Suits, Designer Kurtis & more. Handcrafted by 5000+ artisans. Free shipping above ₹1,999.'},
+  {property: 'og:image', content: 'https://atsevam.com/images/hero.png'},
+  {property: 'og:url', content: 'https://atsevam.com'},
+  {property: 'og:site_name', content: 'Atsevam'},
+  
+  // Twitter
+  {name: 'twitter:card', content: 'summary_large_image'},
+  {name: 'twitter:title', content: 'Atsevam — Premium Ethnic Wear | Lehengas, Anarkalis, Kurtis'},
+  {name: 'twitter:description', content: 'Shop premium handcrafted ethnic wear. Bridal Lehengas, Anarkali Suits, Designer Kurtis & more. Handcrafted by 5000+ artisans.'},
+  {name: 'twitter:image', content: 'https://atsevam.com/images/hero.png'},
+  
+  // Additional SEO
+  {name: 'robots', content: 'index, follow'},
+  {name: 'author', content: 'Atsevam'},
+  {name: 'theme-color', content: '#8B2635'},
 ];
 
 export async function loader({context}: Route.LoaderArgs) {
@@ -103,7 +124,8 @@ export async function loader({context}: Route.LoaderArgs) {
   const featuredProducts = transformedProducts.slice(0, 8);
 
   return {
-    featuredCategories: MOCK_FEATURED_CATEGORIES,
+    traditionalCategories: MOCK_TRADITIONAL_CATEGORIES,
+    westernCategories: MOCK_WESTERN_CATEGORIES,
     occasions: MOCK_OCCASIONS,
     featuredProducts,
     testimonials: MOCK_TESTIMONIALS,
@@ -111,15 +133,16 @@ export async function loader({context}: Route.LoaderArgs) {
 }
 
 export default function Homepage() {
-  const {featuredCategories, occasions, featuredProducts, testimonials} =
+  const {traditionalCategories, westernCategories, occasions, featuredProducts, testimonials} =
     useLoaderData<typeof loader>();
 
   return (
     <div className="av-home">
       <HeroBanner />
-      <FeaturedCategories categories={featuredCategories} />
+      <TraditionalCategoriesSection categories={traditionalCategories} />
       <BrandStrip />
       <VideoSection />
+      <WesternCategoriesSection categories={westernCategories} />
       <ShopByOccasion occasions={occasions} />
       <Carousel title="Handpicked for You" viewAllUrl="/collections/all">
         {featuredProducts.map((p, i) => (
@@ -177,38 +200,80 @@ function HeroBanner() {
   );
 }
 
-// ─── Featured Categories ──────────────────────────────────────────
+// ─── Traditional Categories Section ───────────────────────────────
 
-function FeaturedCategories({categories}: {categories: typeof MOCK_FEATURED_CATEGORIES}) {
+function TraditionalCategoriesSection({categories}: {categories: typeof MOCK_TRADITIONAL_CATEGORIES}) {
   return (
-    <section className="av-featured-cats section">
+    <section className="av-category-section section">
       <div className="container">
-        <h2 className="section-heading--large" style={{textAlign: 'center'}}>Shop by Category</h2>
-        <div className="av-featured-cats__grid">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              to={`/collections/${cat.handle}`}
-              prefetch="intent"
-              className="av-featured-cat"
-            >
-              <div className="av-featured-cat__img-wrap">
-                <img
-                  src={cat.image.url}
-                  alt={cat.image.altText}
-                  loading="lazy"
-                  className="av-featured-cat__img"
-                />
-                <div className="av-featured-cat__overlay" />
-              </div>
-              <div className="av-featured-cat__content">
-                <h3 className="av-featured-cat__title">{cat.title}</h3>
-                <span className="av-featured-cat__cta">
-                  Explore <Icon name="arrow-right" size={16} strokeWidth={2} />
-                </span>
-              </div>
-            </Link>
-          ))}
+        <h2 className="av-category-section__heading">Traditional Ethnic Wear</h2>
+        <div className="av-category-scroll">
+          <div className="av-category-scroll__inner">
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/collections/${cat.handle}`}
+                prefetch="intent"
+                className="av-category-card"
+              >
+                <div className="av-category-card__img-wrap">
+                  <img
+                    src={cat.image.url}
+                    alt={cat.image.altText}
+                    loading="lazy"
+                    className="av-category-card__img"
+                  />
+                  <div className="av-category-card__overlay" />
+                </div>
+                <div className="av-category-card__content">
+                  <h3 className="av-category-card__title">{cat.title}</h3>
+                  <span className="av-category-card__cta">
+                    Explore <Icon name="arrow-right" size={14} strokeWidth={2} />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Western Categories Section ───────────────────────────────────
+
+function WesternCategoriesSection({categories}: {categories: typeof MOCK_WESTERN_CATEGORIES}) {
+  return (
+    <section className="av-category-section section">
+      <div className="container">
+        <h2 className="av-category-section__heading">Western Collection</h2>
+        <div className="av-category-scroll">
+          <div className="av-category-scroll__inner">
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/collections/${cat.handle}`}
+                prefetch="intent"
+                className="av-category-card"
+              >
+                <div className="av-category-card__img-wrap">
+                  <img
+                    src={cat.image.url}
+                    alt={cat.image.altText}
+                    loading="lazy"
+                    className="av-category-card__img"
+                  />
+                  <div className="av-category-card__overlay" />
+                </div>
+                <div className="av-category-card__content">
+                  <h3 className="av-category-card__title">{cat.title}</h3>
+                  <span className="av-category-card__cta">
+                    Explore <Icon name="arrow-right" size={14} strokeWidth={2} />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -248,46 +313,72 @@ function VideoSection() {
   return (
     <section className="av-video-section section">
       <div className="container">
-        <div className="av-video-section__content">
-          <h2 className="av-video-section__headline">Crafted with Love</h2>
-          <p className="av-video-section__sub">
-            Watch our artisans bring each piece to life with traditional techniques passed down through generations.
-          </p>
-        </div>
-        <div className="av-video-section__grid">
-          <div className="av-video-card av-video-card--large">
-            <div className="av-video-card__wrapper">
-              <video
-                className="av-video-card__video"
-                poster="/images/hero.png"
-                controls
-                preload="metadata"
-              >
-                <source src="/videos/bts.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="av-video-card__play">
-                <Icon name="play" size={32} strokeWidth={1.5} />
+        <div className="av-video-section__layout">
+          {/* Left side: Text content */}
+          <div className="av-video-section__text">
+            <h2 className="av-video-section__headline">Crafted with Love</h2>
+            <p className="av-video-section__description">
+              Every piece at Atsevam tells a story of tradition, artistry, and dedication. 
+              Watch our skilled artisans bring each design to life using time-honored techniques 
+              passed down through generations.
+            </p>
+            <p className="av-video-section__description">
+              From intricate embroidery to delicate zari work, every stitch is a testament 
+              to the craftsmanship that makes our ethnic wear truly special.
+            </p>
+            <div className="av-video-section__stats">
+              <div className="av-video-stat">
+                <span className="av-video-stat__number">5,000+</span>
+                <span className="av-video-stat__label">Artisans</span>
+              </div>
+              <div className="av-video-stat">
+                <span className="av-video-stat__number">100%</span>
+                <span className="av-video-stat__label">Handcrafted</span>
+              </div>
+              <div className="av-video-stat">
+                <span className="av-video-stat__number">50+</span>
+                <span className="av-video-stat__label">Years Legacy</span>
               </div>
             </div>
-            <p className="av-video-card__title">Behind the Scenes</p>
           </div>
-          <div className="av-video-card">
-            <div className="av-video-card__wrapper">
-              <video
-                className="av-video-card__video"
-                poster="/images/lehenga.jpg"
-                controls
-                preload="metadata"
-              >
-                <source src="/videos/craftsmanship.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="av-video-card__play">
-                <Icon name="play" size={24} strokeWidth={1.5} />
+
+          {/* Right side: Two vertical videos */}
+          <div className="av-video-section__videos">
+            <div className="av-vertical-video">
+              <div className="av-vertical-video__wrapper">
+                <video
+                  className="av-vertical-video__player"
+                  poster="/images/lehenga.jpg"
+                  controls
+                  preload="metadata"
+                >
+                  <source src="/videos/bts.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <div className="av-vertical-video__play">
+                  <Icon name="play" size={28} strokeWidth={1.5} />
+                </div>
               </div>
+              <p className="av-vertical-video__caption">Behind the Scenes</p>
             </div>
-            <p className="av-video-card__title">The Art of Embroidery</p>
+
+            <div className="av-vertical-video">
+              <div className="av-vertical-video__wrapper">
+                <video
+                  className="av-vertical-video__player"
+                  poster="/images/anarkali.jpg"
+                  controls
+                  preload="metadata"
+                >
+                  <source src="/videos/craftsmanship.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <div className="av-vertical-video__play">
+                  <Icon name="play" size={28} strokeWidth={1.5} />
+                </div>
+              </div>
+              <p className="av-vertical-video__caption">The Art of Embroidery</p>
+            </div>
           </div>
         </div>
       </div>
@@ -322,6 +413,9 @@ function ShopByOccasion({occasions}: {occasions: typeof MOCK_OCCASIONS}) {
               <div className="av-occasion-card__content">
                 <h3 className="av-occasion-card__title">{occ.title}</h3>
                 <p className="av-occasion-card__subtitle">{occ.subtitle}</p>
+                <div className="av-occasion-card__arrow">
+                  <Icon name="arrow-right" size={18} strokeWidth={2} />
+                </div>
               </div>
             </Link>
           ))}
@@ -370,19 +464,22 @@ function TestimonialsSection({testimonials}: {testimonials: typeof MOCK_TESTIMON
         <div className="av-testimonials__grid">
           {testimonials.map((t) => (
             <div key={t.id} className="av-testimonial">
+              <div className="av-testimonial__quote-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 8C10 5.79086 8.20914 4 6 4C3.79086 4 2 5.79086 2 8C2 10.2091 3.79086 12 6 12C6.55228 12 7 12.4477 7 13V15C7 16.1046 6.10457 17 5 17H4C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H5C7.20914 19 9 17.2091 9 15V13C9 11.3431 7.65685 10 6 10C4.89543 10 4 9.10457 4 8C4 6.89543 4.89543 6 6 6C7.10457 6 8 6.89543 8 8V9C8 9.55228 8.44772 10 9 10C9.55228 10 10 9.55228 10 9V8Z" fill="currentColor"/>
+                  <path d="M22 8C22 5.79086 20.2091 4 18 4C15.7909 4 14 5.79086 14 8C14 10.2091 15.7909 12 18 12C18.5523 12 19 12.4477 19 13V15C19 16.1046 18.1046 17 17 17H16C15.4477 17 15 17.4477 15 18C15 18.5523 15.4477 19 16 19H17C19.2091 19 21 17.2091 21 15V13C21 11.3431 19.6569 10 18 10C16.8954 10 16 9.10457 16 8C16 6.89543 16.8954 6 18 6C19.1046 6 20 6.89543 20 8V9C20 9.55228 20.4477 10 21 10C21.5523 10 22 9.55228 22 9V8Z" fill="currentColor"/>
+                </svg>
+              </div>
               <div className="star-rating av-testimonial__stars">
                 {Array.from({length: t.rating}).map((_, i) => (
-                  <Icon key={i} name="star-filled" size={13} strokeWidth={0} />
+                  <Icon key={i} name="star-filled" size={16} strokeWidth={0} />
                 ))}
               </div>
               <p className="av-testimonial__text">"{t.text}"</p>
               <div className="av-testimonial__author">
-                <img
-                  src={t.image}
-                  alt={t.name}
-                  className="av-testimonial__avatar"
-                  loading="lazy"
-                />
+                <div className="av-testimonial__author-initial">
+                  {t.name.charAt(0)}
+                </div>
                 <div>
                   <p className="av-testimonial__name">{t.name}</p>
                   <p className="av-testimonial__meta">{t.location} · {t.product}</p>
@@ -412,9 +509,9 @@ function InstagramSection() {
     <section className="av-instagram section">
       <div className="container">
         <div className="av-instagram__header">
-          <h2 className="section-heading--large">Follow Us @atsevam</h2>
+          <h2 className="section-heading--large">Follow Us @atsevaam</h2>
           <a 
-            href="https://instagram.com/atsevam" 
+            href="https://www.instagram.com/atsevaam" 
             target="_blank" 
             rel="noopener noreferrer"
             className="av-instagram__follow"
@@ -426,7 +523,7 @@ function InstagramSection() {
           {instaPosts.map((post) => (
             <a
               key={post.id}
-              href="https://instagram.com/atsevam"
+              href="https://www.instagram.com/atsevaam"
               target="_blank"
               rel="noopener noreferrer"
               className="av-insta-post"
