@@ -6,18 +6,26 @@
 
 :root {
   /* ─── COLOR PALETTE ─────────────────────────────────────────── */
-  /* Strictly monochrome. The clothes bring the color. */
+  /* Rose-tinted neutrals — warm, feminine, derived from logo palette */
   --color-white:        #FFFFFF;
-  --color-off-white:    #FAF9F7;   /* page background */
-  --color-surface:      #F5F4F1;   /* subtle section separation */
-  --color-border:       #E8E6E1;   /* hairline borders */
-  --color-border-light: #F0EEE9;   /* even lighter, for cards */
-  --color-muted:        #C8C4BC;   /* placeholder text, disabled */
-  --color-subtle:       #9B9690;   /* secondary text */
-  --color-secondary:    #6B6760;   /* body text secondary */
-  --color-primary:      #2C2B28;   /* body text */
-  --color-charcoal:     #1A1917;   /* headings, strong text */
-  --color-black:        #0D0D0C;   /* pure black for CTAs */
+  --color-off-white:    #FDF8F9;   /* page background — faintest rose tint */
+  --color-surface:      #F9F1F4;   /* subtle section separation — soft rose */
+  --color-border:       #EBE0E4;   /* hairline borders — warm rose-grey */
+  --color-border-light: #F3EAED;   /* even lighter, for cards */
+  --color-muted:        #C4B5BC;   /* placeholder text, disabled */
+  --color-subtle:       #9A8A92;   /* secondary text */
+  --color-secondary:    #6B5D63;   /* body text secondary */
+  --color-primary:      #2E2428;   /* body text */
+  --color-charcoal:     #1E1418;   /* headings, strong text */
+  --color-black:        #120A0E;   /* pure black for CTAs */
+
+  /* Brand — derived from AtSevam logo */
+  --color-brand:        #7B2D4E;   /* deep maroon/wine from logo */
+  --color-brand-dark:   #5A1E38;   /* darker maroon for footer */
+  --color-brand-light:  #A0405E;   /* mid-tone accent */
+  --color-brand-lighter:#C87C9E;   /* soft rose from logo */
+  --color-brand-pale:   #F9F0F3;   /* very faint rose tint for hover backgrounds */
+  --color-brand-bg:     #FDF7F9;   /* ultra-light brand tint for sections */
 
   /* Accent — used sparingly, only for badges/tags */
   --color-accent-warm:  #C9A96E;   /* gold, for "Bestseller" badge */

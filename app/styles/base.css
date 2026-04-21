@@ -157,6 +157,27 @@ ul, ol { list-style: none; }
   background: var(--color-border);
 }
 
+/* Large section heading variant (for homepage hero sections) */
+.section-heading--large {
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-transform: none;
+  margin-bottom: 1rem;
+  gap: 0;
+}
+
+.section-heading--large::before,
+.section-heading--large::after {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .section-heading--large {
+    font-size: 1.75rem;
+  }
+}
+
 /* ─── SKELETON LOADING ───────────────────────────────────────── */
 
 @keyframes skeleton-pulse {

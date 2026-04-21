@@ -18,21 +18,59 @@ interface HeaderProps {
 
 type Viewport = 'desktop' | 'mobile';
 
-// ─── Atsevam nav — women's wear only, 4 categories + brand story
-const NAV_ITEMS = [
-  {title: 'Lehengas',    url: '/collections/lehengas'},
-  {title: 'Anarkalis',   url: '/collections/anarkali'},
-  {title: 'Kurtis',      url: '/collections/kurtis'},
-  {title: 'Co-ords',     url: '/collections/co-ords'},
-  {title: 'Our Story',   url: '/pages/our-story'},
+// ─── Navigation Structure ────────────────────────────────────────
+
+// Main header - simple navigation
+const MAIN_NAV = [
+  {title: 'Home',       url: '/'},
+  {title: 'Contact',    url: '/pages/contact'},
 ];
 
-// Secondary tab bar — quick-access filters
-const CATEGORY_TABS = [
-  {title: 'Lehengas',  url: '/collections/lehengas'},
-  {title: 'Anarkalis', url: '/collections/anarkali'},
-  {title: 'Kurtis',    url: '/collections/kurtis'},
-  {title: 'Co-ords',   url: '/collections/co-ords'},
+// Category groups with their subcategories
+const CATEGORY_GROUPS = {
+  'ethnic': {
+    title: 'Ethnic Wear',
+    items: [
+      {title: 'Lehengas',   url: '/collections/lehengas'},
+      {title: 'Anarkalis',  url: '/collections/anarkali'},
+      {title: 'Kurtis',     url: '/collections/kurtis'},
+      {title: 'Co-ords',    url: '/collections/co-ords'},
+    ],
+  },
+  'western': {
+    title: 'Western Wear',
+    items: [
+      {title: 'Dresses',         url: '/collections/western-dresses'},
+      {title: 'Tops & Tunics',   url: '/collections/western-tops-tunics'},
+      {title: 'Pants & Skirts',  url: '/collections/western-pants-skirts'},
+      {title: 'Swimwear',        url: '/collections/western-swimwear'},
+    ],
+  },
+  'navratri': {
+    title: 'Navratri Collection',
+    items: [
+      {title: 'Lehenga Choli',  url: '/collections/navratri-lehenga-choli'},
+      {title: 'Kurtis',         url: '/collections/navratri-kurtis'},
+      {title: 'Chaniya Choli',  url: '/collections/navratri-chaniya-choli'},
+    ],
+  },
+  'sarees': {
+    title: 'Sarees',
+    items: [
+      {title: 'Sarees',  url: '/collections/sarees'},
+    ],
+  },
+};
+
+// Default category tabs (shown on homepage and non-category pages)
+const DEFAULT_CATEGORY_TABS = [
+  {title: 'Lehengas',           url: '/collections/lehengas',                  group: 'ethnic'},
+  {title: 'Anarkalis',          url: '/collections/anarkali',                  group: 'ethnic'},
+  {title: 'Kurtis',             url: '/collections/kurtis',                    group: 'ethnic'},
+  {title: 'Co-ords',            url: '/collections/co-ords',                   group: 'ethnic'},
+  {title: 'Sarees',             url: '/collections/sarees',                    group: 'sarees'},
+  {title: 'Western Wear',       url: '/collections/western-dresses',           group: 'western'},
+  {title: 'Navratri',           url: '/collections/navratri-lehenga-choli',    group: 'navratri'},
 ];
 
 // ─── Main Header ─────────────────────────────────────────────────
@@ -107,39 +145,24 @@ function DesktopNav({
   primaryDomainUrl: string;
   publicStoreDomain: string;
 }) {
-  const items = menu?.items?.length ? menu.items : NAV_ITEMS.map((n, i) => ({
-    id: String(i),
-    url: n.url,
-    title: n.title,
-    resourceId: null,
-    tags: [],
-    type: 'HTTP' as const,
-    items: [],
-  }));
+  // Use MAIN_NAV for simple navigation
+  const items = MAIN_NAV;
 
   return (
     <nav className="av-nav" aria-label="Main navigation">
-      {items.map((item) => {
-        if (!item.url) return null;
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        return (
-          <NavLink
-            key={item.id}
-            to={url}
-            prefetch="intent"
-            className={({isActive}) =>
-              `av-nav__item${isActive ? ' av-nav__item--active' : ''}`
-            }
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
+      {items.map((item, i) => (
+        <NavLink
+          key={i}
+          to={item.url}
+          prefetch="intent"
+          end={item.url === '/'}
+          className={({isActive}) =>
+            `av-nav__item${isActive ? ' av-nav__item--active' : ''}`
+          }
+        >
+          {item.title}
+        </NavLink>
+      ))}
     </nav>
   );
 }
@@ -147,21 +170,111 @@ function DesktopNav({
 // ─── Category Tab Bar ─────────────────────────────────────────────
 
 function CategoryTabBar() {
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
   return (
     <div className="av-tabs" role="navigation" aria-label="Category tabs">
       <div className="av-tabs__inner">
-        {CATEGORY_TABS.map((tab) => (
-          <NavLink
-            key={tab.url}
-            to={tab.url}
-            prefetch="intent"
-            className={({isActive}) =>
-              `av-tabs__item${isActive ? ' av-tabs__item--active' : ''}`
-            }
-          >
-            {tab.title}
-          </NavLink>
-        ))}
+        {/* Ethnic Wear - Direct Links */}
+        <NavLink
+          to="/collections/lehengas"
+          prefetch="intent"
+          className={({isActive}) =>
+            `av-tabs__item${isActive ? ' av-tabs__item--active' : ''}`
+          }
+        >
+          Lehengas
+        </NavLink>
+        <NavLink
+          to="/collections/anarkali"
+          prefetch="intent"
+          className={({isActive}) =>
+            `av-tabs__item${isActive ? ' av-tabs__item--active' : ''}`
+          }
+        >
+          Anarkalis
+        </NavLink>
+        <NavLink
+          to="/collections/kurtis"
+          prefetch="intent"
+          className={({isActive}) =>
+            `av-tabs__item${isActive ? ' av-tabs__item--active' : ''}`
+          }
+        >
+          Kurtis
+        </NavLink>
+        <NavLink
+          to="/collections/co-ords"
+          prefetch="intent"
+          className={({isActive}) =>
+            `av-tabs__item${isActive ? ' av-tabs__item--active' : ''}`
+          }
+        >
+          Co-ords
+        </NavLink>
+
+        {/* Sarees - Direct Link */}
+        <NavLink
+          to="/collections/sarees"
+          prefetch="intent"
+          className={({isActive}) =>
+            `av-tabs__item${isActive ? ' av-tabs__item--active' : ''}`
+          }
+        >
+          Sarees
+        </NavLink>
+
+        {/* Western Wear - Dropdown */}
+        <div 
+          className="av-tabs__dropdown"
+          onMouseEnter={() => setOpenDropdown('western')}
+          onMouseLeave={() => setOpenDropdown(null)}
+        >
+          <button className="av-tabs__item av-tabs__item--dropdown">
+            Western Wear
+            <Icon name="chevron-down" size={14} strokeWidth={2} />
+          </button>
+          {openDropdown === 'western' && (
+            <div className="av-tabs__dropdown-menu">
+              {CATEGORY_GROUPS.western.items.map((item, i) => (
+                <NavLink
+                  key={i}
+                  to={item.url}
+                  prefetch="intent"
+                  className="av-tabs__dropdown-item"
+                >
+                  {item.title}
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Navratri - Dropdown */}
+        <div 
+          className="av-tabs__dropdown"
+          onMouseEnter={() => setOpenDropdown('navratri')}
+          onMouseLeave={() => setOpenDropdown(null)}
+        >
+          <button className="av-tabs__item av-tabs__item--dropdown">
+            Navratri
+            <Icon name="chevron-down" size={14} strokeWidth={2} />
+          </button>
+          {openDropdown === 'navratri' && (
+            <div className="av-tabs__dropdown-menu">
+              {CATEGORY_GROUPS.navratri.items.map((item, i) => (
+                <NavLink
+                  key={i}
+                  to={item.url}
+                  prefetch="intent"
+                  className="av-tabs__dropdown-item"
+                >
+                  {item.title}
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -269,17 +382,11 @@ export function MobileMenu({
   publicStoreDomain: string;
 }) {
   const {close} = useAside();
-  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
 
-  const items = menu?.items?.length ? menu.items : NAV_ITEMS.map((n, i) => ({
-    id: String(i),
-    url: n.url,
-    title: n.title,
-    resourceId: null,
-    tags: [],
-    type: 'HTTP' as const,
-    items: [],
-  }));
+  const toggleGroup = (groupKey: string) => {
+    setExpandedGroup(expandedGroup === groupKey ? null : groupKey);
+  };
 
   return (
     <nav className="av-mobile-menu" aria-label="Mobile navigation">
@@ -287,32 +394,46 @@ export function MobileMenu({
         Home
       </NavLink>
 
-      {items.map((item) => {
-        if (!item.url) return null;
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-
-        return (
-          <NavLink
-            key={item.id}
-            to={url}
-            prefetch="intent"
-            onClick={close}
-            className={({isActive}) =>
-              `av-mobile-menu__item${isActive ? ' av-mobile-menu__item--active' : ''}`
-            }
+      {/* Category Groups */}
+      {Object.entries(CATEGORY_GROUPS).map(([key, group]) => (
+        <div key={key}>
+          <button
+            className="av-mobile-menu__group-btn"
+            onClick={() => toggleGroup(key)}
           >
-            {item.title}
-          </NavLink>
-        );
-      })}
+            <span>{group.title}</span>
+            <Icon 
+              name="chevron-down" 
+              size={16} 
+              strokeWidth={2}
+              className={expandedGroup === key ? 'rotate-180' : ''}
+            />
+          </button>
+          {expandedGroup === key && (
+            <div className="av-mobile-menu__submenu">
+              {group.items.map((item, i) => (
+                <NavLink
+                  key={i}
+                  to={item.url}
+                  prefetch="intent"
+                  onClick={close}
+                  className={({isActive}) =>
+                    `av-mobile-menu__subitem${isActive ? ' av-mobile-menu__subitem--active' : ''}`
+                  }
+                >
+                  {item.title}
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
 
       <div className="av-mobile-menu__divider" />
 
+      <NavLink to="/pages/contact" onClick={close} className="av-mobile-menu__item">
+        Contact
+      </NavLink>
       <NavLink to="/account" onClick={close} className="av-mobile-menu__item">
         Account
       </NavLink>

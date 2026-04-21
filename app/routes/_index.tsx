@@ -1,16 +1,12 @@
 import {Link, useLoaderData} from 'react-router';
-import {Suspense} from 'react';
 import type {Route} from './+types/_index';
 import {ProductCard} from '~/components/ProductCard';
 import {Carousel} from '~/components/Carousel';
 import {Icon} from '~/components/ui/Icon';
-import {ProductCardSkeleton} from '~/components/ui/Skeleton';
 import {
-  MOCK_CATEGORIES,
-  MOCK_BESTSELLERS,
-  MOCK_NEW_ARRIVALS,
+  MOCK_FEATURED_CATEGORIES,
+  MOCK_OCCASIONS,
   MOCK_TESTIMONIALS,
-  MOCK_PRESS,
 } from '~/lib/mock';
 
 export const meta: Route.MetaFunction = () => [
@@ -104,53 +100,37 @@ export async function loader({context}: Route.LoaderArgs) {
   };
 
   const transformedProducts = products.nodes.map(transformProduct);
-  const bestsellers = transformedProducts.slice(0, 6);
-  const newArrivals = transformedProducts.slice(6, 12);
+  const featuredProducts = transformedProducts.slice(0, 8);
 
   return {
-    categories: MOCK_CATEGORIES,
-    bestsellers,
-    newArrivals,
+    featuredCategories: MOCK_FEATURED_CATEGORIES,
+    occasions: MOCK_OCCASIONS,
+    featuredProducts,
     testimonials: MOCK_TESTIMONIALS,
-    press: MOCK_PRESS,
   };
 }
 
 export default function Homepage() {
-  const {categories, bestsellers, newArrivals, testimonials, press} =
+  const {featuredCategories, occasions, featuredProducts, testimonials} =
     useLoaderData<typeof loader>();
 
   return (
     <div className="av-home">
       <HeroBanner />
-      <CategoryGrid categories={categories} />
+      <FeaturedCategories categories={featuredCategories} />
       <BrandStrip />
-      <Carousel title="Bestsellers" viewAllUrl="/collections/all">
-        {bestsellers.map((p, i) => (
+      <VideoSection />
+      <ShopByOccasion occasions={occasions} />
+      <Carousel title="Handpicked for You" viewAllUrl="/collections/all">
+        {featuredProducts.map((p, i) => (
           <div key={p.id} className="av-carousel__item">
             <ProductCard product={p} loading={i < 3 ? 'eager' : 'lazy'} />
           </div>
         ))}
       </Carousel>
-      <EditorialBanner
-        tag="New Collection"
-        headline="The Festive Edit"
-        sub="Handcrafted for the moments that matter."
-        cta="Explore Now"
-        ctaUrl="/collections/lehenga"
-        imageSeed={400}
-        align="left"
-      />
-      <Carousel title="New Arrivals" viewAllUrl="/collections/all">
-        {newArrivals.map((p) => (
-          <div key={p.id} className="av-carousel__item">
-            <ProductCard product={p} />
-          </div>
-        ))}
-      </Carousel>
       <TrustBar />
       <TestimonialsSection testimonials={testimonials} />
-      <PressSection press={press} />
+      <InstagramSection />
     </div>
   );
 }
@@ -174,14 +154,19 @@ function HeroBanner() {
 
       {/* Content */}
       <div className="av-hero__content">
-        <p className="av-hero__eyebrow">New Collection</p>
+        <p className="av-hero__eyebrow">New Arrivals · SS 2026</p>
         <h1 className="av-hero__headline">The Festive Edit</h1>
         <p className="av-hero__sub">
           Handcrafted for the moments that matter.
         </p>
-        <Link to="/collections/lehengas" className="btn btn-secondary btn-lg av-hero__cta">
-          Shop Now
-        </Link>
+        <div className="av-hero__cta-group">
+          <Link to="/collections/lehengas" className="btn btn-secondary btn-lg av-hero__cta">
+            Shop Lehengas
+          </Link>
+          <Link to="/collections/kurtis" className="av-hero__cta-ghost">
+            Explore Kurtis →
+          </Link>
+        </div>
       </div>
 
       {/* Scroll indicator */}
@@ -192,29 +177,36 @@ function HeroBanner() {
   );
 }
 
-// ─── Category Grid ────────────────────────────────────────────────
+// ─── Featured Categories ──────────────────────────────────────────
 
-function CategoryGrid({categories}: {categories: typeof MOCK_CATEGORIES}) {
+function FeaturedCategories({categories}: {categories: typeof MOCK_FEATURED_CATEGORIES}) {
   return (
-    <section className="av-categories section">
+    <section className="av-featured-cats section">
       <div className="container">
-        <div className="av-categories__grid">
+        <h2 className="section-heading--large" style={{textAlign: 'center'}}>Shop by Category</h2>
+        <div className="av-featured-cats__grid">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/collections/${cat.handle}`}
               prefetch="intent"
-              className="av-cat-card"
+              className="av-featured-cat"
             >
-              <div className="av-cat-card__img-wrap">
+              <div className="av-featured-cat__img-wrap">
                 <img
                   src={cat.image.url}
                   alt={cat.image.altText}
                   loading="lazy"
-                  className="av-cat-card__img"
+                  className="av-featured-cat__img"
                 />
+                <div className="av-featured-cat__overlay" />
               </div>
-              <p className="av-cat-card__title">{cat.title}</p>
+              <div className="av-featured-cat__content">
+                <h3 className="av-featured-cat__title">{cat.title}</h3>
+                <span className="av-featured-cat__cta">
+                  Explore <Icon name="arrow-right" size={16} strokeWidth={2} />
+                </span>
+              </div>
             </Link>
           ))}
         </div>
@@ -223,53 +215,116 @@ function CategoryGrid({categories}: {categories: typeof MOCK_CATEGORIES}) {
   );
 }
 
-// ─── Brand Strip ──────────────────────────────────────────────────
+// ─── Brand Strip — animated marquee ─────────────────────────────
+
+const MARQUEE_ITEMS = [
+  '❖ Handcrafted by 5,000+ Artisans',
+  '❤ Free Shipping Above ₹1,999',
+  '❖ Premium Ethnic Wear',
+  '❤ 7-Day Easy Returns',
+  '❖ Made in India',
+  '❤ Cash on Delivery Available',
+];
 
 function BrandStrip() {
+  // Duplicate items so the scroll is seamless (first half + second half loop)
+  const allItems = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
   return (
     <div className="av-brand-strip">
-      <div className="container">
-        <p className="av-brand-strip__text">
-          ♥ &nbsp; Handcrafted by 5,000+ artisans across India
-        </p>
+      <div className="av-brand-strip__marquee">
+        {allItems.map((item, i) => (
+          <span key={i} className="av-brand-strip__item">
+            {item}
+          </span>
+        ))}
       </div>
     </div>
   );
 }
 
-// ─── Editorial Banner ─────────────────────────────────────────────
+// ─── Video Section ────────────────────────────────────────────────
 
-type EditorialBannerProps = {
-  tag: string;
-  headline: string;
-  sub: string;
-  cta: string;
-  ctaUrl: string;
-  imageSeed: number;
-  align: 'left' | 'right';
-};
-
-function EditorialBanner({tag, headline, sub, cta, ctaUrl, imageSeed, align}: EditorialBannerProps) {
+function VideoSection() {
   return (
-    <section className={`av-editorial section av-editorial--${align}`}>
+    <section className="av-video-section section">
       <div className="container">
-        <div className="av-editorial__inner">
-          <div className="av-editorial__image-wrap">
-            <img
-              src={`https://picsum.photos/seed/aved${imageSeed}/900/600`}
-              alt={headline}
-              loading="lazy"
-              className="av-editorial__img"
-            />
+        <div className="av-video-section__content">
+          <h2 className="av-video-section__headline">Crafted with Love</h2>
+          <p className="av-video-section__sub">
+            Watch our artisans bring each piece to life with traditional techniques passed down through generations.
+          </p>
+        </div>
+        <div className="av-video-section__grid">
+          <div className="av-video-card av-video-card--large">
+            <div className="av-video-card__wrapper">
+              <video
+                className="av-video-card__video"
+                poster="/images/hero.png"
+                controls
+                preload="metadata"
+              >
+                <source src="/videos/bts.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div className="av-video-card__play">
+                <Icon name="play" size={32} strokeWidth={1.5} />
+              </div>
+            </div>
+            <p className="av-video-card__title">Behind the Scenes</p>
           </div>
-          <div className="av-editorial__content">
-            <p className="av-editorial__tag">{tag}</p>
-            <h2 className="av-editorial__headline">{headline}</h2>
-            <p className="av-editorial__sub">{sub}</p>
-            <Link to={ctaUrl} className="btn btn-primary btn-lg">
-              {cta}
+          <div className="av-video-card">
+            <div className="av-video-card__wrapper">
+              <video
+                className="av-video-card__video"
+                poster="/images/lehenga.jpg"
+                controls
+                preload="metadata"
+              >
+                <source src="/videos/craftsmanship.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div className="av-video-card__play">
+                <Icon name="play" size={24} strokeWidth={1.5} />
+              </div>
+            </div>
+            <p className="av-video-card__title">The Art of Embroidery</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Shop by Occasion ─────────────────────────────────────────────
+
+function ShopByOccasion({occasions}: {occasions: typeof MOCK_OCCASIONS}) {
+  return (
+    <section className="av-occasions section">
+      <div className="container">
+        <h2 className="section-heading--large" style={{textAlign: 'center'}}>Shop by Occasion</h2>
+        <div className="av-occasions__grid">
+          {occasions.map((occ) => (
+            <Link
+              key={occ.id}
+              to={`/collections/${occ.handle}`}
+              prefetch="intent"
+              className="av-occasion-card"
+            >
+              <div className="av-occasion-card__img-wrap">
+                <img
+                  src={occ.image.url}
+                  alt={occ.image.altText}
+                  loading="lazy"
+                  className="av-occasion-card__img"
+                />
+                <div className="av-occasion-card__overlay" />
+              </div>
+              <div className="av-occasion-card__content">
+                <h3 className="av-occasion-card__title">{occ.title}</h3>
+                <p className="av-occasion-card__subtitle">{occ.subtitle}</p>
+              </div>
             </Link>
-          </div>
+          ))}
         </div>
       </div>
     </section>
@@ -279,10 +334,10 @@ function EditorialBanner({tag, headline, sub, cta, ctaUrl, imageSeed, align}: Ed
 // ─── Trust Bar ────────────────────────────────────────────────────
 
 const TRUST_ITEMS = [
-  {icon: 'truck'    as const, title: 'Free Shipping',    sub: 'On orders above ₹1,999'},
-  {icon: 'star'     as const, title: 'Premium Quality',  sub: 'Handcrafted by artisans'},
-  {icon: 'heart'    as const, title: 'Easy Returns',     sub: '7-day hassle-free returns'},
-  {icon: 'user'     as const, title: 'Cash on Delivery', sub: 'Available across India'},
+  {icon: 'truck'      as const, title: 'Free Shipping',    sub: 'On orders above ₹1,999'},
+  {icon: 'shield'     as const, title: 'Premium Quality',  sub: 'Handcrafted by artisans'},
+  {icon: 'refresh-cw' as const, title: 'Easy Returns',     sub: '7-day hassle-free returns'},
+  {icon: 'banknote'   as const, title: 'Cash on Delivery', sub: 'Available across India'},
 ];
 
 function TrustBar() {
@@ -341,18 +396,52 @@ function TestimonialsSection({testimonials}: {testimonials: typeof MOCK_TESTIMON
   );
 }
 
-// ─── Press Section ────────────────────────────────────────────────
+// ─── Instagram Section ────────────────────────────────────────────
 
-function PressSection({press}: {press: typeof MOCK_PRESS}) {
+function InstagramSection() {
+  const instaPosts = [
+    {id: 1, image: '/images/lehenga.jpg', likes: '2.4k'},
+    {id: 2, image: '/images/anarkali.jpg', likes: '1.8k'},
+    {id: 3, image: '/images/kurti.jpg', likes: '3.1k'},
+    {id: 4, image: '/images/coord.jpg', likes: '1.5k'},
+    {id: 5, image: '/images/western dresses/image (12).png', likes: '2.2k'},
+    {id: 6, image: '/images/lehenga.jpg', likes: '1.9k'},
+  ];
+
   return (
-    <section className="av-press section">
+    <section className="av-instagram section">
       <div className="container">
-        <p className="av-press__label">As Featured In</p>
-        <div className="av-press__logos">
-          {press.map((p) => (
-            <div key={p.id} className="av-press__logo">
-              <span>{p.name}</span>
-            </div>
+        <div className="av-instagram__header">
+          <h2 className="section-heading--large">Follow Us @atsevam</h2>
+          <a 
+            href="https://instagram.com/atsevam" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="av-instagram__follow"
+          >
+            Follow on Instagram <Icon name="arrow-right" size={16} strokeWidth={2} />
+          </a>
+        </div>
+        <div className="av-instagram__grid">
+          {instaPosts.map((post) => (
+            <a
+              key={post.id}
+              href="https://instagram.com/atsevam"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="av-insta-post"
+            >
+              <img
+                src={post.image}
+                alt={`Instagram post ${post.id}`}
+                loading="lazy"
+                className="av-insta-post__img"
+              />
+              <div className="av-insta-post__overlay">
+                <Icon name="heart" size={20} strokeWidth={1.5} />
+                <span>{post.likes}</span>
+              </div>
+            </a>
           ))}
         </div>
       </div>

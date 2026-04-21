@@ -166,6 +166,34 @@ const icons = {
       d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z M7 7h.01"
     />
   ),
+  play: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M5 3l14 9-14 9V3z"
+    />
+  ),
+  shield: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+    />
+  ),
+  'refresh-cw': (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+    />
+  ),
+  banknote: (
+    <>
+      <rect x="2" y="6" width="20" height="12" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 12h.01M18 12h.01" />
+    </>
+  ),
 };
 
 export function Icon({name, size = 20, className = '', strokeWidth = 1.5}: IconProps) {

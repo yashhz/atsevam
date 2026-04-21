@@ -5,7 +5,7 @@ import {Badge} from '~/components/ui/Badge';
 import type {MockProduct} from '~/lib/mock';
 
 type ProductCardProps = {
-  product: MockProduct;
+  product: MockProduct & {discount?: number};
   loading?: 'eager' | 'lazy';
 };
 
@@ -18,7 +18,6 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
   const showSecondImage = (hovered || activeImageIndex === 1) && hasMultipleImages;
 
   const handleImageTap = (e: React.MouseEvent) => {
-    // Only toggle on mobile/tablet (touch devices)
     if (window.innerWidth <= 1024 && hasMultipleImages) {
       e.preventDefault();
       setActiveImageIndex((prev) => (prev === 0 ? 1 : 0));
@@ -72,7 +71,7 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
 
         {/* Wishlist */}
         <button
-          className={`wishlist-btn av-card__wishlist${wishlisted ? ' active' : ''}`}
+          className={`av-card__wishlist${wishlisted ? ' active' : ''}`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -86,33 +85,52 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
             strokeWidth={1.5}
           />
         </button>
+
+        {/* Quick View bar — slides up on hover */}
+        <div className="av-card__quick-view">
+          <Link
+            to={`/products/${product.handle}`}
+            prefetch="intent"
+            className="av-card__quick-view-btn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Quick View
+          </Link>
+        </div>
       </Link>
 
       {/* Info */}
       <div className="av-card__info">
-        {/* Category pill */}
-        <span className="av-card__category">{product.category}</span>
+        {/* Brand / Category */}
+        <span className="av-card__brand">{product.category}</span>
 
         {/* Title */}
         <Link to={`/products/${product.handle}`} prefetch="intent" className="av-card__title-link">
-          <h3 className="av-card__title truncate-2">{product.title}</h3>
+          <p className="av-card__title">{product.title}</p>
         </Link>
 
-        {/* Price row */}
+        {/* Price row — Myntra style: price + strikethrough + discount% */}
         <div className="av-card__price-row">
           <span className="av-card__price">{product.price}</span>
           {product.compareAtPrice && (
-            <span className="av-card__compare">{product.compareAtPrice}</span>
+            <>
+              <span className="av-card__mrp">{product.compareAtPrice}</span>
+              {(product as any).discount && (
+                <span className="av-card__discount">({(product as any).discount}% OFF)</span>
+              )}
+            </>
           )}
         </div>
 
         {/* Rating */}
         {product.rating && (
-          <div className="star-rating">
-            <Icon name="star-filled" size={12} strokeWidth={0} />
-            <span>{product.rating.toFixed(1)}</span>
+          <div className="av-card__rating">
+            <span className="av-card__rating-badge">
+              {product.rating.toFixed(1)}
+              <Icon name="star-filled" size={10} strokeWidth={0} />
+            </span>
             {product.reviewCount && (
-              <span className="star-rating__count">({product.reviewCount})</span>
+              <span className="av-card__rating-count">({product.reviewCount})</span>
             )}
           </div>
         )}
