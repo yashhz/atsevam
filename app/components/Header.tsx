@@ -314,10 +314,35 @@ function SearchToggle() {
 
 function AccountLink({isLoggedIn}: {isLoggedIn: Promise<boolean>}) {
   return (
-    <NavLink to="/account" prefetch="intent" className="av-header__icon-btn" aria-label="Account">
-      <Suspense fallback={<Icon name="user" size={20} strokeWidth={1.5} />}>
+    <NavLink
+      to="/account"
+      prefetch="intent"
+      className="av-header__icon-btn av-header__account-btn"
+      aria-label="Account"
+    >
+      <Suspense
+        fallback={
+          <span className="av-header__account-icon">
+            <Icon name="user" size={20} strokeWidth={1.5} />
+          </span>
+        }
+      >
         <Await resolve={isLoggedIn}>
-          {() => <Icon name="user" size={20} strokeWidth={1.5} />}
+          {(loggedIn) => (
+            <span className="av-header__account-icon">
+              <Icon
+                name="user"
+                size={20}
+                strokeWidth={loggedIn ? 1 : 1.5}
+              />
+              {loggedIn && (
+                <span
+                  className="av-header__account-dot"
+                  aria-label="Signed in"
+                />
+              )}
+            </span>
+          )}
         </Await>
       </Suspense>
     </NavLink>
@@ -435,7 +460,7 @@ export function MobileMenu({
         Contact
       </NavLink>
       <NavLink to="/account" onClick={close} className="av-mobile-menu__item">
-        Account
+        Account / Sign In
       </NavLink>
       <NavLink to="/search" onClick={close} className="av-mobile-menu__item">
         Search

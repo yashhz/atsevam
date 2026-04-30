@@ -1,5 +1,5 @@
 import {useLoaderData} from 'react-router';
-import {useState, useRef} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -15,7 +15,7 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {Icon} from '~/components/ui/Icon';
 import {Badge} from '~/components/ui/Badge';
 import {Accordion, AccordionItem} from '~/components/ui/Accordion';
-import {ProductCard} from '~/components/ProductCard';
+import {ProductGrid} from '~/components/ProductGrid';
 import {MOCK_PRODUCT_DETAIL} from '~/lib/mock';
 import type {MockProductDetail} from '~/lib/mock';
 
@@ -84,15 +84,21 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   }
   
   // Transform Shopify product to match display structure
+  const rawPrice = parseFloat(product.selectedOrFirstAvailableVariant?.price.amount || '0');
+  const rawCompare = product.selectedOrFirstAvailableVariant?.compareAtPrice
+    ? parseFloat(product.selectedOrFirstAvailableVariant.compareAtPrice.amount)
+    : undefined;
+
   const transformedProduct: MockProductDetail = {
     id: product.id,
     title: product.title,
     handle: product.handle,
     category,
     badge: (product.tags?.includes('new') ? 'new' : product.tags?.includes('sale') ? 'sale' : undefined) as 'new' | 'sale' | undefined,
-    price: `₹${Math.round(parseFloat(product.selectedOrFirstAvailableVariant?.price.amount || '0')).toLocaleString('en-IN')}`,
-    compareAtPrice: product.selectedOrFirstAvailableVariant?.compareAtPrice 
-      ? `₹${Math.round(parseFloat(product.selectedOrFirstAvailableVariant.compareAtPrice.amount)).toLocaleString('en-IN')}`
+    price: `₹${Math.round(rawPrice).toLocaleString('en-IN')}`,
+    compareAtPrice: rawCompare ? `₹${Math.round(rawCompare).toLocaleString('en-IN')}` : undefined,
+    discount: rawCompare && rawCompare > rawPrice
+      ? Math.round(((rawCompare - rawPrice) / rawCompare) * 100)
       : undefined,
     rating: undefined,
     reviewCount: 0,
@@ -321,6 +327,9 @@ function transformProducts(products: any[]) {
       handle: product.handle,
       price: `₹${Math.round(price).toLocaleString('en-IN')}`,
       compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
+      discount: compareAtPrice && compareAtPrice > price
+        ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
+        : undefined,
       featuredImage: {
         url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
         altText: product.featuredImage?.altText || product.title,
@@ -433,9 +442,7 @@ export default function Product() {
               >
                 <Icon name={wishlisted ? 'heart-filled' : 'heart'} size={18} strokeWidth={1.5} />
               </button>
-              <button className="wishlist-btn" aria-label="Share">
-                <Icon name="share" size={18} strokeWidth={1.5} />
-              </button>
+              <ShareButtons title={mock.title} handle={mock.handle} image={mock.featuredImage.url} />
             </div>
           </div>
 
@@ -463,7 +470,12 @@ export default function Product() {
           <div className="av-pdp__price-block">
             <span className="av-pdp__price">{mock.price}</span>
             {mock.compareAtPrice && (
-              <span className="av-pdp__compare">{mock.compareAtPrice}</span>
+              <>
+                <span className="av-pdp__compare">{mock.compareAtPrice}</span>
+                {mock.discount && (
+                  <span className="av-pdp__discount-badge">{mock.discount}% OFF</span>
+                )}
+              </>
             )}
             <span className="av-pdp__tax-note">MRP inclusive of all taxes</span>
           </div>
@@ -541,18 +553,17 @@ export default function Product() {
           </Accordion>
         </div>
       </div>
-              {/* You may also like */}
+      {/* You May Also Like */}
       {mock.relatedProducts && mock.relatedProducts.length > 0 && (
-        <section className="av-pdp__related section">
-          <div className="container">
-            <h2 className="section-heading">You May Also Like</h2>
-            <div className="av-pdp__related-grid">
-              {mock.relatedProducts.map((p: any) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        </section>
+        <ProductGrid
+          eyebrow="Curated For You"
+          title="You May Also Like"
+          products={mock.relatedProducts}
+          viewAllHref={`/collections/${mock.category.toLowerCase().replace(/\s+/g, '-')}`}
+          viewAllLabel="View Collection"
+          loading="lazy"
+          columns={4}
+        />
       )}
 
       {product && (
@@ -620,6 +631,81 @@ function MockAddToCart() {
         'Add to Cart'
       )}
     </button>
+  );
+}
+
+// ─── Social Share Buttons ─────────────────────────────────────────
+
+function ShareButtons({title, handle, image}: {title: string; handle: string; image: string}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const url = typeof window !== 'undefined'
+    ? window.location.href
+    : `https://atsevam.com/products/${handle}`;
+  const encodedUrl = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(title);
+  const encodedImage = encodeURIComponent(image);
+
+  const shareLinks = [
+    {
+      label: 'WhatsApp',
+      icon: '💬',
+      href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+    },
+    {
+      label: 'Pinterest',
+      icon: '📌',
+      href: `https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedImage}&description=${encodedTitle}`,
+    },
+    {
+      label: 'Twitter / X',
+      icon: '🐦',
+      href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+    },
+  ];
+
+  return (
+    <div className="av-share" ref={ref}>
+      <button
+        className={`wishlist-btn${open ? ' active' : ''}`}
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Share product"
+        aria-expanded={open}
+      >
+        <Icon name="share" size={18} strokeWidth={1.5} />
+      </button>
+      {open && (
+        <div className="av-share__dropdown" role="menu">
+          <p className="av-share__label">Share this product</p>
+          {shareLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="av-share__item"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+            >
+              <span className="av-share__icon">{link.icon}</span>
+              <span>{link.label}</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

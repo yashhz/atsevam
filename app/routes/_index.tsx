@@ -1,6 +1,8 @@
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import {ProductCard} from '~/components/ProductCard';
+import {ProductGrid} from '~/components/ProductGrid';
+import {VideoSection} from '~/components/VideoSection';
 import {Carousel} from '~/components/Carousel';
 import {Icon} from '~/components/ui/Icon';
 import {
@@ -8,7 +10,9 @@ import {
   MOCK_WESTERN_CATEGORIES,
   MOCK_OCCASIONS,
   MOCK_TESTIMONIALS,
+  type MockProduct,
 } from '~/lib/mock';
+import {fetchJudgeMeRatingsBulk, applyRatings} from '~/lib/judgeme';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'Atsevam — Lehengas, Anarkalis, Kurtis & Western Wear | Premium Ethnic Fashion'},
@@ -36,65 +40,66 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export async function loader({context}: Route.LoaderArgs) {
-  const {storefront} = context;
+  const {storefront, env} = context;
 
-  // Fetch real products from Shopify
-  const {products} = await storefront.query(
-    `#graphql
-      query HomepageProducts {
-        products(first: 12, sortKey: BEST_SELLING) {
-          nodes {
-            id
-            title
-            handle
-            productType
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
-              }
-            }
-            compareAtPriceRange {
-              minVariantPrice {
-                amount
-                currencyCode
-              }
-            }
-            featuredImage {
-              url
-              altText
-              width
-              height
-            }
-            images(first: 2) {
-              nodes {
-                url
-                altText
-              }
-            }
-            tags
-          }
+  // ── GraphQL fragment shared by all three queries ──────────────────
+  const PRODUCT_FIELDS = `#graphql
+    fragment HomepageProduct on Product {
+      id
+      title
+      handle
+      productType
+      tags
+      priceRange { minVariantPrice { amount currencyCode } }
+      compareAtPriceRange { minVariantPrice { amount currencyCode } }
+      featuredImage { url altText width height }
+      images(first: 2) { nodes { url altText } }
+    }
+  `;
+
+  // ── Fetch all three in parallel ───────────────────────────────────
+  const [featuredRes, newArrivalsRes, bestSellersRes] = await Promise.all([
+    // Featured / homepage carousel — BEST_SELLING sort
+    storefront.query(`#graphql
+      ${PRODUCT_FIELDS}
+      query HomepageFeatured {
+        products(first: 12, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }
+      }
+    `),
+    // New Arrivals — from collection
+    storefront.query(`#graphql
+      ${PRODUCT_FIELDS}
+      query HomepageNewArrivals {
+        collection(handle: "new-arrivals") {
+          products(first: 8, sortKey: CREATED) { nodes { ...HomepageProduct } }
         }
       }
-    `
-  );
+    `).catch(() => ({collection: null})),
+    // Best Sellers — from collection
+    storefront.query(`#graphql
+      ${PRODUCT_FIELDS}
+      query HomepageBestSellers {
+        collection(handle: "bestsellers") {
+          products(first: 8, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }
+        }
+      }
+    `).catch(() => ({collection: null})),
+  ]);
 
-  // Transform Shopify products to match mock data structure
+  // ── Transform helper ──────────────────────────────────────────────
   const transformProduct = (product: any) => {
     const price = parseFloat(product.priceRange.minVariantPrice.amount);
-    const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
+    const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount
       ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
       : undefined;
-    
-    // Determine category from productType or tags
+
     let category = 'Ethnic Wear';
     if (product.productType) {
       category = product.productType;
     } else if (product.tags?.length > 0) {
-      // Only use tag if it matches our known categories
       const knownCategories = ['Lehenga', 'Anarkali', 'Kurti', 'Co-ord'];
-      const matchedCategory = product.tags.find((tag: string) => 
-        knownCategories.some(cat => tag.toLowerCase().includes(cat.toLowerCase()))
+      const matchedCategory = product.tags.find((tag: string) =>
+        knownCategories.some((cat) => tag.toLowerCase().includes(cat.toLowerCase())),
       );
       if (matchedCategory) category = matchedCategory;
     }
@@ -104,46 +109,96 @@ export async function loader({context}: Route.LoaderArgs) {
       title: product.title,
       handle: product.handle,
       price: `₹${Math.round(price).toLocaleString('en-IN')}`,
-      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
+      compareAtPrice: compareAtPrice
+        ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}`
+        : undefined,
+      discount:
+        compareAtPrice && compareAtPrice > price
+          ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
+          : undefined,
       featuredImage: {
         url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
         altText: product.featuredImage?.altText || product.title,
       },
-      hoverImage: product.images.nodes[1] ? {
-        url: product.images.nodes[1].url,
-        altText: product.images.nodes[1].altText || product.title,
-      } : undefined,
+      hoverImage: product.images.nodes[1]
+        ? {url: product.images.nodes[1].url, altText: product.images.nodes[1].altText || product.title}
+        : undefined,
       category,
       badge: compareAtPrice && compareAtPrice > price ? 'sale' as const : undefined,
-      rating: undefined,
-      reviewCount: undefined,
+      rating: undefined as number | undefined,
+      reviewCount: undefined as number | undefined,
     };
   };
 
-  const transformedProducts = products.nodes.map(transformProduct);
-  const featuredProducts = transformedProducts.slice(0, 8);
+  // ── Transform product lists ───────────────────────────────────────
+  const featuredRaw: MockProduct[] = (featuredRes.products?.nodes ?? []).map(transformProduct).slice(0, 8);
+  const newArrivalsRaw: MockProduct[] = ((newArrivalsRes as any)?.collection?.products?.nodes ?? []).map(transformProduct);
+  const bestSellersRaw: MockProduct[] = ((bestSellersRes as any)?.collection?.products?.nodes ?? []).map(transformProduct);
+
+  // ── Judge.me bulk ratings (no-op when token not set) ─────────────
+  const allProducts = [...featuredRaw, ...newArrivalsRaw, ...bestSellersRaw];
+  const ratings = await fetchJudgeMeRatingsBulk(allProducts, (env as any) ?? {});
+
+  const featuredProducts = applyRatings(featuredRaw, ratings);
+  const newArrivals     = applyRatings(newArrivalsRaw, ratings);
+  const bestSellers     = applyRatings(bestSellersRaw, ratings);
 
   return {
     traditionalCategories: MOCK_TRADITIONAL_CATEGORIES,
     westernCategories: MOCK_WESTERN_CATEGORIES,
     occasions: MOCK_OCCASIONS,
     featuredProducts,
+    newArrivals,
+    bestSellers,
     testimonials: MOCK_TESTIMONIALS,
   };
 }
 
 export default function Homepage() {
-  const {traditionalCategories, westernCategories, occasions, featuredProducts, testimonials} =
-    useLoaderData<typeof loader>();
+  const {
+    traditionalCategories,
+    westernCategories,
+    occasions,
+    featuredProducts,
+    newArrivals,
+    bestSellers,
+    testimonials,
+  } = useLoaderData<typeof loader>();
 
   return (
     <div className="av-home">
       <HeroBanner />
       <TraditionalCategoriesSection categories={traditionalCategories} />
       <BrandStrip />
+
+      {/* New Arrivals — server-fetched, Judge.me-rated */}
+      {newArrivals.length > 0 && (
+        <ProductGrid
+          eyebrow="Just Landed"
+          title="New Arrivals"
+          subtitle="Fresh pieces from our artisans, crafted for the season"
+          products={newArrivals}
+          viewAllHref="/collections/new-arrivals"
+          loading="lazy"
+        />
+      )}
+
       <VideoSection />
       <WesternCategoriesSection categories={westernCategories} />
       <ShopByOccasion occasions={occasions} />
+
+      {/* Best Sellers — server-fetched, Judge.me-rated */}
+      {bestSellers.length > 0 && (
+        <ProductGrid
+          eyebrow="Customer Favourites"
+          title="Best Sellers"
+          subtitle="The pieces our customers keep coming back for"
+          products={bestSellers}
+          viewAllHref="/collections/bestsellers"
+          loading="lazy"
+        />
+      )}
+
       <Carousel title="Handpicked for You" viewAllUrl="/collections/all">
         {featuredProducts.map((p, i) => (
           <div key={p.id} className="av-carousel__item">
@@ -151,6 +206,7 @@ export default function Homepage() {
           </div>
         ))}
       </Carousel>
+
       <TrustBar />
       <TestimonialsSection testimonials={testimonials} />
       <InstagramSection />
@@ -304,85 +360,6 @@ function BrandStrip() {
         ))}
       </div>
     </div>
-  );
-}
-
-// ─── Video Section ────────────────────────────────────────────────
-
-function VideoSection() {
-  return (
-    <section className="av-video-section section">
-      <div className="container">
-        <div className="av-video-section__layout">
-          {/* Left side: Text content */}
-          <div className="av-video-section__text">
-            <h2 className="av-video-section__headline">Crafted with Love</h2>
-            <p className="av-video-section__description">
-              Every piece at Atsevam tells a story of tradition, artistry, and dedication. 
-              Watch our skilled artisans bring each design to life using time-honored techniques 
-              passed down through generations.
-            </p>
-            <p className="av-video-section__description">
-              From intricate embroidery to delicate zari work, every stitch is a testament 
-              to the craftsmanship that makes our ethnic wear truly special.
-            </p>
-            <div className="av-video-section__stats">
-              <div className="av-video-stat">
-                <span className="av-video-stat__number">5,000+</span>
-                <span className="av-video-stat__label">Artisans</span>
-              </div>
-              <div className="av-video-stat">
-                <span className="av-video-stat__number">100%</span>
-                <span className="av-video-stat__label">Handcrafted</span>
-              </div>
-              <div className="av-video-stat">
-                <span className="av-video-stat__number">50+</span>
-                <span className="av-video-stat__label">Years Legacy</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right side: Two vertical videos */}
-          <div className="av-video-section__videos">
-            <div className="av-vertical-video">
-              <div className="av-vertical-video__wrapper">
-                <video
-                  className="av-vertical-video__player"
-                  poster="/images/lehenga.jpg"
-                  controls
-                  preload="metadata"
-                >
-                  <source src="/videos/bts.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-                <div className="av-vertical-video__play">
-                  <Icon name="play" size={28} strokeWidth={1.5} />
-                </div>
-              </div>
-              <p className="av-vertical-video__caption">Behind the Scenes</p>
-            </div>
-
-            <div className="av-vertical-video">
-              <div className="av-vertical-video__wrapper">
-                <video
-                  className="av-vertical-video__player"
-                  poster="/images/anarkali.jpg"
-                  controls
-                  preload="metadata"
-                >
-                  <source src="/videos/craftsmanship.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-                <div className="av-vertical-video__play">
-                  <Icon name="play" size={28} strokeWidth={1.5} />
-                </div>
-              </div>
-              <p className="av-vertical-video__caption">The Art of Embroidery</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 

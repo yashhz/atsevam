@@ -7,3 +7,6 @@ node_modules
 .env
 .shopify
 .react-router
+
+# Shopify Admin API token (scripts)
+scripts/.token

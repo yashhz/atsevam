@@ -32,78 +32,68 @@ function getLineItemChildrenMap(lines: CartLine[]): LineItemChildrenMap {
   }
   return children;
 }
+
 /**
- * The main cart component that displays the cart items and summary.
- * It is used by both the /cart route and the cart aside dialog.
+ * The main cart component — used both in /cart page and cart Aside drawer.
  */
 export function CartMain({layout, cart: originalCart}: CartMainProps) {
-  // The useOptimisticCart hook applies pending actions to the cart
-  // so the user immediately sees feedback when they modify the cart.
   const cart = useOptimisticCart(originalCart);
-
-  const linesCount = Boolean(cart?.lines?.nodes?.length || 0);
-  const withDiscount =
-    cart &&
-    Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
-  const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
-  const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
+  const cartHasItems = Boolean(cart?.totalQuantity && cart.totalQuantity > 0);
   const childrenMap = getLineItemChildrenMap(cart?.lines?.nodes ?? []);
 
+  if (!cartHasItems) {
+    return <CartEmpty layout={layout} />;
+  }
+
   return (
-    <section
-      className={className}
-      aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
-    >
-      <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
-        <p id="cart-lines" className="sr-only">
-          Line items
-        </p>
-        <div>
-          <ul aria-labelledby="cart-lines">
-            {(cart?.lines?.nodes ?? []).map((line) => {
-              // we do not render non-parent lines at the root of the cart
-              if (
-                'parentRelationship' in line &&
-                line.parentRelationship?.parent
-              ) {
-                return null;
-              }
-              return (
-                <CartLineItem
-                  key={line.id}
-                  line={line}
-                  layout={layout}
-                  childrenMap={childrenMap}
-                />
-              );
-            })}
-          </ul>
-        </div>
-        {cartHasItems && <CartSummary cart={cart} layout={layout} />}
-      </div>
-    </section>
+    <div className={`av-cart av-cart--${layout}`}>
+      {/* Line items */}
+      <ul className="av-cart__lines" aria-label="Cart items">
+        {(cart?.lines?.nodes ?? []).map((line) => {
+          if ('parentRelationship' in line && line.parentRelationship?.parent) {
+            return null;
+          }
+          return (
+            <CartLineItem
+              key={line.id}
+              line={line}
+              layout={layout}
+              childrenMap={childrenMap}
+            />
+          );
+        })}
+      </ul>
+
+      {/* Summary / checkout */}
+      <CartSummary cart={cart} layout={layout} />
+    </div>
   );
 }
 
-function CartEmpty({
-  hidden = false,
-}: {
-  hidden: boolean;
-  layout?: CartMainProps['layout'];
-}) {
+function CartEmpty({layout}: {layout: CartLayout}) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+    <div className="av-cart-empty">
+      <div className="av-cart-empty__icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+      </div>
+      <h2 className="av-cart-empty__title">Your cart is empty</h2>
+      <p className="av-cart-empty__sub">
+        Looks like you haven&rsquo;t added anything yet.
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link
+        to="/collections/all"
+        onClick={close}
+        prefetch="viewport"
+        className="btn btn-primary"
+      >
+        Start Shopping
       </Link>
     </div>
   );
 }
+

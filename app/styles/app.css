@@ -27,11 +27,24 @@ aside {
   background: var(--color-white);
   box-shadow: var(--shadow-xl);
   height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile browsers */
   width: min(var(--aside-width), 100vw);
   position: fixed;
   right: calc(-1 * var(--aside-width));
   top: 0;
   transition: transform var(--duration-slow) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 480px) {
+  aside {
+    width: 100vw;
+    right: -100vw;
+  }
+  .overlay.expanded aside {
+    transform: translateX(-100vw);
+  }
 }
 
 aside header {
@@ -41,6 +54,7 @@ aside header {
   height: var(--header-height-desktop);
   justify-content: space-between;
   padding: 0 var(--space-6);
+  flex-shrink: 0; /* never compress the header */
 }
 
 aside header h3 {
@@ -52,7 +66,21 @@ aside header h3 {
   color: var(--color-charcoal);
 }
 
-aside main { padding: var(--space-6); }
+aside main {
+  padding: var(--space-6);
+  flex: 1;
+  overflow-y: auto;
+  /* Smooth momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Cart aside: CartMain manages its own internal layout + scroll,
+   so strip the default aside main padding and overflow */
+aside:has(.av-cart) main {
+  overflow: hidden;
+  padding: 0;
+}
+
 
 /* Overlay */
 .overlay {
@@ -77,7 +105,8 @@ aside main { padding: var(--space-6); }
   left: 0;
   position: absolute;
   top: 0;
-  width: calc(100% - var(--aside-width));
+  /* clamp to 0 so it never goes negative on small screens */
+  width: max(0px, calc(100% - min(var(--aside-width), 100vw)));
 }
 
 /* Cart */
@@ -126,17 +155,9 @@ aside main { padding: var(--space-6); }
   font-size: var(--text-sm);
 }
 
-/* Search */
+/* Legacy: .predictive-search replaced by .av-search-aside — kept for safety */
 .predictive-search {
-  height: calc(100vh - var(--header-height-desktop) - 40px);
-  overflow-y: auto;
-}
-
-.predictive-search-form {
-  background: var(--color-white);
-  position: sticky;
-  top: 0;
-  padding-bottom: var(--space-4);
+  display: none;
 }
 
 .predictive-search-result { margin-bottom: var(--space-8); }

@@ -12,6 +12,7 @@ export type MockProduct = {
   category: string;
   price: string;
   compareAtPrice?: string;
+  discount?: number;
   rating?: number;
   reviewCount?: number;
   featuredImage: {url: string; altText: string};

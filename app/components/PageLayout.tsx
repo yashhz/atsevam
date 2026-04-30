@@ -79,23 +79,30 @@ function SearchAside() {
   const queriesDatalistId = useId();
   return (
     <Aside type="search" heading="Search">
-      <div className="predictive-search">
+      <div className="av-search-aside">
         <SearchFormPredictive>
           {({fetchResults, goToSearch, inputRef}) => (
-            <div style={{display: 'flex', gap: '0.5rem', marginBottom: '1rem'}}>
-              <input
-                className="input"
-                name="q"
-                onChange={fetchResults}
-                onFocus={fetchResults}
-                placeholder="Search products…"
-                ref={inputRef}
-                type="search"
-                list={queriesDatalistId}
-                style={{flex: 1}}
-              />
-              <button className="btn btn-primary" onClick={goToSearch}>
-                <Icon name="search" size={16} />
+            <div className="av-search-aside__form">
+              <div className="av-search-aside__input-wrap">
+                <Icon name="search" size={18} strokeWidth={1.5} className="av-search-aside__input-icon" />
+                <input
+                  className="av-search-aside__input"
+                  name="q"
+                  onChange={fetchResults}
+                  onFocus={fetchResults}
+                  placeholder="Search products…"
+                  ref={inputRef}
+                  type="search"
+                  list={queriesDatalistId}
+                  autoComplete="off"
+                />
+              </div>
+              <button
+                className="btn btn-primary av-search-aside__go"
+                onClick={goToSearch}
+                aria-label="Search"
+              >
+                Go
               </button>
             </div>
           )}
@@ -107,9 +114,10 @@ function SearchAside() {
 
             if (state === 'loading' && term.current) {
               return (
-                <p style={{fontSize: 'var(--text-sm)', color: 'var(--color-subtle)'}}>
-                  Searching…
-                </p>
+                <div className="av-search-aside__loading">
+                  <span className="av-search-aside__spinner" aria-hidden />
+                  <p>Searching…</p>
+                </div>
               );
             }
 
@@ -147,10 +155,9 @@ function SearchAside() {
                   <Link
                     onClick={closeSearch}
                     to={`${SEARCH_ENDPOINT}?q=${term.current}`}
-                    className="btn btn-ghost"
-                    style={{marginTop: '1rem'}}
+                    className="av-search-aside__view-all btn btn-ghost btn-full"
                   >
-                    View all results for "{term.current}" →
+                    View all results for &ldquo;{term.current}&rdquo; →
                   </Link>
                 ) : null}
               </>
