@@ -377,11 +377,27 @@ export type FooterQuery = {
   >;
 };
 
-export type HomepageProductsQueryVariables = StorefrontAPI.Exact<{
+export type HomepageProductFragment = Pick<
+  StorefrontAPI.Product,
+  'id' | 'title' | 'handle' | 'productType' | 'tags'
+> & {
+  priceRange: {
+    minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+  };
+  compareAtPriceRange: {
+    minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+  };
+  featuredImage?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+  >;
+  images: {nodes: Array<Pick<StorefrontAPI.Image, 'url' | 'altText'>>};
+};
+
+export type HomepageFeaturedQueryVariables = StorefrontAPI.Exact<{
   [key: string]: never;
 }>;
 
-export type HomepageProductsQuery = {
+export type HomepageFeaturedQuery = {
   products: {
     nodes: Array<
       Pick<
@@ -407,6 +423,74 @@ export type HomepageProductsQuery = {
       }
     >;
   };
+};
+
+export type HomepageNewArrivalsQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type HomepageNewArrivalsQuery = {
+  collection?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          'id' | 'title' | 'handle' | 'productType' | 'tags'
+        > & {
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          compareAtPriceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+          >;
+          images: {nodes: Array<Pick<StorefrontAPI.Image, 'url' | 'altText'>>};
+        }
+      >;
+    };
+  }>;
+};
+
+export type HomepageBestSellersQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type HomepageBestSellersQuery = {
+  collection?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          'id' | 'title' | 'handle' | 'productType' | 'tags'
+        > & {
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          compareAtPriceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+          >;
+          images: {nodes: Array<Pick<StorefrontAPI.Image, 'url' | 'altText'>>};
+        }
+      >;
+    };
+  }>;
 };
 
 export type ArticleQueryVariables = StorefrontAPI.Exact<{
@@ -1361,9 +1445,17 @@ interface GeneratedQueryTypes {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
-  '#graphql\n      query HomepageProducts {\n        products(first: 12, sortKey: BEST_SELLING) {\n          nodes {\n            id\n            title\n            handle\n            productType\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            compareAtPriceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            featuredImage {\n              url\n              altText\n              width\n              height\n            }\n            images(first: 2) {\n              nodes {\n                url\n                altText\n              }\n            }\n            tags\n          }\n        }\n      }\n    ': {
-    return: HomepageProductsQuery;
-    variables: HomepageProductsQueryVariables;
+  '#graphql\n      #graphql\n    fragment HomepageProduct on Product {\n      id\n      title\n      handle\n      productType\n      tags\n      priceRange { minVariantPrice { amount currencyCode } }\n      compareAtPriceRange { minVariantPrice { amount currencyCode } }\n      featuredImage { url altText width height }\n      images(first: 2) { nodes { url altText } }\n    }\n  \n      query HomepageFeatured {\n        products(first: 12, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }\n      }\n    ': {
+    return: HomepageFeaturedQuery;
+    variables: HomepageFeaturedQueryVariables;
+  };
+  '#graphql\n      #graphql\n    fragment HomepageProduct on Product {\n      id\n      title\n      handle\n      productType\n      tags\n      priceRange { minVariantPrice { amount currencyCode } }\n      compareAtPriceRange { minVariantPrice { amount currencyCode } }\n      featuredImage { url altText width height }\n      images(first: 2) { nodes { url altText } }\n    }\n  \n      query HomepageNewArrivals {\n        collection(handle: "new-arrivals") {\n          products(first: 8, sortKey: CREATED) { nodes { ...HomepageProduct } }\n        }\n      }\n    ': {
+    return: HomepageNewArrivalsQuery;
+    variables: HomepageNewArrivalsQueryVariables;
+  };
+  '#graphql\n      #graphql\n    fragment HomepageProduct on Product {\n      id\n      title\n      handle\n      productType\n      tags\n      priceRange { minVariantPrice { amount currencyCode } }\n      compareAtPriceRange { minVariantPrice { amount currencyCode } }\n      featuredImage { url altText width height }\n      images(first: 2) { nodes { url altText } }\n    }\n  \n      query HomepageBestSellers {\n        collection(handle: "bestsellers") {\n          products(first: 8, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }\n        }\n      }\n    ': {
+    return: HomepageBestSellersQuery;
+    variables: HomepageBestSellersQueryVariables;
   };
   '#graphql\n  query Article(\n    $articleHandle: String!\n    $blogHandle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(language: $language, country: $country) {\n    blog(handle: $blogHandle) {\n      handle\n      articleByHandle(handle: $articleHandle) {\n        handle\n        title\n        contentHtml\n        publishedAt\n        author: authorV2 {\n          name\n        }\n        image {\n          id\n          altText\n          url\n          width\n          height\n        }\n        seo {\n          description\n          title\n        }\n      }\n    }\n  }\n': {
     return: ArticleQuery;

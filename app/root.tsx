@@ -1,4 +1,5 @@
 import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
+import { useJudgeme } from '@judgeme/shopify-hydrogen';
 import {
   Outlet,
   useRouteError,
@@ -182,6 +183,12 @@ export function Layout({children}: {children?: React.ReactNode}) {
 
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
+
+  // Initialize Judge.me — loads widget script once at app root
+  useJudgeme({
+    shopDomain: 'bgenfh-zn.myshopify.com',
+    publicToken: 'JA1uQ-vNN6FTT5kLMRHJysHX-h8',
+  });
 
   if (!data) {
     return <Outlet />;

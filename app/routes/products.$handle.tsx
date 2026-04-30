@@ -553,6 +553,21 @@ export default function Product() {
           </Accordion>
         </div>
       </div>
+
+      {/* ── Judge.me Reviews Widget ──────────────────────────────── */}
+      <div className="av-pdp__reviews container">
+        <div className="av-pdp__reviews-header">
+          <span className="av-pdp__reviews-eyebrow">Customer Reviews</span>
+          <h2 className="av-pdp__reviews-title">What Our Customers Say</h2>
+        </div>
+        <div
+          id="judgeme_product_widget"
+          className="jdgm-widget jdgm-review-widget"
+          data-id={product?.id?.split('/').pop() ?? ''}
+          data-product-title={product?.title ?? mockProduct?.title ?? ''}
+        />
+      </div>
+
       {/* You May Also Like */}
       {mock.relatedProducts && mock.relatedProducts.length > 0 && (
         <ProductGrid

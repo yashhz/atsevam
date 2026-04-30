@@ -63,8 +63,11 @@ export default function Orders() {
   const {orders} = customer;
 
   return (
-    <div className="av-account-section">
-      <h2 className="av-account-section__title">My Orders</h2>
+    <div className="av-acct-section">
+      <div className="av-acct-section__head">
+        <h1 className="av-acct-section__title">My Orders</h1>
+        <p className="av-acct-section__sub">Track and manage your purchases</p>
+      </div>
       <OrderSearchForm currentFilters={filters} />
       <OrdersTable orders={orders} filters={filters} />
     </div>
@@ -81,7 +84,7 @@ function OrdersTable({
   const hasFilters = !!(filters.name || filters.confirmationNumber);
 
   return (
-    <div className="av-account-orders" aria-live="polite">
+    <div className="av-acct-orders" aria-live="polite">
       {orders?.nodes.length ? (
         <PaginatedResourceSection connection={orders}>
           {({node: order}) => <OrderItem key={order.id} order={order} />}
@@ -95,16 +98,23 @@ function OrdersTable({
 
 function EmptyOrders({hasFilters = false}: {hasFilters?: boolean}) {
   return (
-    <div className="av-account-empty">
+    <div className="av-acct-empty">
+      <div className="av-acct-empty__icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+      </div>
       {hasFilters ? (
         <>
-          <p>No orders found matching your search.</p>
-          <Link to="/account/orders" className="av-account-link">Clear filters →</Link>
+          <p className="av-acct-empty__text">No orders found matching your search.</p>
+          <Link to="/account/orders" className="av-acct-empty__cta">Clear filters</Link>
         </>
       ) : (
         <>
-          <p>You haven't placed any orders yet.</p>
-          <Link to="/collections" className="btn btn-primary">Start Shopping</Link>
+          <p className="av-acct-empty__text">You haven&apos;t placed any orders yet.</p>
+          <Link to="/collections/all" className="btn btn-primary">Start Shopping</Link>
         </>
       )}
     </div>
@@ -127,17 +137,14 @@ function OrderSearchForm({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const params = new URLSearchParams();
-
     const name = formData.get(ORDER_FILTER_FIELDS.NAME)?.toString().trim();
     const confirmationNumber = formData
       .get(ORDER_FILTER_FIELDS.CONFIRMATION_NUMBER)
       ?.toString()
       .trim();
-
     if (name) params.set(ORDER_FILTER_FIELDS.NAME, name);
     if (confirmationNumber)
       params.set(ORDER_FILTER_FIELDS.CONFIRMATION_NUMBER, confirmationNumber);
-
     setSearchParams(params);
   };
 
@@ -147,33 +154,35 @@ function OrderSearchForm({
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="av-account-search"
+      className="av-acct-search"
       aria-label="Search orders"
     >
-      <div className="av-account-search__inputs">
+      <div className="av-acct-search__inputs">
         <input
           type="search"
           name={ORDER_FILTER_FIELDS.NAME}
-          placeholder="Order #"
+          placeholder="Order number"
           aria-label="Order number"
           defaultValue={currentFilters.name || ''}
+          className="av-acct-search__input"
         />
         <input
           type="search"
           name={ORDER_FILTER_FIELDS.CONFIRMATION_NUMBER}
-          placeholder="Confirmation #"
+          placeholder="Confirmation number"
           aria-label="Confirmation number"
           defaultValue={currentFilters.confirmationNumber || ''}
+          className="av-acct-search__input"
         />
       </div>
-      <div className="av-account-search__buttons">
+      <div className="av-acct-search__actions">
         <button type="submit" className="btn btn-primary" disabled={isSearching}>
-          {isSearching ? 'Searching...' : 'Search'}
+          {isSearching ? 'Searching…' : 'Search'}
         </button>
         {hasFilters && (
           <button
             type="button"
-            className="btn btn-secondary"
+            className="av-acct-search__clear"
             disabled={isSearching}
             onClick={() => {
               setSearchParams(new URLSearchParams());
@@ -188,35 +197,62 @@ function OrderSearchForm({
   );
 }
 
+function getStatusColor(status: string) {
+  const s = status?.toLowerCase();
+  if (s === 'paid' || s === 'fulfilled' || s === 'delivered') return 'green';
+  if (s === 'pending' || s === 'in_progress' || s === 'unfulfilled') return 'amber';
+  if (s === 'refunded' || s === 'cancelled' || s === 'voided') return 'red';
+  return 'neutral';
+}
+
 function OrderItem({order}: {order: OrderItemFragment}) {
   const fulfillmentStatus = flattenConnection(order.fulfillments)[0]?.status;
+  const date = new Date(order.processedAt).toLocaleDateString('en-IN', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  });
+
   return (
-    <div className="av-account-order-item">
-      <div className="av-account-order-item__header">
-        <Link to={`/account/orders/${btoa(order.id)}`} className="av-account-order-item__number">
-          #{order.number}
-        </Link>
-        <span className="av-account-order-item__date">
-          {new Date(order.processedAt).toLocaleDateString()}
-        </span>
-      </div>
-      <div className="av-account-order-item__details">
-        {order.confirmationNumber && (
-          <p className="av-account-order-item__confirmation">
-            Confirmation: {order.confirmationNumber}
-          </p>
-        )}
-        <div className="av-account-order-item__status">
-          <span className="av-account-order-item__badge">{order.financialStatus}</span>
-          {fulfillmentStatus && (
-            <span className="av-account-order-item__badge">{fulfillmentStatus}</span>
+    <div className="av-acct-order">
+      {/* Header row */}
+      <div className="av-acct-order__head">
+        <div>
+          <span className="av-acct-order__number">Order #{order.number}</span>
+          {order.confirmationNumber && (
+            <span className="av-acct-order__confirm">
+              Confirmation: {order.confirmationNumber}
+            </span>
           )}
         </div>
+        <span className="av-acct-order__date">{date}</span>
       </div>
-      <div className="av-account-order-item__footer">
-        <Money data={order.totalPrice} />
-        <Link to={`/account/orders/${btoa(order.id)}`} className="av-account-link">
-          View Details →
+
+      {/* Badges + Total */}
+      <div className="av-acct-order__meta">
+        <div className="av-acct-order__badges">
+          <span className={`av-acct-badge av-acct-badge--${getStatusColor(order.financialStatus ?? '')}`}>
+            {order.financialStatus}
+          </span>
+          {fulfillmentStatus && (
+            <span className={`av-acct-badge av-acct-badge--${getStatusColor(fulfillmentStatus)}`}>
+              {fulfillmentStatus}
+            </span>
+          )}
+        </div>
+        <div className="av-acct-order__total">
+          <Money data={order.totalPrice} />
+        </div>
+      </div>
+
+      {/* Footer CTA */}
+      <div className="av-acct-order__footer">
+        <Link
+          to={`/account/orders/${btoa(order.id)}`}
+          className="av-acct-order__view-btn"
+        >
+          View Details
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
         </Link>
       </div>
     </div>

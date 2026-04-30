@@ -84,46 +84,76 @@ export default function AccountProfile() {
   const {state} = useNavigation();
   const action = useActionData<ActionResponse>();
   const customer = action?.customer ?? account?.customer;
+  const isSaving = state !== 'idle';
+  const saved = action && !action.error && !isSaving;
 
   return (
-    <div className="av-account-section">
-      <h2 className="av-account-section__title">My Profile</h2>
-      <Form method="PUT" className="av-account-form">
-        <fieldset className="av-account-form__fieldset">
-          <legend className="av-account-form__legend">Personal Information</legend>
-          <div className="av-account-form__field">
-            <label htmlFor="firstName">First name</label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              autoComplete="given-name"
-              placeholder="First name"
-              aria-label="First name"
-              defaultValue={customer.firstName ?? ''}
-              minLength={2}
-            />
+    <div className="av-acct-section">
+      <div className="av-acct-section__head">
+        <h1 className="av-acct-section__title">Profile</h1>
+        <p className="av-acct-section__sub">Manage your personal information</p>
+      </div>
+
+      <Form method="PUT" className="av-acct-form">
+        <div className="av-acct-form__card">
+          <p className="av-acct-form__card-title">Personal Information</p>
+          <div className="av-acct-form__grid">
+            <div className="av-acct-form__field">
+              <label htmlFor="firstName" className="av-acct-form__label">
+                First Name
+              </label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                autoComplete="given-name"
+                placeholder="First name"
+                aria-label="First name"
+                defaultValue={customer.firstName ?? ''}
+                minLength={2}
+                className="av-acct-form__input"
+              />
+            </div>
+            <div className="av-acct-form__field">
+              <label htmlFor="lastName" className="av-acct-form__label">
+                Last Name
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Last name"
+                aria-label="Last name"
+                defaultValue={customer.lastName ?? ''}
+                minLength={2}
+                className="av-acct-form__input"
+              />
+            </div>
           </div>
-          <div className="av-account-form__field">
-            <label htmlFor="lastName">Last name</label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              autoComplete="family-name"
-              placeholder="Last name"
-              aria-label="Last name"
-              defaultValue={customer.lastName ?? ''}
-              minLength={2}
-            />
-          </div>
-        </fieldset>
+        </div>
+
         {action?.error && (
-          <p className="av-account-form__error">{action.error}</p>
+          <div className="av-acct-form__error" role="alert">
+            {action.error}
+          </div>
         )}
-        <button type="submit" className="btn btn-primary" disabled={state !== 'idle'}>
-          {state !== 'idle' ? 'Updating...' : 'Update Profile'}
-        </button>
+
+        {saved && (
+          <div className="av-acct-form__success" role="status">
+            Profile updated successfully.
+          </div>
+        )}
+
+        <div className="av-acct-form__actions">
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving…' : 'Save Changes'}
+          </button>
+        </div>
       </Form>
     </div>
   );

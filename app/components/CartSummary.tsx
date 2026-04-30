@@ -54,10 +54,17 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
       <a
         href={checkoutUrl}
         target="_self"
-        className="btn btn-primary btn-full btn-lg"
+        className="btn btn-primary btn-full btn-lg av-cart-summary__checkout-btn"
       >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
         Proceed to Checkout
       </a>
+      <p className="av-cart-summary__secure-note">
+        🔒 Secure checkout · Free shipping above ₹1,999
+      </p>
     </div>
   );
 }
@@ -77,30 +84,28 @@ function CartDiscounts({
       ?.map(({code}) => code) || [];
 
   return (
-    <section aria-label="Discounts">
-      {/* Have existing discount, display it with a remove option */}
-      <dl hidden={!codes.length}>
-        <div>
-          <dt id={discountsHeadingId}>Discounts</dt>
-          <UpdateDiscountForm>
-            <div
-              className="cart-discount"
-              role="group"
-              aria-labelledby={discountsHeadingId}
+    <div className="av-cart-coupon">
+      {/* Applied discount chip */}
+      {codes.length > 0 && (
+        <UpdateDiscountForm>
+          <div className="av-cart-coupon__applied">
+            <span className="av-cart-coupon__tag">
+              🏷 {codes.join(', ')}
+            </span>
+            <button
+              type="submit"
+              className="av-cart-coupon__remove"
+              aria-label="Remove discount"
             >
-              <code>{codes?.join(', ')}</code>
-              &nbsp;
-              <button type="submit" aria-label="Remove discount">
-                Remove
-              </button>
-            </div>
-          </UpdateDiscountForm>
-        </div>
-      </dl>
+              ✕
+            </button>
+          </div>
+        </UpdateDiscountForm>
+      )}
 
-      {/* Show an input to apply a discount */}
+      {/* Input row */}
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
+        <div className="av-cart-coupon__row">
           <label htmlFor={discountCodeInputId} className="sr-only">
             Discount code
           </label>
@@ -109,14 +114,18 @@ function CartDiscounts({
             type="text"
             name="discountCode"
             placeholder="Discount code"
+            className="av-cart-coupon__input"
           />
-          &nbsp;
-          <button type="submit" aria-label="Apply discount code">
+          <button
+            type="submit"
+            className="av-cart-coupon__apply-btn"
+            aria-label="Apply discount code"
+          >
             Apply
           </button>
         </div>
       </UpdateDiscountForm>
-    </section>
+    </div>
   );
 }
 
@@ -196,35 +205,44 @@ function CartGiftCard({
   };
 
   return (
-    <section aria-label="Gift cards">
+    <div className="av-cart-coupon" aria-label="Gift cards">
+      {/* Applied gift card chips */}
       {giftCardCodes && giftCardCodes.length > 0 && (
-        <dl>
-          <dt id={giftCardHeadingId}>Applied Gift Card(s)</dt>
+        <div className="av-cart-coupon__applied-list">
           {giftCardCodes.map((giftCard) => (
-            <dd key={giftCard.id} className="cart-discount">
-              <RemoveGiftCardForm
-                giftCardId={giftCard.id}
-                lastCharacters={giftCard.lastCharacters}
-                onRemoveClick={() => handleRemoveClick(giftCard.id)}
-                buttonRef={(el: HTMLButtonElement | null) => {
-                  if (el) {
-                    removeButtonRefs.current.set(giftCard.id, el);
-                  } else {
-                    removeButtonRefs.current.delete(giftCard.id);
-                  }
-                }}
-              >
-                <code>***{giftCard.lastCharacters}</code>
-                &nbsp;
-                <Money data={giftCard.amountUsed} />
-              </RemoveGiftCardForm>
-            </dd>
+            <RemoveGiftCardForm
+              key={giftCard.id}
+              giftCardId={giftCard.id}
+              lastCharacters={giftCard.lastCharacters}
+              onRemoveClick={() => handleRemoveClick(giftCard.id)}
+              buttonRef={(el: HTMLButtonElement | null) => {
+                if (el) {
+                  removeButtonRefs.current.set(giftCard.id, el);
+                } else {
+                  removeButtonRefs.current.delete(giftCard.id);
+                }
+              }}
+            >
+              <div className="av-cart-coupon__applied">
+                <span className="av-cart-coupon__tag">
+                  🎁 ***{giftCard.lastCharacters} · <Money data={giftCard.amountUsed} />
+                </span>
+                <button
+                  type="submit"
+                  className="av-cart-coupon__remove"
+                  aria-label={`Remove gift card ending in ${giftCard.lastCharacters}`}
+                >
+                  ✕
+                </button>
+              </div>
+            </RemoveGiftCardForm>
           ))}
-        </dl>
+        </div>
       )}
 
+      {/* Input row — same layout as discount code */}
       <AddGiftCardForm fetcherKey="gift-card-add">
-        <div>
+        <div className="av-cart-coupon__row">
           <label htmlFor={giftCardInputId} className="sr-only">
             Gift card code
           </label>
@@ -234,18 +252,19 @@ function CartGiftCard({
             name="giftCardCode"
             placeholder="Gift card code"
             ref={giftCardCodeInput}
+            className="av-cart-coupon__input"
           />
-          &nbsp;
           <button
             type="submit"
             disabled={giftCardAddFetcher.state !== 'idle'}
             aria-label="Apply gift card code"
+            className="av-cart-coupon__apply-btn"
           >
             Apply
           </button>
         </div>
       </AddGiftCardForm>
-    </section>
+    </div>
   );
 }
 
