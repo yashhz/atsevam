@@ -194,6 +194,46 @@ const icons = {
       <path strokeLinecap="round" strokeLinejoin="round" d="M6 12h.01M18 12h.01" />
     </>
   ),
+  'help-circle': (
+    <>
+      <circle cx="12" cy="12" r="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <line x1="12" y1="17" x2="12.01" y2="17" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  'check-circle': (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M22 4 12 14.01l-3-3" />
+    </>
+  ),
+  briefcase: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"
+    />
+  ),
+  ruler: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M21.73 18l-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3zM12 9v4M12 17h.01"
+    />
+  ),
+  'file-text': (
+    <>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+    </>
+  ),
+  sparkles: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3zM5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1zM19 13l.5 1.5L21 15l-1.5.5L19 17l-.5-1.5L17 15l1.5-.5L19 13z"
+    />
+  ),
 };
 
 export function Icon({name, size = 20, className = '', strokeWidth = 1.5}: IconProps) {

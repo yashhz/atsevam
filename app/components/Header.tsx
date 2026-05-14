@@ -23,6 +23,8 @@ type Viewport = 'desktop' | 'mobile';
 // Main header - simple navigation
 const MAIN_NAV = [
   {title: 'Home',       url: '/'},
+  {title: 'Retail',     url: '/collections/all'},
+  {title: 'Wholesale',  url: '/pages/wholesale'},
   {title: 'Contact',    url: '/pages/contact'},
 ];
 
@@ -456,6 +458,12 @@ export function MobileMenu({
 
       <div className="av-mobile-menu__divider" />
 
+      <NavLink to="/collections/all" onClick={close} className="av-mobile-menu__item">
+        Retail
+      </NavLink>
+      <NavLink to="/pages/wholesale" onClick={close} className="av-mobile-menu__item">
+        Wholesale / B2B
+      </NavLink>
       <NavLink to="/pages/contact" onClick={close} className="av-mobile-menu__item">
         Contact
       </NavLink>

@@ -70,7 +70,7 @@ export default function OurStory() {
             Atsevam was born from a simple belief — that the most beautiful things in the world are made by human hands.
           </p>
           <p className="av-story__body">
-            In a world of fast fashion and mass production, we chose a different path. We went to the villages of Rajasthan, the workshops of Gujarat, and the ateliers of Lucknow — and we listened. We listened to artisans who had spent decades perfecting the art of zari embroidery, thread chain stitch, and block printing. We heard their stories, learned their techniques, and made a promise: to give their craft the audience it deserves.
+            Made in Surat by skilled karigars, every piece tells a story of dedication and artistry. In a world of fast fashion and mass production, we chose a different path. We went to the villages of Rajasthan, the workshops of Gujarat, and the ateliers of Lucknow — and we listened. We listened to artisans who had spent decades perfecting the art of zari embroidery, thread chain stitch, and block printing. We heard their stories, learned their techniques, and made a promise: to give their craft the audience it deserves.
           </p>
           <p className="av-story__body">
             Today, Atsevam is more than a clothing brand. It is a bridge between the hands that create and the women who wear — a celebration of India's living textile heritage, reimagined for the modern wardrobe.

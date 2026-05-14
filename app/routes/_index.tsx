@@ -4,6 +4,7 @@ import {ProductCard} from '~/components/ProductCard';
 import {ProductGrid} from '~/components/ProductGrid';
 import {VideoSection} from '~/components/VideoSection';
 import {Carousel} from '~/components/Carousel';
+import {CategoryBanner} from '~/components/CategoryBanner';
 import {Icon} from '~/components/ui/Icon';
 import {
   MOCK_TRADITIONAL_CATEGORIES,
@@ -26,6 +27,7 @@ export const meta: Route.MetaFunction = () => [
   {property: 'og:image', content: 'https://atsevam.com/images/hero.png'},
   {property: 'og:url', content: 'https://atsevam.com'},
   {property: 'og:site_name', content: 'Atsevam'},
+  {property: 'og:locale', content: 'en_IN'},
   
   // Twitter
   {name: 'twitter:card', content: 'summary_large_image'},
@@ -34,9 +36,10 @@ export const meta: Route.MetaFunction = () => [
   {name: 'twitter:image', content: 'https://atsevam.com/images/hero.png'},
   
   // Additional SEO
-  {name: 'robots', content: 'index, follow'},
+  {name: 'robots', content: 'index, follow, max-image-preview:large'},
   {name: 'author', content: 'Atsevam'},
-  {name: 'theme-color', content: '#8B2635'},
+  {name: 'theme-color', content: '#7B2D4E'},
+  {name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5'},
 ];
 
 export async function loader({context}: Route.LoaderArgs) {
@@ -167,6 +170,7 @@ export default function Homepage() {
 
   return (
     <div className="av-home">
+      <CategoryBanner />
       <HeroBanner />
       <TraditionalCategoriesSection categories={traditionalCategories} />
       <BrandStrip />

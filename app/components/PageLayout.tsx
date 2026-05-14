@@ -35,6 +35,11 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
+      {/* Skip to main content for accessibility */}
+      <a href="#main-content" className="skip-to-main">
+        Skip to main content
+      </a>
+      
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
@@ -48,7 +53,7 @@ export function PageLayout({
         />
       )}
 
-      <main className="av-main">{children}</main>
+      <main id="main-content" className="av-main">{children}</main>
 
       <Footer
         footer={footer}

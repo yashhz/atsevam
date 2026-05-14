@@ -10,25 +10,25 @@ interface FooterProps {
 
 const FOOTER_LINKS = {
   'Customer Service': [
-    {title: 'Track Order',         url: '/pages/track-order'},
-    {title: 'Returns & Exchanges', url: '/policies/refund-policy'},
-    {title: 'Shipping Policy',     url: '/policies/shipping-policy'},
-    {title: 'FAQ',                 url: '/pages/faq'},
-    {title: 'Contact Us',          url: '/pages/contact'},
+    {title: 'Track Order',         url: '/pages/track-order',         icon: 'package' as const},
+    {title: 'Returns & Exchanges', url: '/policies/refund-policy',    icon: 'refresh-cw' as const},
+    {title: 'Shipping Policy',     url: '/policies/shipping-policy',  icon: 'truck' as const},
+    {title: 'FAQ',                 url: '/pages/faq',                 icon: 'help-circle' as const},
+    {title: 'Contact Us',          url: '/pages/contact',             icon: 'mail' as const},
   ],
   'Quick Links': [
-    {title: 'Our Story',           url: '/pages/our-story'},
-    {title: 'Wholesale / B2B',     url: '/pages/wholesale'},
-    {title: 'Size Guide',          url: '/pages/size-guide'},
-    {title: 'Privacy Policy',      url: '/policies/privacy-policy'},
-    {title: 'Terms of Service',    url: '/policies/terms-of-service'},
+    {title: 'Our Story',           url: '/pages/our-story',           icon: 'heart' as const},
+    {title: 'Wholesale / B2B',     url: '/pages/wholesale',           icon: 'briefcase' as const},
+    {title: 'Size Guide',          url: '/pages/size-guide',          icon: 'ruler' as const},
+    {title: 'Privacy Policy',      url: '/policies/privacy-policy',   icon: 'shield' as const},
+    {title: 'Terms of Service',    url: '/policies/terms-of-service', icon: 'file-text' as const},
   ],
   'Shop': [
-    {title: 'Lehengas',            url: '/collections/lehengas'},
-    {title: 'Anarkalis',           url: '/collections/anarkali'},
-    {title: 'Kurtis',              url: '/collections/kurtis'},
-    {title: 'Co-ord Sets',         url: '/collections/co-ords'},
-    {title: 'New Arrivals',        url: '/collections/new-arrivals'},
+    {title: 'Lehengas',            url: '/collections/lehengas',      icon: 'star' as const},
+    {title: 'Anarkalis',           url: '/collections/anarkali',      icon: 'star' as const},
+    {title: 'Kurtis',              url: '/collections/kurtis',        icon: 'star' as const},
+    {title: 'Co-ord Sets',         url: '/collections/co-ords',       icon: 'star' as const},
+    {title: 'New Arrivals',        url: '/collections/new-arrivals',  icon: 'sparkles' as const},
   ],
 };
 
@@ -88,7 +88,8 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
                   {links.map((link) => (
                     <li key={link.url}>
                       <NavLink to={link.url} className="av-footer__link">
-                        {link.title}
+                        <Icon name={link.icon} size={16} strokeWidth={1.5} />
+                        <span>{link.title}</span>
                       </NavLink>
                     </li>
                   ))}
@@ -103,6 +104,26 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
       {/* Bottom bar */}
       <div className="av-footer__bottom">
         <div className="container">
+          {/* Trust badges */}
+          <div className="av-footer__trust-badges">
+            <div className="av-footer__trust-badge">
+              <Icon name="shield" size={20} strokeWidth={1.5} />
+              <span>Secure Payment</span>
+            </div>
+            <div className="av-footer__trust-badge">
+              <Icon name="truck" size={20} strokeWidth={1.5} />
+              <span>Fast Delivery</span>
+            </div>
+            <div className="av-footer__trust-badge">
+              <Icon name="check-circle" size={20} strokeWidth={1.5} />
+              <span>Quality Assured</span>
+            </div>
+            <div className="av-footer__trust-badge">
+              <Icon name="heart" size={20} strokeWidth={1.5} />
+              <span>Made with Love</span>
+            </div>
+          </div>
+          
           <div className="av-footer__bottom-inner">
             <p className="av-footer__copyright">
               © {new Date().getFullYear()} Atsevam. All rights reserved.

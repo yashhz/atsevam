@@ -39,17 +39,17 @@
   --font-body:     'Inter', 'Helvetica Neue', sans-serif;
   --font-mono:     'JetBrains Mono', monospace;
 
-  /* Scale — fluid, generous - INCREASED BY ~20% */
+  /* Scale — fluid, generous - OPTIMIZED FOR DESKTOP READABILITY */
   --text-xs:    0.8125rem;   /* 13px — labels, badges */
   --text-sm:    0.9375rem;   /* 15px — secondary UI */
-  --text-base:  1.0625rem;   /* 17px — body copy */
-  --text-md:    1.1875rem;   /* 19px — slightly larger body */
-  --text-lg:    1.4375rem;   /* 23px — subheadings */
-  --text-xl:    1.75rem;     /* 28px — section titles */
-  --text-2xl:   2.25rem;     /* 36px — page headings */
-  --text-3xl:   3.125rem;    /* 50px — hero subtext */
-  --text-4xl:   4.25rem;     /* 68px — hero headline */
-  --text-5xl:   5.625rem;    /* 90px — editorial statement */
+  --text-base:  1.125rem;    /* 18px — body copy (increased from 17px) */
+  --text-md:    1.25rem;     /* 20px — slightly larger body (increased from 19px) */
+  --text-lg:    1.5rem;      /* 24px — subheadings (increased from 23px) */
+  --text-xl:    1.875rem;    /* 30px — section titles (increased from 28px) */
+  --text-2xl:   2.5rem;      /* 40px — page headings (increased from 36px) */
+  --text-3xl:   3.5rem;      /* 56px — hero subtext (increased from 50px) */
+  --text-4xl:   4.75rem;     /* 76px — hero headline (increased from 68px) */
+  --text-5xl:   6.25rem;     /* 100px — editorial statement (increased from 90px) */
 
   /* Weight */
   --weight-light:   300;
