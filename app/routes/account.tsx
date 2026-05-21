@@ -89,7 +89,7 @@ export default function AccountLayout() {
 
       <div className="av-acct__layout container">
         {/* ── Sidebar ────────────────────────────────────────── */}
-        <aside className="av-acct__sidebar">
+        <div className="av-acct__sidebar" role="complementary">
           {/* User card */}
           <div className="av-acct__user-card">
             <div className="av-acct__avatar">{initials}</div>
@@ -127,7 +127,7 @@ export default function AccountLayout() {
               Sign Out
             </button>
           </Form>
-        </aside>
+        </div>
 
         {/* ── Main content ───────────────────────────────────── */}
         <main className="av-acct__main">

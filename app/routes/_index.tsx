@@ -171,7 +171,6 @@ export default function Homepage() {
   return (
     <div className="av-home">
       <CategoryBanner />
-      <HeroBanner />
       <TraditionalCategoriesSection categories={traditionalCategories} />
       <BrandStrip />
 
@@ -215,48 +214,6 @@ export default function Homepage() {
       <TestimonialsSection testimonials={testimonials} />
       <InstagramSection />
     </div>
-  );
-}
-
-// ─── Hero Banner ──────────────────────────────────────────────────
-
-function HeroBanner() {
-  return (
-    <section className="av-hero">
-      {/* Background image */}
-      <div className="av-hero__bg">
-        <img
-          src="/images/hero.png"
-          alt="Atsevam — The Festive Edit"
-          className="av-hero__img"
-          loading="eager"
-          fetchPriority="high"
-        />
-        <div className="av-hero__overlay" />
-      </div>
-
-      {/* Content */}
-      <div className="av-hero__content">
-        <p className="av-hero__eyebrow">New Arrivals · SS 2026</p>
-        <h1 className="av-hero__headline">The Festive Edit</h1>
-        <p className="av-hero__sub">
-          Handcrafted for the moments that matter.
-        </p>
-        <div className="av-hero__cta-group">
-          <Link to="/collections/lehengas" className="btn btn-secondary btn-lg av-hero__cta">
-            Shop Lehengas
-          </Link>
-          <Link to="/collections/kurtis" className="av-hero__cta-ghost">
-            Explore Kurtis →
-          </Link>
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="av-hero__scroll" aria-hidden="true">
-        <Icon name="chevron-down" size={20} strokeWidth={1} />
-      </div>
-    </section>
   );
 }
 
