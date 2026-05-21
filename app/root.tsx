@@ -188,6 +188,7 @@ export default function App() {
   useJudgeme({
     shopDomain: 'atsevam.myshopify.com',
     publicToken: 'JA1uQ-vNN6FTT5kLMRHJysHX-h8',
+    cdnHost: 'https://cdn.judge.me',
   });
 
   if (!data) {
