@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {redirect, useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/account.orders.$id';
 import {Money, Image} from '@shopify/hydrogen';
 import type {
@@ -8,7 +8,7 @@ import type {
 import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Order ${data?.order?.name}`}];
+  return [{title: `Order ${data?.order?.name} — Atsevam`}];
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {
@@ -39,7 +39,7 @@ export async function loader({params, context}: Route.LoaderArgs) {
   const discountApplications = order.discountApplications.nodes;
 
   // Get fulfillment status from first fulfillment node
-  const fulfillmentStatus = order.fulfillments.nodes[0]?.status ?? 'N/A';
+  const fulfillmentStatus = order.fulfillments.nodes[0]?.status ?? 'UNFULFILLED';
 
   // Get first discount value with proper type checking
   const firstDiscount = discountApplications[0]?.value;
@@ -81,142 +81,190 @@ export default function OrderRoute() {
     discountPercentage,
     fulfillmentStatus,
   } = useLoaderData<typeof loader>();
+
+  const date = new Date(order.processedAt!).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  // Timeline Steps Calculations
+  const isShipped = ['FULFILLED', 'RESTOCKED'].includes(fulfillmentStatus);
+  const isDelivered = fulfillmentStatus === 'FULFILLED'; // Simple map for demo purposes
+
+  const timelineSteps = [
+    { label: 'Placed', active: true },
+    { label: 'Confirmed', active: true },
+    { label: 'Shipped', active: isShipped },
+    { label: 'Delivered', active: isDelivered },
+  ];
+
   return (
-    <div className="account-order">
-      <h2>Order {order.name}</h2>
-      <p>Placed on {new Date(order.processedAt!).toDateString()}</p>
-      {order.confirmationNumber && (
-        <p>Confirmation: {order.confirmationNumber}</p>
-      )}
-      <br />
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Price</th>
-              <th scope="col">Quantity</th>
-              <th scope="col">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {lineItems.map((lineItem, lineItemIndex) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <OrderLineRow key={lineItemIndex} lineItem={lineItem} />
-            ))}
-          </tbody>
-          <tfoot>
-            {((discountValue && discountValue.amount) ||
-              discountPercentage) && (
-              <tr>
-                <th scope="row" colSpan={3}>
-                  <p>Discounts</p>
-                </th>
-                <th scope="row">
-                  <p>Discounts</p>
-                </th>
-                <td>
-                  {discountPercentage ? (
-                    <span>-{discountPercentage}% OFF</span>
-                  ) : (
-                    discountValue && <Money data={discountValue!} />
-                  )}
-                </td>
-              </tr>
-            )}
-            <tr>
-              <th scope="row" colSpan={3}>
-                <p>Subtotal</p>
-              </th>
-              <th scope="row">
-                <p>Subtotal</p>
-              </th>
-              <td>
-                <Money data={order.subtotal!} />
-              </td>
-            </tr>
-            <tr>
-              <th scope="row" colSpan={3}>
-                Tax
-              </th>
-              <th scope="row">
-                <p>Tax</p>
-              </th>
-              <td>
-                <Money data={order.totalTax!} />
-              </td>
-            </tr>
-            <tr>
-              <th scope="row" colSpan={3}>
-                Total
-              </th>
-              <th scope="row">
-                <p>Total</p>
-              </th>
-              <td>
-                <Money data={order.totalPrice!} />
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+    <div className="av-acct-section">
+      <div className="av-acct-order-detail">
+        {/* Back Link */}
         <div>
-          <h3>Shipping Address</h3>
-          {order?.shippingAddress ? (
-            <address>
-              <p>{order.shippingAddress.name}</p>
-              {order.shippingAddress.formatted ? (
-                <p>{order.shippingAddress.formatted}</p>
+          <Link to="/account/orders" className="av-acct-order-detail__back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Orders
+          </Link>
+        </div>
+
+        {/* Header */}
+        <div className="av-acct-order-detail__head">
+          <h1 className="av-acct-order-detail__number">Order {order.name}</h1>
+          <span className="av-acct-order-detail__date">Placed on {date}</span>
+        </div>
+
+        {/* Visual Progress Timeline */}
+        <div className="av-acct-timeline">
+          {timelineSteps.map((step, idx) => (
+            <div
+              key={step.label}
+              className={`av-acct-timeline__step${step.active ? ' av-acct-timeline__step--active' : ''}`}
+            >
+              <div className="av-acct-timeline__dot">
+                {step.active ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                ) : (
+                  idx + 1
+                )}
+              </div>
+              <span className="av-acct-timeline__label">{step.label}</span>
+              <div className="av-acct-timeline__line"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* 2-Column Detail Grid */}
+        <div className="av-acct-order-detail__grid">
+          {/* Main items and billing */}
+          <div className="av-acct-order-detail__main">
+            {/* Ordered Items */}
+            <div className="av-acct-order-detail__section">
+              <h2 className="av-acct-order-detail__section-title">Items Ordered</h2>
+              <div className="av-acct-order-detail__items">
+                {lineItems.map((lineItem, lineItemIndex) => (
+                  <div key={lineItemIndex} className="av-acct-order-detail-item">
+                    <div className="av-acct-order-detail-item__img">
+                      {lineItem?.image ? (
+                        <Image data={lineItem.image} width={75} height={94} sizes="75px" />
+                      ) : (
+                        <div className="w-full h-full bg-stone-100" />
+                      )}
+                    </div>
+                    <div className="av-acct-order-detail-item__info">
+                      <p className="av-acct-order-detail-item__title">{lineItem.title}</p>
+                      <div className="av-acct-order-detail-item__meta">
+                        {lineItem.variantTitle && <span>Variant: {lineItem.variantTitle}</span>}
+                        <span>Qty: {lineItem.quantity}</span>
+                      </div>
+                      <span className="av-acct-order-detail-item__price">
+                        <Money data={lineItem.price!} />
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Calculations Summary */}
+            <div className="av-acct-order-detail__section">
+              <h2 className="av-acct-order-detail__section-title">Payment Details</h2>
+              <div className="av-acct-order-detail__billing">
+                <div className="av-acct-order-detail__billing-row">
+                  <span>Subtotal</span>
+                  <span>
+                    <Money data={order.subtotal!} />
+                  </span>
+                </div>
+
+                {((discountValue && discountValue.amount) || discountPercentage) && (
+                  <div className="av-acct-order-detail__billing-row">
+                    <span>Discounts</span>
+                    <span className="text-emerald-700 font-semibold">
+                      {discountPercentage ? (
+                        <span>-{discountPercentage}% OFF</span>
+                      ) : (
+                        discountValue && <Money data={discountValue!} />
+                      )}
+                    </span>
+                  </div>
+                )}
+
+                <div className="av-acct-order-detail__billing-row">
+                  <span>Estimated Tax</span>
+                  <span>
+                    <Money data={order.totalTax!} />
+                  </span>
+                </div>
+
+                <div className="av-acct-order-detail__billing-row av-acct-order-detail__billing-row--total">
+                  <span>Total Amount</span>
+                  <span>
+                    <Money data={order.totalPrice!} />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar shipping & status */}
+          <div className="av-acct-order-detail__aside">
+            {/* Delivery address */}
+            <div className="av-acct-order-detail__section">
+              <h2 className="av-acct-order-detail__section-title">Delivery Address</h2>
+              {order?.shippingAddress ? (
+                <div className="av-acct-order-detail__address">
+                  <p>{order.shippingAddress.name}</p>
+                  {order.shippingAddress.formatted?.map((line, idx) => (
+                    <p key={idx}>{line}</p>
+                  ))}
+                  {order.shippingAddress.phoneNumber && (
+                    <p className="mt-2 text-stone-500">Phone: {order.shippingAddress.phoneNumber}</p>
+                  )}
+                </div>
               ) : (
-                ''
+                <p className="text-stone-500 text-sm">No shipping address defined</p>
               )}
-              {order.shippingAddress.formattedArea ? (
-                <p>{order.shippingAddress.formattedArea}</p>
-              ) : (
-                ''
+            </div>
+
+            {/* Status & tracking actions */}
+            <div className="av-acct-order-detail__section">
+              <h2 className="av-acct-order-detail__section-title">Order Status</h2>
+              <div className="mb-5">
+                <p className="text-sm text-stone-600 mb-2">
+                  Fulfillment: <span className="font-semibold text-stone-900">{fulfillmentStatus}</span>
+                </p>
+                <p className="text-sm text-stone-600">
+                  Payment: <span className="font-semibold text-stone-900">{order.financialStatus}</span>
+                </p>
+              </div>
+
+              {order.statusPageUrl && (
+                <a
+                  target="_blank"
+                  href={order.statusPageUrl}
+                  rel="noreferrer"
+                  className="av-acct-order-detail__track-btn"
+                >
+                  Track Package
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
               )}
-            </address>
-          ) : (
-            <p>No shipping address defined</p>
-          )}
-          <h3>Status</h3>
-          <div>
-            <p>{fulfillmentStatus}</p>
+            </div>
           </div>
         </div>
       </div>
-      <br />
-      <p>
-        <a target="_blank" href={order.statusPageUrl} rel="noreferrer">
-          View Order Status →
-        </a>
-      </p>
     </div>
-  );
-}
-
-function OrderLineRow({lineItem}: {lineItem: OrderLineItemFullFragment}) {
-  return (
-    <tr key={lineItem.id}>
-      <td>
-        <div>
-          {lineItem?.image && (
-            <div>
-              <Image data={lineItem.image} width={96} height={96} />
-            </div>
-          )}
-          <div>
-            <p>{lineItem.title}</p>
-            <small>{lineItem.variantTitle}</small>
-          </div>
-        </div>
-      </td>
-      <td>
-        <Money data={lineItem.price!} />
-      </td>
-      <td>{lineItem.quantity}</td>
-      <td>
-        <Money data={lineItem.totalDiscount!} />
-      </td>
-    </tr>
   );
 }

@@ -27,7 +27,7 @@ export async function loader({context, params, request}: Route.LoaderArgs) {
   // Fetch all products
   const {products} = await storefront.query(
     `#graphql
-      query AllProducts($first: Int, $last: Int, $startCursor: String, $endCursor: String) {
+      query AllCatalogProducts($first: Int, $last: Int, $startCursor: String, $endCursor: String) {
         products(first: $first, last: $last, before: $startCursor, after: $endCursor) {
           nodes {
             id
