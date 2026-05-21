@@ -11,8 +11,6 @@ interface FooterProps {
 const FOOTER_LINKS = {
   'Customer Service': [
     {title: 'Track Order',         url: '/pages/track-order',         icon: 'package' as const},
-    {title: 'Returns & Exchanges', url: '/policies/refund-policy',    icon: 'refresh-cw' as const},
-    {title: 'Shipping Policy',     url: '/policies/shipping-policy',  icon: 'truck' as const},
     {title: 'FAQ',                 url: '/pages/faq',                 icon: 'help-circle' as const},
     {title: 'Contact Us',          url: '/pages/contact',             icon: 'mail' as const},
   ],
@@ -20,8 +18,6 @@ const FOOTER_LINKS = {
     {title: 'Our Story',           url: '/pages/our-story',           icon: 'heart' as const},
     {title: 'Wholesale / B2B',     url: '/pages/wholesale',           icon: 'briefcase' as const},
     {title: 'Size Guide',          url: '/pages/size-guide',          icon: 'ruler' as const},
-    {title: 'Privacy Policy',      url: '/policies/privacy-policy',   icon: 'shield' as const},
-    {title: 'Terms of Service',    url: '/policies/terms-of-service', icon: 'file-text' as const},
   ],
   'Shop': [
     {title: 'Lehengas',            url: '/collections/lehengas',      icon: 'star' as const},

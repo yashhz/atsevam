@@ -7,9 +7,6 @@ export const meta: Route.MetaFunction = () => [
   {name: 'description', content: 'The story behind Atsevam — handcrafted ethnic wear celebrating India\'s artisanal heritage.'},
 ];
 
-const img = (seed: number, w = 800, h = 600) =>
-  `https://picsum.photos/seed/story${seed}/${w}/${h}`;
-
 const VALUES = [
   {
     icon: 'heart' as const,
@@ -50,15 +47,15 @@ export default function OurStory() {
       <section className="av-story__hero">
         <div className="av-story__hero-bg">
           <img
-            src={img(1, 1600, 700)}
-            alt="Atsevam artisans at work"
+            src="/images/story-model.png"
+            alt="Beautiful handcrafted bridal couture"
             className="av-story__hero-img"
             loading="eager"
           />
           <div className="av-story__hero-overlay" />
         </div>
         <div className="av-story__hero-content container">
-          <p className="av-story__eyebrow">Our Story</p>
+          <p className="av-story__eyebrow">Our Heritage</p>
           <h1 className="av-story__headline">Where Craft Meets Couture</h1>
         </div>
       </section>
@@ -69,12 +66,18 @@ export default function OurStory() {
           <p className="av-story__lead">
             Atsevam was born from a simple belief — that the most beautiful things in the world are made by human hands.
           </p>
-          <p className="av-story__body">
+          <p className="av-story__body av-story__body--dropcap">
             Made in Surat by skilled karigars, every piece tells a story of dedication and artistry. In a world of fast fashion and mass production, we chose a different path. We went to the villages of Rajasthan, the workshops of Gujarat, and the ateliers of Lucknow — and we listened. We listened to artisans who had spent decades perfecting the art of zari embroidery, thread chain stitch, and block printing. We heard their stories, learned their techniques, and made a promise: to give their craft the audience it deserves.
           </p>
           <p className="av-story__body">
             Today, Atsevam is more than a clothing brand. It is a bridge between the hands that create and the women who wear — a celebration of India's living textile heritage, reimagined for the modern wardrobe.
           </p>
+          
+          <div className="av-story__divider">
+            <div className="av-story__divider-line" />
+            <div className="av-story__divider-dot" />
+            <div className="av-story__divider-line" />
+          </div>
         </div>
       </section>
 
@@ -83,7 +86,7 @@ export default function OurStory() {
         <div className="container">
           <div className="av-story__split-inner">
             <div className="av-story__split-image">
-              <img src={img(2, 700, 900)} alt="Artisan embroidering a lehenga" loading="lazy" />
+              <img src="/images/story-artisan.png" alt="Karigar meticulously embroidering luxury fabric" loading="lazy" />
             </div>
             <div className="av-story__split-content">
               <p className="av-story__section-tag">The Craft</p>
@@ -94,7 +97,7 @@ export default function OurStory() {
               <p className="av-story__body">
                 We work directly with artisan cooperatives, ensuring fair wages, safe working conditions, and the preservation of techniques that might otherwise be lost to time.
               </p>
-              <Link to="/collections/lehenga" className="btn btn-primary">
+              <Link to="/collections/lehengas" className="btn btn-primary">
                 Shop Lehengas
               </Link>
             </div>
@@ -144,10 +147,10 @@ export default function OurStory() {
         <div className="container">
           <div className="av-story__split-inner">
             <div className="av-story__split-image">
-              <img src={img(3, 700, 900)} alt="Woman wearing Atsevam anarkali" loading="lazy" />
+              <img src="/images/story-detail.png" alt="Macro detail of luxury zari gold embroidery" loading="lazy" />
             </div>
             <div className="av-story__split-content">
-              <p className="av-story__section-tag">The Woman</p>
+              <p className="av-story__section-tag">The Detail</p>
               <h2 className="av-story__section-title">Designed for Real Life</h2>
               <p className="av-story__body">
                 Our collections span the full spectrum of a woman's life — from the grandeur of a bridal lehenga to the ease of an everyday kurti. We believe that beautiful clothing shouldn't be reserved for special occasions alone.
@@ -173,7 +176,7 @@ export default function OurStory() {
               Every purchase directly supports the artisan families who made it.
             </p>
             <div className="av-story__cta-btns">
-              <Link to="/collections/lehenga" className="btn btn-primary btn-lg">
+              <Link to="/collections/lehengas" className="btn btn-primary btn-lg">
                 Shop Now
               </Link>
               <Link to="/pages/wholesale" className="btn btn-secondary btn-lg">

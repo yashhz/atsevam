@@ -1,4 +1,5 @@
 import type {Route} from './+types/pages.size-guide';
+import {Icon} from '~/components/ui/Icon';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'Size Guide — Atsevam'},
@@ -31,8 +32,9 @@ const SIZE_CHARTS = {
 export default function SizeGuide() {
   return (
     <div className="av-size-guide-page">
-      <div className="container container--narrow">
+      <div className="container av-size-guide-container">
         <header className="av-size-guide-page__header">
+          <p className="av-size-guide-page__eyebrow">Perfect Fit</p>
           <h1 className="av-size-guide-page__title">Size Guide</h1>
           <p className="av-size-guide-page__subtitle">
             Find your perfect fit with our detailed measurements
@@ -44,20 +46,32 @@ export default function SizeGuide() {
           <h2 className="av-size-guide__section-title">How to Measure</h2>
           <div className="av-size-guide__measure-grid">
             <div className="av-size-guide__measure-item">
-              <h3>Bust</h3>
-              <p>Measure around the fullest part of your bust, keeping the tape parallel to the floor.</p>
+              <div className="av-size-guide__measure-num">01</div>
+              <div className="av-size-guide__measure-content">
+                <h3>Bust</h3>
+                <p>Measure around the fullest part of your bust, keeping the tape parallel to the floor.</p>
+              </div>
             </div>
             <div className="av-size-guide__measure-item">
-              <h3>Waist</h3>
-              <p>Measure around your natural waistline, keeping the tape comfortably loose.</p>
+              <div className="av-size-guide__measure-num">02</div>
+              <div className="av-size-guide__measure-content">
+                <h3>Waist</h3>
+                <p>Measure around your natural waistline, keeping the tape comfortably loose.</p>
+              </div>
             </div>
             <div className="av-size-guide__measure-item">
-              <h3>Hip</h3>
-              <p>Measure around the fullest part of your hips, about 8 inches below your waist.</p>
+              <div className="av-size-guide__measure-num">03</div>
+              <div className="av-size-guide__measure-content">
+                <h3>Hip</h3>
+                <p>Measure around the fullest part of your hips, about 8 inches below your waist.</p>
+              </div>
             </div>
             <div className="av-size-guide__measure-item">
-              <h3>Length</h3>
-              <p>Measure from the shoulder seam to the desired hem length.</p>
+              <div className="av-size-guide__measure-num">04</div>
+              <div className="av-size-guide__measure-content">
+                <h3>Length</h3>
+                <p>Measure from the shoulder seam to the desired hem length.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -65,111 +79,141 @@ export default function SizeGuide() {
         {/* Lehenga Size Chart */}
         <section className="av-size-guide__section">
           <h2 className="av-size-guide__section-title">Lehenga & Anarkali</h2>
-          <div className="av-size-guide__table-wrapper">
-            <table className="av-size-guide__table">
-              <thead>
-                <tr>
-                  <th>Size</th>
-                  <th>Bust (inches)</th>
-                  <th>Waist (inches)</th>
-                  <th>Hip (inches)</th>
-                  <th>Length (inches)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SIZE_CHARTS.lehenga.map((row) => (
-                  <tr key={row.size}>
-                    <td><strong>{row.size}</strong></td>
-                    <td>{row.bust}</td>
-                    <td>{row.waist}</td>
-                    <td>{row.hip}</td>
-                    <td>{row.length}</td>
+          <div className="av-size-guide__table-container">
+            <div className="av-size-guide__scroll-hint">
+              <Icon name="refresh-cw" size={14} />
+              <span>Swipe horizontally to view chart →</span>
+            </div>
+            <div className="av-size-guide__table-wrapper">
+              <table className="av-size-guide__table">
+                <thead>
+                  <tr>
+                    <th>Size</th>
+                    <th>Bust (inches)</th>
+                    <th>Waist (inches)</th>
+                    <th>Hip (inches)</th>
+                    <th>Length (inches)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {SIZE_CHARTS.lehenga.map((row) => (
+                    <tr key={row.size}>
+                      <td><strong>{row.size}</strong></td>
+                      <td>{row.bust}</td>
+                      <td>{row.waist}</td>
+                      <td>{row.hip}</td>
+                      <td>{row.length}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
           <p className="av-size-guide__note">
-            Note: Anarkalis are semi-stitched and come in Free Size with adjustable waist.
+            * Note: Anarkalis are semi-stitched and come in Free Size with adjustable waist.
           </p>
         </section>
 
         {/* Kurti Size Chart */}
         <section className="av-size-guide__section">
           <h2 className="av-size-guide__section-title">Kurtis</h2>
-          <div className="av-size-guide__table-wrapper">
-            <table className="av-size-guide__table">
-              <thead>
-                <tr>
-                  <th>Size</th>
-                  <th>Bust (inches)</th>
-                  <th>Waist (inches)</th>
-                  <th>Hip (inches)</th>
-                  <th>Length (inches)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SIZE_CHARTS.kurti.map((row) => (
-                  <tr key={row.size}>
-                    <td><strong>{row.size}</strong></td>
-                    <td>{row.bust}</td>
-                    <td>{row.waist}</td>
-                    <td>{row.hip}</td>
-                    <td>{row.length}</td>
+          <div className="av-size-guide__table-container">
+            <div className="av-size-guide__scroll-hint">
+              <Icon name="refresh-cw" size={14} />
+              <span>Swipe horizontally to view chart →</span>
+            </div>
+            <div className="av-size-guide__table-wrapper">
+              <table className="av-size-guide__table">
+                <thead>
+                  <tr>
+                    <th>Size</th>
+                    <th>Bust (inches)</th>
+                    <th>Waist (inches)</th>
+                    <th>Hip (inches)</th>
+                    <th>Length (inches)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {SIZE_CHARTS.kurti.map((row) => (
+                    <tr key={row.size}>
+                      <td><strong>{row.size}</strong></td>
+                      <td>{row.bust}</td>
+                      <td>{row.waist}</td>
+                      <td>{row.hip}</td>
+                      <td>{row.length}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
         {/* Co-ord Size Chart */}
         <section className="av-size-guide__section">
           <h2 className="av-size-guide__section-title">Co-ord Sets</h2>
-          <div className="av-size-guide__table-wrapper">
-            <table className="av-size-guide__table">
-              <thead>
-                <tr>
-                  <th>Size</th>
-                  <th>Bust (inches)</th>
-                  <th>Waist (inches)</th>
-                  <th>Hip (inches)</th>
-                  <th>Top Length</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SIZE_CHARTS.coord.map((row) => (
-                  <tr key={row.size}>
-                    <td><strong>{row.size}</strong></td>
-                    <td>{row.bust}</td>
-                    <td>{row.waist}</td>
-                    <td>{row.hip}</td>
-                    <td>{row.topLength}</td>
+          <div className="av-size-guide__table-container">
+            <div className="av-size-guide__scroll-hint">
+              <Icon name="refresh-cw" size={14} />
+              <span>Swipe horizontally to view chart →</span>
+            </div>
+            <div className="av-size-guide__table-wrapper">
+              <table className="av-size-guide__table">
+                <thead>
+                  <tr>
+                    <th>Size</th>
+                    <th>Bust (inches)</th>
+                    <th>Waist (inches)</th>
+                    <th>Hip (inches)</th>
+                    <th>Top Length</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {SIZE_CHARTS.coord.map((row) => (
+                    <tr key={row.size}>
+                      <td><strong>{row.size}</strong></td>
+                      <td>{row.bust}</td>
+                      <td>{row.waist}</td>
+                      <td>{row.hip}</td>
+                      <td>{row.topLength}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
           <p className="av-size-guide__note">
-            Note: Co-ord sets feature elastic waistbands for flexible fit.
+            * Note: Co-ord sets feature elastic waistbands for flexible fit.
           </p>
         </section>
 
         {/* Tips */}
         <section className="av-size-guide__section">
           <h2 className="av-size-guide__section-title">Sizing Tips</h2>
-          <ul className="av-size-guide__tips">
-            <li>If you're between sizes, we recommend sizing up for a comfortable fit.</li>
-            <li>All measurements are in inches and approximate. Slight variations may occur due to handcrafted nature.</li>
-            <li>For custom sizing or alterations, contact us at atsevam1@gmail.com or +91 99799 05952</li>
-            <li>Check individual product pages for specific measurements and fit notes.</li>
+          <ul className="av-size-guide__tips-list">
+            <li>
+              <span className="av-size-guide__tip-dot">▪</span>
+              <span>If you're between sizes, we recommend sizing up for a comfortable fit.</span>
+            </li>
+            <li>
+              <span className="av-size-guide__tip-dot">▪</span>
+              <span>All measurements are in inches and approximate. Slight variations may occur due to handcrafted nature.</span>
+            </li>
+            <li>
+              <span className="av-size-guide__tip-dot">▪</span>
+              <span>For custom sizing or alterations, contact us at <a href="mailto:atsevam1@gmail.com">atsevam1@gmail.com</a> or <a href="tel:+919979905952">+91 99799 05952</a></span>
+            </li>
+            <li>
+              <span className="av-size-guide__tip-dot">▪</span>
+              <span>Check individual product pages for specific measurements and fit notes.</span>
+            </li>
           </ul>
         </section>
 
         <div className="av-size-guide-page__cta">
-          <p>Need help finding your size?</p>
+          <p>Need help finding your perfect size?</p>
           <a href="/pages/contact" className="btn btn-primary">
-            Contact Us
+            Contact Fit Expert
           </a>
         </div>
       </div>
