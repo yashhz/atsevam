@@ -186,7 +186,7 @@ export default function App() {
 
   // Initialize Judge.me — loads widget script once at app root
   useJudgeme({
-    shopDomain: 'atsevam.myshopify.com',
+    shopDomain: 'bgenfh-zn.myshopify.com',
     publicToken: 'JA1uQ-vNN6FTT5kLMRHJysHX-h8',
     cdnHost: 'https://cdn.judge.me',
   });
