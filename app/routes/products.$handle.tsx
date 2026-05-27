@@ -788,22 +788,41 @@ export default function Product() {
                   <Icon
                     key={idx}
                     name="star-filled"
-                    size={14}
+                    size={16}
                     strokeWidth={0}
                     className={idx < Math.round(totalReviews > 0 ? averageRating : mock.rating || 0) ? 'av-pdp__review-star' : 'av-pdp__review-star--empty'}
                   />
                 ))}
               </div>
               <p className="av-pdp__reviews-total">
-                Based on {totalReviews > 0 ? totalReviews : mock.reviewCount ?? 1000} verified reviews
+                {totalReviews > 0 ? totalReviews : mock.reviewCount ?? 1000} verified reviews
               </p>
+
+              {/* Rating bar breakdown */}
+              {totalReviews > 0 && (
+                <div className="av-pdp__reviews-bars">
+                  {[5, 4, 3, 2, 1].map((star) => {
+                    const count = reviews.filter((r: any) => r.rating === star).length;
+                    const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+                    return (
+                      <div key={star} className="av-pdp__reviews-bar-row">
+                        <span className="av-pdp__reviews-bar-label">{star}★</span>
+                        <div className="av-pdp__reviews-bar-track">
+                          <div className="av-pdp__reviews-bar-fill" style={{width: `${pct}%`}} />
+                        </div>
+                        <span className="av-pdp__reviews-bar-count">{count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Verified Review Form */}
             {isLoggedIn ? (
               hasPurchased ? (
                 <fetcher.Form ref={formRef} method="post" className="av-pdp__review-form">
-                  <h3 className="av-pdp__review-form-title">Write a Verified Review</h3>
+                  <h3 className="av-pdp__review-form-title">✍️ Write a Review</h3>
                   
                   <div className="av-pdp__review-input-group">
                     <label className="av-pdp__review-label">Your Rating</label>
@@ -818,7 +837,7 @@ export default function Product() {
                             onClick={() => setUserRating(currentStar)}
                             aria-label={`Rate ${currentStar} stars`}
                           >
-                            <Icon name="star-filled" size={20} strokeWidth={0} />
+                            <Icon name="star-filled" size={22} strokeWidth={0} />
                           </button>
                         );
                       })}
@@ -867,12 +886,12 @@ export default function Product() {
                     disabled={fetcher.state === 'submitting'}
                     className="av-pdp__review-submit-btn"
                   >
-                    {fetcher.state === 'submitting' ? 'Submitting Verified Review...' : 'Submit Verified Review'}
+                    {fetcher.state === 'submitting' ? 'Submitting...' : 'Submit Verified Review'}
                   </button>
 
                   {fetcher.data && (fetcher.data as any).success && (
                     <div className="av-pdp__reviews-success">
-                      🎉 Thank you! Your verified review has been submitted successfully.
+                      🎉 Thank you! Your verified review has been submitted.
                     </div>
                   )}
 
@@ -885,7 +904,7 @@ export default function Product() {
               ) : (
                 <div className="av-pdp__review-form">
                   <div className="av-pdp__reviews-lock-card">
-                    <Icon name="shield" size={24} strokeWidth={1.5} />
+                    <Icon name="shield" size={28} strokeWidth={1.5} />
                     <h3 className="av-pdp__reviews-lock-title">Review Locked</h3>
                     <p className="av-pdp__reviews-lock-sub">
                       Only verified buyers who purchased this product from Atsevam can leave a review.
@@ -896,10 +915,10 @@ export default function Product() {
             ) : (
               <div className="av-pdp__review-form">
                 <div className="av-pdp__reviews-lock-card">
-                  <Icon name="shield" size={24} strokeWidth={1.5} />
-                  <h3 className="av-pdp__reviews-lock-title">Login Required</h3>
+                  <Icon name="shield" size={28} strokeWidth={1.5} />
+                  <h3 className="av-pdp__reviews-lock-title">Login to Review</h3>
                   <p className="av-pdp__reviews-lock-sub">
-                    Please log into your Atsevam account to verify your purchase and leave a review.
+                    Sign in to your Atsevam account to verify your purchase and share your experience.
                   </p>
                   <a href="/account/login" className="av-pdp__reviews-lock-btn">
                     Sign In to Account
@@ -918,16 +937,22 @@ export default function Product() {
                   month: 'short',
                   year: 'numeric',
                 });
+                const initials = review.author_name
+                  ? review.author_name.split(' ').map((w: string) => w[0]).join('').substring(0, 2).toUpperCase()
+                  : '?';
                 return (
                   <div key={review.id} className="av-pdp__review-card">
                     <div className="av-pdp__review-card-head">
                       <div className="av-pdp__review-author-info">
-                        <span className="av-pdp__review-author">{review.author_name}</span>
-                        {review.verified_buyer && (
-                          <span className="av-pdp__review-verified">
-                            <Icon name="check-circle" size={10} strokeWidth={2.5} /> Verified Buyer
-                          </span>
-                        )}
+                        <div className="av-pdp__review-avatar" aria-hidden="true">{initials}</div>
+                        <div className="av-pdp__review-author-meta">
+                          <span className="av-pdp__review-author">{review.author_name}</span>
+                          {review.verified_buyer && (
+                            <span className="av-pdp__review-verified">
+                              <Icon name="check-circle" size={10} strokeWidth={2.5} /> Verified Buyer
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <span className="av-pdp__review-date">{dateStr}</span>
                     </div>
@@ -936,7 +961,7 @@ export default function Product() {
                         <Icon
                           key={idx}
                           name="star-filled"
-                          size={12}
+                          size={13}
                           strokeWidth={0}
                           className={idx < review.rating ? 'av-pdp__review-star' : 'av-pdp__review-star--empty'}
                         />
@@ -948,7 +973,7 @@ export default function Product() {
                 );
               })
             ) : (
-              <div className="av-pdp__review-card" style={{ textAlign: 'center', padding: 'var(--space-12) var(--space-6)' }}>
+              <div className="av-pdp__review-card" style={{ textAlign: 'center', padding: 'var(--space-16) var(--space-6)' }}>
                 <p style={{ color: 'var(--color-muted)', fontSize: 'var(--text-sm)' }}>
                   No reviews yet for this product. Be the first verified purchaser to share your experience!
                 </p>
