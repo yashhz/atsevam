@@ -15,36 +15,57 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     id: '1',
     title: 'Lehengas',
     handle: 'lehengas',
-    image: '/images/lehenga.jpg',
+    image: '/images/homepage/lehenga.jpeg',
     description: 'Bridal & Festive Collection',
   },
   {
     id: '2',
     title: 'Anarkali Suits',
     handle: 'anarkali',
-    image: '/images/anarkali.jpg',
+    image: '/images/homepage/anarkali1.jpeg',
     description: 'Elegant Traditional Wear',
   },
   {
     id: '3',
     title: 'Designer Kurtis',
     handle: 'kurtis',
-    image: '/images/kurti.jpg',
+    image: '/images/homepage/kurti.jpeg',
     description: 'Contemporary Ethnic Style',
   },
   {
     id: '4',
     title: 'Co-ord Sets',
     handle: 'co-ords',
-    image: '/images/coord.jpg',
+    image: '/images/homepage/co ord set.jpeg',
     description: 'Modern Fusion Wear',
   },
   {
     id: '5',
-    title: 'Sarees',
+    title: 'Traditional Sarees',
     handle: 'sarees',
-    image: '/images/lehenga.jpg',
-    description: 'Timeless Elegance',
+    image: '/images/homepage/1 (3).jpeg',
+    description: 'Timeless Elegance & Grace',
+  },
+  {
+    id: '6',
+    title: 'Navratri Special',
+    handle: 'navratri-lehenga-choli',
+    image: '/images/homepage/lehenga choli.jpeg',
+    description: 'Vibrant Festive Collection',
+  },
+  {
+    id: '7',
+    title: 'Western Wear',
+    handle: 'western-dresses',
+    image: '/images/homepage/1 (7).jpeg',
+    description: 'Modern Silhouettes, Classic Craft',
+  },
+  {
+    id: '8',
+    title: 'New Arrivals',
+    handle: 'new-arrivals',
+    image: '/images/homepage/1 (8).jpeg',
+    description: 'Fresh Runway Handcrafts',
   },
 ];
 
@@ -52,6 +73,10 @@ export function CategoryBanner() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Swipe states for Myntra/Ajio mobile responsive feel
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const totalSlides = CATEGORY_SLIDES.length;
 
@@ -61,7 +86,7 @@ export function CategoryBanner() {
 
     timeoutRef.current = setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
-    }, 4000); // 4 seconds per slide
+    }, 4500); // 4.5 seconds per slide
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -85,7 +110,7 @@ export function CategoryBanner() {
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
     setIsAutoPlaying(false);
-    // Resume auto-play after 8 seconds of manual interaction
+    // Resume auto-play after manual interaction
     setTimeout(() => setIsAutoPlaying(true), 8000);
   };
 
@@ -101,9 +126,38 @@ export function CategoryBanner() {
     setTimeout(() => setIsAutoPlaying(true), 8000);
   };
 
+  // Swipe handlers
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      nextSlide();
+    } else if (isRightSwipe) {
+      prevSlide();
+    }
+  };
+
   return (
     <section className="av-category-banner" aria-label="Product categories carousel">
-      <div className="av-category-banner__container">
+      <div 
+        className="av-category-banner__container"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Slides */}
         <div className="av-category-banner__slides" role="region" aria-live="polite">
           {CATEGORY_SLIDES.map((slide, index) => (
@@ -124,7 +178,7 @@ export function CategoryBanner() {
                   src={slide.image}
                   alt={slide.title}
                   className="av-category-banner__image"
-                  loading={index <= 1 ? 'eager' : 'lazy'}
+                  loading={index === 0 ? 'eager' : 'lazy'}
                 />
                 <div className="av-category-banner__overlay" />
               </div>
