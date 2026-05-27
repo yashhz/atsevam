@@ -21,6 +21,8 @@ export default async function handleRequest(
     },
     scriptSrc: [
       "'self'",
+      "'unsafe-inline'",
+      "'unsafe-eval'",
       'https://cdn.judge.me',
       'https://judge.me',
     ],
