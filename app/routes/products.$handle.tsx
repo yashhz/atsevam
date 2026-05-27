@@ -1,4 +1,4 @@
-import {useLoaderData} from 'react-router';
+import {useLoaderData, Form, useNavigation, useFetcher} from 'react-router';
 import {useState, useRef, useEffect} from 'react';
 import {JudgemeReviewWidget} from '@judgeme/shopify-hydrogen';
 import type {Route} from './+types/products.$handle';
@@ -48,10 +48,185 @@ export const meta: Route.MetaFunction = ({data}) => {
   ];
 };
 
+export async function action({request, context, params}: Route.ActionArgs) {
+  const {handle} = params;
+  if (!handle) throw new Error('Expected product handle');
+
+  const {customerAccount} = context;
+  const isLoggedIn = await customerAccount.isLoggedIn();
+
+  if (!isLoggedIn) {
+    return {error: 'You must be logged in to leave a review.'};
+  }
+
+  // 1. Verify purchase
+  const VERIFY_PURCHASES_QUERY = `
+    query VerifyPurchasesAction {
+      customer {
+        orders(first: 100) {
+          nodes {
+            lineItems(first: 100) {
+              nodes {
+                merchandise {
+                  ... on ProductVariant {
+                    product {
+                      handle
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  let hasPurchased = false;
+  try {
+    const {data} = await customerAccount.query(VERIFY_PURCHASES_QUERY);
+    const purchasedHandles = data?.customer?.orders?.nodes?.flatMap((order: any) => 
+      order.lineItems?.nodes?.map((item: any) => item.merchandise?.product?.handle)
+    ).filter(Boolean) || [];
+    hasPurchased = purchasedHandles.includes(handle);
+  } catch (err) {
+    console.error('Failed to verify purchase in action:', err);
+  }
+
+  if (!hasPurchased) {
+    return {error: 'Only verified buyers who purchased this item can write a review.'};
+  }
+
+  // 2. Extract form data
+  const formData = await request.formData();
+  const author_name = formData.get('author_name')?.toString();
+  const rating = parseInt(formData.get('rating')?.toString() || '5', 10);
+  const title = formData.get('title')?.toString();
+  const body = formData.get('body')?.toString();
+
+  if (!author_name || !title || !body || isNaN(rating)) {
+    return {error: 'All fields are required.'};
+  }
+
+  // 3. Save to Supabase
+  const SUPABASE_URL = 'https://ymwnsesccyrngeaxomzr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify({
+        product_handle: handle,
+        author_name,
+        rating,
+        title,
+        body,
+        verified_buyer: true,
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('Supabase write error:', errText);
+      return {error: 'Failed to save review. Please try again.'};
+    }
+
+    return {success: true};
+  } catch (err) {
+    console.error('Supabase save failed:', err);
+    return {error: 'Network error. Please try again.'};
+  }
+}
+
 export async function loader(args: Route.LoaderArgs) {
   const deferredData = loadDeferredData(args);
   const criticalData = await loadCriticalData(args);
-  return {...deferredData, ...criticalData};
+  const {handle} = args.params;
+  const {customerAccount} = args.context;
+
+  // 1. Check login
+  const isLoggedIn = await customerAccount.isLoggedIn();
+
+  // 2. Verify purchase if logged in
+  let hasPurchased = false;
+  let customerName = '';
+  if (isLoggedIn) {
+    try {
+      const VERIFY_PURCHASES_QUERY = `
+        query VerifyPurchasesLoader {
+          customer {
+            firstName
+            lastName
+            orders(first: 100) {
+              nodes {
+                lineItems(first: 100) {
+                  nodes {
+                    merchandise {
+                      ... on ProductVariant {
+                        product {
+                          handle
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+      const {data} = await customerAccount.query(VERIFY_PURCHASES_QUERY);
+      if (data?.customer) {
+        customerName = `${data.customer.firstName || ''} ${data.customer.lastName || ''}`.trim();
+        const purchasedHandles = data.customer.orders?.nodes?.flatMap((order: any) => 
+          order.lineItems?.nodes?.map((item: any) => item.merchandise?.product?.handle)
+        ).filter(Boolean) || [];
+        hasPurchased = purchasedHandles.includes(handle);
+      }
+    } catch (err) {
+      console.error('Failed to verify purchase in loader:', err);
+    }
+  }
+
+  // 3. Fetch reviews from Supabase
+  const SUPABASE_URL = 'https://ymwnsesccyrngeaxomzr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r';
+  let reviews = [];
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?product_handle=eq.${handle}&select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      }
+    });
+    if (res.ok) {
+      reviews = await res.json();
+    }
+  } catch (err) {
+    console.error('Failed to fetch reviews from Supabase:', err);
+  }
+
+  const totalReviews = reviews.length;
+  const averageRating = totalReviews > 0 
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews 
+    : 0;
+
+  return {
+    ...deferredData,
+    ...criticalData,
+    isLoggedIn,
+    hasPurchased,
+    customerName,
+    reviews,
+    averageRating,
+    totalReviews,
+  };
 }
 
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
@@ -354,10 +529,31 @@ function loadDeferredData(_args: Route.LoaderArgs) {
 // ─── Page ─────────────────────────────────────────────────────────
 
 export default function Product() {
-  const {product, mockProduct, useMock} = useLoaderData<typeof loader>();
+  const {
+    product,
+    mockProduct,
+    useMock,
+    isLoggedIn,
+    hasPurchased,
+    customerName,
+    reviews,
+    averageRating,
+    totalReviews,
+  } = useLoaderData<typeof loader>();
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const fetcher = useFetcher();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [userRating, setUserRating] = useState(5);
+
+  useEffect(() => {
+    if (fetcher.data && (fetcher.data as any).success) {
+      formRef.current?.reset();
+      setUserRating(5);
+    }
+  }, [fetcher.data]);
 
   // Shopify variant logic — hooks must always be called (React rules)
   const selectedVariant = useOptimisticVariant(
@@ -463,11 +659,11 @@ export default function Product() {
                 name="star-filled"
                 size={14}
                 strokeWidth={0}
-                className={i < Math.floor(mock.rating || 0) ? '' : 'av-pdp__star--empty'}
+                className={i < Math.floor(totalReviews > 0 ? averageRating : mock.rating || 0) ? '' : 'av-pdp__star--empty'}
               />
             ))}
-            <span className="av-pdp__rating-score">{(mock.rating ?? 4.8).toFixed(1)}/5</span>
-            <span className="star-rating__count">({mock.reviewCount ?? 1000}+ reviews)</span>
+            <span className="av-pdp__rating-score">{(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)}/5</span>
+            <span className="star-rating__count">({totalReviews > 0 ? totalReviews : mock.reviewCount ?? 1000} reviews)</span>
           </div>
           <p className="av-pdp__loved-line">
             ❤️ Loved by 1,000+ customers
@@ -567,16 +763,199 @@ export default function Product() {
         </div>
       </div>
 
-      {/* ── Judge.me Reviews Widget ──────────────────────────────── */}
+      {/* ── Verified Customer Reviews ──────────────────────────────── */}
       <div className="av-pdp__reviews container">
         <div className="av-pdp__reviews-header">
           <span className="av-pdp__reviews-eyebrow">Customer Reviews</span>
           <h2 className="av-pdp__reviews-title">What Our Customers Say</h2>
           <p className="av-pdp__reviews-subtitle">
-            Real reviews from real customers who love our handcrafted ethnic wear
+            Real, verified reviews from genuine customers who love our premium ethnic wear
           </p>
         </div>
-        <JudgemeReviewWidget id={product.id} />
+
+        <div className="av-pdp__reviews-layout">
+          {/* Left Side: Overview & Form */}
+          <div className="av-pdp__reviews-left">
+            <div className="av-pdp__reviews-overview">
+              <div className="av-pdp__reviews-avg-block">
+                <span className="av-pdp__reviews-avg-rating">
+                  {(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)}
+                </span>
+                <span className="av-pdp__reviews-avg-max">/5</span>
+              </div>
+              <div className="av-pdp__review-stars">
+                {Array.from({length: 5}).map((_, idx) => (
+                  <Icon
+                    key={idx}
+                    name="star-filled"
+                    size={14}
+                    strokeWidth={0}
+                    className={idx < Math.round(totalReviews > 0 ? averageRating : mock.rating || 0) ? 'av-pdp__review-star' : 'av-pdp__review-star--empty'}
+                  />
+                ))}
+              </div>
+              <p className="av-pdp__reviews-total">
+                Based on {totalReviews > 0 ? totalReviews : mock.reviewCount ?? 1000} verified reviews
+              </p>
+            </div>
+
+            {/* Verified Review Form */}
+            {isLoggedIn ? (
+              hasPurchased ? (
+                <fetcher.Form ref={formRef} method="post" className="av-pdp__review-form">
+                  <h3 className="av-pdp__review-form-title">Write a Verified Review</h3>
+                  
+                  <div className="av-pdp__review-input-group">
+                    <label className="av-pdp__review-label">Your Rating</label>
+                    <div className="av-pdp__stars-selector">
+                      {Array.from({length: 5}).map((_, i) => {
+                        const currentStar = i + 1;
+                        return (
+                          <button
+                            key={i}
+                            type="button"
+                            className={`av-pdp__star-btn${currentStar <= userRating ? '' : ' av-pdp__star-btn--empty'}`}
+                            onClick={() => setUserRating(currentStar)}
+                            aria-label={`Rate ${currentStar} stars`}
+                          >
+                            <Icon name="star-filled" size={20} strokeWidth={0} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <input type="hidden" name="rating" value={userRating} />
+                  </div>
+
+                  <div className="av-pdp__review-input-group">
+                    <label htmlFor="author_name" className="av-pdp__review-label">Display Name</label>
+                    <input
+                      id="author_name"
+                      name="author_name"
+                      type="text"
+                      defaultValue={customerName}
+                      placeholder="e.g. Priyanjali"
+                      required
+                      className="av-pdp__review-input"
+                    />
+                  </div>
+
+                  <div className="av-pdp__review-input-group">
+                    <label htmlFor="title" className="av-pdp__review-label">Review Title</label>
+                    <input
+                      id="title"
+                      name="title"
+                      type="text"
+                      placeholder="e.g. Stunning flare and premium fabric!"
+                      required
+                      className="av-pdp__review-input"
+                    />
+                  </div>
+
+                  <div className="av-pdp__review-input-group">
+                    <label htmlFor="body" className="av-pdp__review-label">Review Details</label>
+                    <textarea
+                      id="body"
+                      name="body"
+                      placeholder="Share details about the embroidery, flare width, stitching quality, etc."
+                      required
+                      className="av-pdp__review-textarea"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={fetcher.state === 'submitting'}
+                    className="av-pdp__review-submit-btn"
+                  >
+                    {fetcher.state === 'submitting' ? 'Submitting Verified Review...' : 'Submit Verified Review'}
+                  </button>
+
+                  {fetcher.data && (fetcher.data as any).success && (
+                    <div className="av-pdp__reviews-success">
+                      🎉 Thank you! Your verified review has been submitted successfully.
+                    </div>
+                  )}
+
+                  {fetcher.data && (fetcher.data as any).error && (
+                    <div className="av-pdp__reviews-error">
+                      ⚠️ {(fetcher.data as any).error}
+                    </div>
+                  )}
+                </fetcher.Form>
+              ) : (
+                <div className="av-pdp__review-form">
+                  <div className="av-pdp__reviews-lock-card">
+                    <Icon name="shield" size={24} strokeWidth={1.5} />
+                    <h3 className="av-pdp__reviews-lock-title">Review Locked</h3>
+                    <p className="av-pdp__reviews-lock-sub">
+                      Only verified buyers who purchased this product from Atsevam can leave a review.
+                    </p>
+                  </div>
+                </div>
+              )
+            ) : (
+              <div className="av-pdp__review-form">
+                <div className="av-pdp__reviews-lock-card">
+                  <Icon name="shield" size={24} strokeWidth={1.5} />
+                  <h3 className="av-pdp__reviews-lock-title">Login Required</h3>
+                  <p className="av-pdp__reviews-lock-sub">
+                    Please log into your Atsevam account to verify your purchase and leave a review.
+                  </p>
+                  <a href="/account/login" className="av-pdp__reviews-lock-btn">
+                    Sign In to Account
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Side: Reviews List */}
+          <div className="av-pdp__reviews-list">
+            {reviews && reviews.length > 0 ? (
+              reviews.map((review: any) => {
+                const dateStr = new Date(review.created_at).toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                });
+                return (
+                  <div key={review.id} className="av-pdp__review-card">
+                    <div className="av-pdp__review-card-head">
+                      <div className="av-pdp__review-author-info">
+                        <span className="av-pdp__review-author">{review.author_name}</span>
+                        {review.verified_buyer && (
+                          <span className="av-pdp__review-verified">
+                            <Icon name="check-circle" size={10} strokeWidth={2.5} /> Verified Buyer
+                          </span>
+                        )}
+                      </div>
+                      <span className="av-pdp__review-date">{dateStr}</span>
+                    </div>
+                    <div className="av-pdp__review-stars">
+                      {Array.from({length: 5}).map((_, idx) => (
+                        <Icon
+                          key={idx}
+                          name="star-filled"
+                          size={12}
+                          strokeWidth={0}
+                          className={idx < review.rating ? 'av-pdp__review-star' : 'av-pdp__review-star--empty'}
+                        />
+                      ))}
+                    </div>
+                    <h4 className="av-pdp__review-card-title">{review.title}</h4>
+                    <p className="av-pdp__review-card-body">{review.body}</p>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="av-pdp__review-card" style={{ textAlign: 'center', padding: 'var(--space-12) var(--space-6)' }}>
+                <p style={{ color: 'var(--color-muted)', fontSize: 'var(--text-sm)' }}>
+                  No reviews yet for this product. Be the first verified purchaser to share your experience!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* You May Also Like */}
