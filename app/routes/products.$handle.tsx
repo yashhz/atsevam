@@ -1,5 +1,6 @@
 import {useLoaderData} from 'react-router';
 import {useState, useRef, useEffect} from 'react';
+import {JudgemeReviewWidget} from '@judgeme/shopify-hydrogen';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -575,17 +576,7 @@ export default function Product() {
             Real reviews from real customers who love our handcrafted ethnic wear
           </p>
         </div>
-        <div
-          id="judgeme_product_widget"
-          className="jdgm-widget jdgm-review-widget"
-          data-id={product?.id?.split('/').pop() ?? ''}
-          data-product-title={product?.title ?? mockProduct?.title ?? ''}
-        >
-          {/* Fallback content while Judge.me loads */}
-          <div className="av-pdp__reviews-loading">
-            <p>Loading reviews...</p>
-          </div>
-        </div>
+        <JudgemeReviewWidget id={product.id} />
       </div>
 
       {/* You May Also Like */}

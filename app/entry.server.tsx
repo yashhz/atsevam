@@ -19,6 +19,31 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    scriptSrc: [
+      "'self'",
+      'https://cdn.judge.me',
+      'https://judge.me',
+    ],
+    connectSrc: [
+      "'self'",
+      'https://judge.me',
+      'https://cdn.judge.me',
+    ],
+    imgSrc: [
+      "'self'",
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+      'https://cdn.judge.me',
+      'https://judge.me',
+      'data:',
+    ],
+    styleSrc: [
+      "'self'",
+      "'unsafe-inline'",
+      'https://cdn.shopify.com',
+      'https://cdn.judge.me',
+      'https://judge.me',
+    ],
   });
 
   const body = await renderToReadableStream(
