@@ -1352,7 +1352,6 @@
   position: relative;
   width: 100%;
   aspect-ratio: 2752 / 1536; /* Perfect dynamic scaling based on the exact 2752x1536 resolution! */
-  max-width: var(--max-width);
   margin: 0 auto;
   min-height: 320px; /* Fallback on extremely small screens */
 }
@@ -1430,22 +1429,30 @@
 
 .av-category-banner__title {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4.5vw, 3.25rem);
-  font-weight: var(--weight-light);
+  font-size: clamp(2.25rem, 5.5vw, 4rem); /* Increased size for strong luxury banner presence */
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-wide);
   color: var(--color-white);
   margin-bottom: var(--space-2);
-  line-height: 1.15;
+  line-height: 1.1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Soft premium shadow for maximum legibility */
 }
 
 .av-category-banner__description {
   font-family: var(--font-body);
-  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
-  font-weight: var(--weight-regular);
+  font-size: clamp(0.9rem, 2vw, 1.15rem); /* Increased slightly for premium fashion feel */
+  font-weight: 500; /* Bolded a bit by default */
   letter-spacing: var(--tracking-wide);
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: var(--space-4);
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: var(--space-5);
   max-width: 500px;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+  transition: font-weight 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease, transform 0.3s ease;
+}
+
+.av-category-banner__slide:hover .av-category-banner__description {
+  font-weight: 700; /* Subheader gets bold on hover! */
+  color: var(--color-white);
 }
 
 .av-category-banner__cta {
