@@ -1,5 +1,5 @@
 import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
-import { useJudgeme } from '@judgeme/shopify-hydrogen';
+import {useJudgemeCustom} from '~/hooks/useJudgemeCustom';
 import {
   Outlet,
   useRouteError,
@@ -183,12 +183,14 @@ export function Layout({children}: {children?: React.ReactNode}) {
 
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
+  const nonce = useNonce();
 
-  // Initialize Judge.me — loads widget script once at app root
-  useJudgeme({
+  // Initialize Judge.me — loads widget script once at app root with CSP nonce
+  useJudgemeCustom({
     shopDomain: 'bgenfh-zn.myshopify.com',
     publicToken: 'JA1uQ-vNN6FTT5kLMRHJysHX-h8',
     cdnHost: 'https://cdn.judge.me',
+    nonce,
   });
 
   if (!data) {

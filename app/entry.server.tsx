@@ -23,6 +23,8 @@ export default async function handleRequest(
       "'self'",
       "'unsafe-inline'",
       "'unsafe-eval'",
+      'https://cdn.shopify.com',
+      'https://shopify.com',
       'https://cdn.judge.me',
       'https://*.judge.me',
       'https://judge.me',
@@ -32,6 +34,7 @@ export default async function handleRequest(
       'https://judge.me',
       'https://cdn.judge.me',
       'https://*.judge.me',
+      'https://cdn.shopify.com',
     ],
     imgSrc: [
       "'self'",
@@ -49,6 +52,14 @@ export default async function handleRequest(
       'https://cdn.judge.me',
       'https://*.judge.me',
       'https://judge.me',
+      'https://fonts.googleapis.com',
+      'https://fonts.gstatic.com',
+    ],
+    fontSrc: [
+      "'self'",
+      'https://fonts.gstatic.com',
+      'https://fonts.googleapis.com',
+      'data:',
     ],
   });
 
