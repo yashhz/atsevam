@@ -1351,7 +1351,7 @@
 .av-category-banner__container {
   position: relative;
   width: 100%;
-  aspect-ratio: 2752 / 1536; /* Perfect dynamic scaling based on the exact 2752x1536 resolution! */
+  aspect-ratio: 2752 / 1300; /* Wider aspect ratio to naturally crop and fit desktop screens */
   margin: 0 auto;
   min-height: 320px; /* Fallback on extremely small screens */
 }
@@ -1392,12 +1392,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 18%; /* Shift focus up slightly to crop from the bottom and keep faces/torso centered */
   transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .av-category-banner__slide:hover .av-category-banner__image {
-  transform: scale(1.03);
+  transform: scale(1.03) translateY(-1%); /* Add a subtle dynamic parallax lift on hover */
 }
 
 .av-category-banner__overlay {
@@ -1429,29 +1429,29 @@
 
 .av-category-banner__title {
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 5.5vw, 4rem); /* Increased size for strong luxury banner presence */
-  font-weight: var(--weight-regular);
+  font-size: clamp(2.75rem, 6.5vw, 4.75rem); /* Significantly enlarged for ultra-prominent luxury banner look */
+  font-weight: 600; /* Bold display font for strong Myntra/Ajio style presence */
   letter-spacing: var(--tracking-wide);
   color: var(--color-white);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
   line-height: 1.1;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Soft premium shadow for maximum legibility */
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2); /* Enhanced soft shadow for premium contrast */
 }
 
 .av-category-banner__description {
   font-family: var(--font-body);
-  font-size: clamp(0.9rem, 2vw, 1.15rem); /* Increased slightly for premium fashion feel */
-  font-weight: 500; /* Bolded a bit by default */
+  font-size: clamp(1.15rem, 2.5vw, 1.45rem); /* Increased for a premium and prominent fashion statement */
+  font-weight: 600; /* Strong medium-bold category text by default */
   letter-spacing: var(--tracking-wide);
   color: rgba(255, 255, 255, 0.95);
-  margin-bottom: var(--space-5);
-  max-width: 500px;
-  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+  margin-bottom: var(--space-6);
+  max-width: 600px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
   transition: font-weight 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease, transform 0.3s ease;
 }
 
 .av-category-banner__slide:hover .av-category-banner__description {
-  font-weight: 700; /* Subheader gets bold on hover! */
+  font-weight: 700; /* Deep bold on active hover state */
   color: var(--color-white);
 }
 
