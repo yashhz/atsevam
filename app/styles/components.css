@@ -1392,12 +1392,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 18%; /* Shift focus up slightly to crop from the bottom and keep faces/torso centered */
+  object-position: center top; /* Align strictly to the top to ensure heads are never cropped, cropping exclusively from the bottom */
   transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .av-category-banner__slide:hover .av-category-banner__image {
-  transform: scale(1.03) translateY(-1%); /* Add a subtle dynamic parallax lift on hover */
+  transform: scale(1.03); /* Clean premium scale zoom on active hover */
 }
 
 .av-category-banner__overlay {
