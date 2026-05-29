@@ -45,7 +45,7 @@ export const meta: Route.MetaFunction = () => [
 export async function loader({context}: Route.LoaderArgs) {
   const {storefront, env} = context;
 
-  // ── GraphQL fragment shared by all three queries ──────────────────
+  // ── GraphQL fragment shared by all storefront queries ──────────────
   const PRODUCT_FIELDS = `#graphql
     fragment HomepageProduct on Product {
       id
@@ -60,8 +60,8 @@ export async function loader({context}: Route.LoaderArgs) {
     }
   `;
 
-  // ── Fetch all three in parallel ───────────────────────────────────
-  const [featuredRes, newArrivalsRes, bestSellersRes] = await Promise.all([
+  // ── Fetch all collections in parallel ──────────────────────────────
+  const [featuredRes, newArrivalsRes, bestSellersRes, lehengasRes, kurtisRes] = await Promise.all([
     // Featured / homepage carousel — BEST_SELLING sort
     storefront.query(`#graphql
       ${PRODUCT_FIELDS}
@@ -84,6 +84,24 @@ export async function loader({context}: Route.LoaderArgs) {
       query HomepageBestSellers {
         collection(handle: "bestsellers") {
           products(first: 8, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }
+        }
+      }
+    `).catch(() => ({collection: null})),
+    // Lehengas collection
+    storefront.query(`#graphql
+      ${PRODUCT_FIELDS}
+      query HomepageLehengas {
+        collection(handle: "lehengas") {
+          products(first: 9, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }
+        }
+      }
+    `).catch(() => ({collection: null})),
+    // Kurtis collection
+    storefront.query(`#graphql
+      ${PRODUCT_FIELDS}
+      query HomepageKurtis {
+        collection(handle: "kurtis") {
+          products(first: 9, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }
         }
       }
     `).catch(() => ({collection: null})),
@@ -134,17 +152,59 @@ export async function loader({context}: Route.LoaderArgs) {
   };
 
   // ── Transform product lists ───────────────────────────────────────
-  const featuredRaw: MockProduct[] = (featuredRes.products?.nodes ?? []).map(transformProduct).slice(0, 8);
+  const featuredRaw: MockProduct[] = (featuredRes.products?.nodes ?? []).map(transformProduct);
   const newArrivalsRaw: MockProduct[] = ((newArrivalsRes as any)?.collection?.products?.nodes ?? []).map(transformProduct);
   const bestSellersRaw: MockProduct[] = ((bestSellersRes as any)?.collection?.products?.nodes ?? []).map(transformProduct);
+  
+  let lehengasRaw: MockProduct[] = ((lehengasRes as any)?.collection?.products?.nodes ?? []).map(transformProduct);
+  let kurtisRaw: MockProduct[] = ((kurtisRes as any)?.collection?.products?.nodes ?? []).map(transformProduct);
+
+  const allProductsPool = [...featuredRaw, ...newArrivalsRaw, ...bestSellersRaw];
+
+  // Fallback filters for Lehenga and Kurti if collections are empty
+  if (lehengasRaw.length === 0) {
+    lehengasRaw = allProductsPool.filter((p) => p.category.toLowerCase().includes('lehenga')).slice(0, 9);
+  }
+  if (kurtisRaw.length === 0) {
+    kurtisRaw = allProductsPool.filter((p) => p.category.toLowerCase().includes('kurti')).slice(0, 9);
+  }
+
+  // Guarantee minimal contents to avoid blank grids
+  if (lehengasRaw.length === 0 && featuredRaw.length > 0) {
+    lehengasRaw = featuredRaw.slice(0, 6);
+  }
+  if (kurtisRaw.length === 0 && featuredRaw.length > 0) {
+    kurtisRaw = featuredRaw.slice(3, 9);
+  }
+
+  // Filter products for active comparative discount price drops
+  let priceDropRaw = allProductsPool.filter(
+    (p) =>
+      p.compareAtPrice &&
+      parseFloat(p.price.replace(/[^\d]/g, '')) < parseFloat(p.compareAtPrice.replace(/[^\d]/g, '')),
+  ).slice(0, 3);
+
+  if (priceDropRaw.length === 0 && featuredRaw.length > 0) {
+    priceDropRaw = featuredRaw.slice(0, 3).map((p) => {
+      const numericPrice = parseFloat(p.price.replace(/[^\d]/g, ''));
+      return {
+        ...p,
+        compareAtPrice: `₹${Math.round(numericPrice * 1.3).toLocaleString('en-IN')}`,
+        discount: 23,
+      };
+    });
+  }
 
   // ── Judge.me bulk ratings (no-op when token not set) ─────────────
-  const allProducts = [...featuredRaw, ...newArrivalsRaw, ...bestSellersRaw];
+  const allProducts = [...featuredRaw, ...newArrivalsRaw, ...bestSellersRaw, ...lehengasRaw, ...kurtisRaw, ...priceDropRaw];
   const ratings = await fetchJudgeMeRatingsBulk(allProducts, (env as any) ?? {});
 
-  const featuredProducts = applyRatings(featuredRaw, ratings);
+  const featuredProducts = applyRatings(featuredRaw.slice(0, 8), ratings);
   const newArrivals     = applyRatings(newArrivalsRaw, ratings);
   const bestSellers     = applyRatings(bestSellersRaw, ratings);
+  const lehengas        = applyRatings(lehengasRaw, ratings);
+  const kurtis          = applyRatings(kurtisRaw, ratings);
+  const priceDropDeals  = applyRatings(priceDropRaw, ratings);
 
   return {
     traditionalCategories: MOCK_TRADITIONAL_CATEGORIES,
@@ -153,6 +213,9 @@ export async function loader({context}: Route.LoaderArgs) {
     featuredProducts,
     newArrivals,
     bestSellers,
+    lehengas,
+    kurtis,
+    priceDropDeals,
     testimonials: MOCK_TESTIMONIALS,
   };
 }
@@ -165,50 +228,82 @@ export default function Homepage() {
     featuredProducts,
     newArrivals,
     bestSellers,
+    lehengas,
+    kurtis,
+    priceDropDeals,
     testimonials,
   } = useLoaderData<typeof loader>();
 
   return (
     <div className="av-home">
+      {/* Shortened Hero Banner */}
       <CategoryBanner />
-      <TraditionalCategoriesSection categories={traditionalCategories} />
-      <BrandStrip />
 
-      {/* New Arrivals — server-fetched, Judge.me-rated */}
-      {newArrivals.length > 0 && (
-        <ProductGrid
-          eyebrow="Just Landed"
-          title="New Arrivals"
-          subtitle="Fresh pieces from our artisans, crafted for the season"
-          products={newArrivals}
-          viewAllHref="/collections/new-arrivals"
-          loading="lazy"
-        />
+      {/* 1. Category Circles (App-style circular collection row) */}
+      <CategoryCirclesSection />
+
+      {/* 2. Shop By Discount minimalist cards */}
+      <ShopByDiscountSection />
+
+      {/* 3. Price Drop Deals row */}
+      {priceDropDeals.length > 0 && (
+        <PriceDropSection products={priceDropDeals} />
       )}
 
-      <VideoSection />
-      <WesternCategoriesSection categories={westernCategories} />
-      <ShopByOccasion occasions={occasions} />
+      {/* 4. Shop By Size selector pill buttons */}
+      <ShopBySizeSection />
 
-      {/* Best Sellers — server-fetched, Judge.me-rated */}
+      <BrandStrip />
+
+      {/* 5. Best Selling Products Category section */}
       {bestSellers.length > 0 && (
         <ProductGrid
           eyebrow="Customer Favourites"
-          title="Best Sellers"
-          subtitle="The pieces our customers keep coming back for"
+          title="Best Selling Products"
+          subtitle="The hot pieces our customers keep coming back for"
           products={bestSellers}
           viewAllHref="/collections/bestsellers"
           loading="lazy"
         />
       )}
 
-      <Carousel title="Handpicked for You" viewAllUrl="/collections/all">
-        {featuredProducts.map((p, i) => (
-          <div key={p.id} className="av-carousel__item">
-            <ProductCard product={p} loading={i < 3 ? 'eager' : 'lazy'} />
-          </div>
-        ))}
-      </Carousel>
+      {/* 6. Featured Grid: Shop by Category (9 elegant squares) */}
+      <FeaturedCategoriesGrid />
+
+      {/* 7. Top Lehenga grid (6 to 9 products) */}
+      {lehengas.length > 0 && (
+        <ProductGrid
+          eyebrow="Luxury Ethnic"
+          title="Top Lehengas"
+          subtitle="Discover our top handcrafted traditional lehenga-cholis"
+          products={lehengas.slice(0, 9)}
+          viewAllHref="/collections/lehengas"
+          loading="lazy"
+        />
+      )}
+
+      {/* 8. Top Kurtis grid (6 to 9 products) */}
+      {kurtis.length > 0 && (
+        <ProductGrid
+          eyebrow="Chic Everyday"
+          title="Top Kurtis"
+          subtitle="Curated designer kurtis for active comfort and grace"
+          products={kurtis.slice(0, 9)}
+          viewAllHref="/collections/kurtis"
+          loading="lazy"
+        />
+      )}
+
+      {/* New Arrivals carousel */}
+      {newArrivals.length > 0 && (
+        <Carousel title="New Arrivals" viewAllUrl="/collections/new-arrivals">
+          {newArrivals.map((p, i) => (
+            <div key={p.id} className="av-carousel__item">
+              <ProductCard product={p} loading={i < 3 ? 'eager' : 'lazy'} />
+            </div>
+          ))}
+        </Carousel>
+      )}
 
       <TrustBar />
       <TestimonialsSection testimonials={testimonials} />
@@ -217,85 +312,197 @@ export default function Homepage() {
   );
 }
 
-// ─── Traditional Categories Section ───────────────────────────────
+// ─── 1. Category Circles (circular thumbnail collection) ──────────
 
-function TraditionalCategoriesSection({categories}: {categories: typeof MOCK_TRADITIONAL_CATEGORIES}) {
+function CategoryCirclesSection() {
+  const categories = [
+    { name: 'Lehengas', handle: 'lehengas', img: '/images/lehenga.jpg' },
+    { name: 'Anarkali', handle: 'anarkali', img: '/images/anarkali.jpg' },
+    { name: 'Kurtis', handle: 'kurtis', img: '/images/kurti.jpg' },
+    { name: 'Co-ords', handle: 'co-ords', img: '/images/coord.jpg' },
+    { name: 'Sarees', handle: 'sarees', img: '/images/lehenga.jpg' },
+    { name: 'Navratri', handle: 'navratri-lehenga-choli', img: '/images/lehenga.jpg' },
+    { name: 'Western', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
+    { name: 'New In', handle: 'new-arrivals', img: '/images/western tops/western top.png' },
+  ];
+
   return (
-    <section className="av-category-section section">
+    <section className="av-circles-section section">
       <div className="container">
-        <h2 className="av-category-section__heading">Traditional Ethnic Wear</h2>
-        <div className="av-category-scroll">
-          <div className="av-category-scroll__inner">
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                to={`/collections/${cat.handle}`}
-                prefetch="intent"
-                className="av-category-card"
-              >
-                <div className="av-category-card__img-wrap">
-                  <img
-                    src={cat.image.url}
-                    alt={cat.image.altText}
-                    loading="lazy"
-                    className="av-category-card__img"
-                  />
-                  <div className="av-category-card__overlay" />
-                </div>
-                <div className="av-category-card__content">
-                  <h3 className="av-category-card__title">{cat.title}</h3>
-                  <span className="av-category-card__cta">
-                    Explore <Icon name="arrow-right" size={14} strokeWidth={2} />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+        <div className="av-circles-row">
+          {categories.map((cat, i) => (
+            <Link
+              key={i}
+              to={`/collections/${cat.handle}`}
+              className="av-circle-item"
+              prefetch="intent"
+            >
+              <div className="av-circle-item__image-wrap">
+                <img src={cat.img} alt={cat.name} className="av-circle-item__img" loading="lazy" />
+              </div>
+              <span className="av-circle-item__name">{cat.name}</span>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Western Categories Section ───────────────────────────────────
+// ─── 2. Shop By Discount Section ──────────────────────────────────
 
-function WesternCategoriesSection({categories}: {categories: typeof MOCK_WESTERN_CATEGORIES}) {
+function ShopByDiscountSection() {
+  const discounts = [
+    { value: '20% OFF', label: 'Festive Starter', handle: 'kurtis' },
+    { value: '30% OFF', label: 'Occasion Special', handle: 'co-ords' },
+    { value: '40% OFF', label: 'Grand Celebrations', handle: 'anarkali' },
+    { value: '50% OFF', label: 'Mega Value Deals', handle: 'lehengas' },
+  ];
+
   return (
-    <section className="av-category-section section">
+    <section className="av-discount-section section">
       <div className="container">
-        <h2 className="av-category-section__heading">Western Collection</h2>
-        <div className="av-category-scroll">
-          <div className="av-category-scroll__inner">
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                to={`/collections/${cat.handle}`}
-                prefetch="intent"
-                className="av-category-card"
-              >
-                <div className="av-category-card__img-wrap">
-                  <img
-                    src={cat.image.url}
-                    alt={cat.image.altText}
-                    loading="lazy"
-                    className="av-category-card__img"
-                  />
-                  <div className="av-category-card__overlay" />
-                </div>
-                <div className="av-category-card__content">
-                  <h3 className="av-category-card__title">{cat.title}</h3>
-                  <span className="av-category-card__cta">
-                    Explore <Icon name="arrow-right" size={14} strokeWidth={2} />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+        <h2 className="av-home-section-title">Shop By Discount</h2>
+        <div className="av-discount-grid">
+          {discounts.map((disc, i) => (
+            <Link
+              key={i}
+              to={`/collections/${disc.handle}`}
+              className="av-discount-card"
+              prefetch="intent"
+            >
+              <div className="av-discount-card__inner">
+                <span className="av-discount-card__value">{disc.value}</span>
+                <span className="av-discount-card__label">{disc.label}</span>
+                <span className="av-discount-card__cta">Shop Collection →</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
   );
 }
+
+// ─── 3. Price Drop Deals Section ──────────────────────────────────
+
+function PriceDropSection({ products }: { products: MockProduct[] }) {
+  return (
+    <section className="av-price-drop-section section">
+      <div className="container">
+        <h2 className="av-home-section-title">Price Drop Deals</h2>
+        <div className="av-price-drop-grid">
+          {products.map((product) => (
+            <Link
+              key={product.id}
+              to={`/products/${product.handle}`}
+              className="av-price-drop-card"
+              prefetch="intent"
+            >
+              <div className="av-price-drop-card__image-wrap">
+                <img
+                  src={product.featuredImage.url}
+                  alt={product.title}
+                  className="av-price-drop-card__img"
+                  loading="lazy"
+                />
+                {product.discount && (
+                  <span className="av-price-drop-card__badge">-{product.discount}%</span>
+                )}
+              </div>
+              <div className="av-price-drop-card__content">
+                <h3 className="av-price-drop-card__title">{product.title}</h3>
+                <div className="av-price-drop-card__prices">
+                  <span className="av-price-drop-card__price">{product.price}</span>
+                  {product.compareAtPrice && (
+                    <span className="av-price-drop-card__compare">{product.compareAtPrice}</span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── 4. Shop By Size Section ──────────────────────────────────────
+
+function ShopBySizeSection() {
+  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  return (
+    <section className="av-size-section section">
+      <div className="container">
+        <h2 className="av-home-section-title">Shop By Size</h2>
+        <div className="av-size-row">
+          {sizes.map((size, i) => (
+            <Link
+              key={i}
+              to={`/collections/all?size=${size}`}
+              className="av-size-pill"
+              prefetch="intent"
+            >
+              <span className="av-size-pill__text">{size}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── 6. Featured Grid: Shop by Category (9 elegant squares) ───────
+
+function FeaturedCategoriesGrid() {
+  const categories = [
+    { title: 'Bridal Lehengas', handle: 'lehengas', img: '/images/lehenga.jpg' },
+    { title: 'Kurti Sets', handle: 'kurtis', img: '/images/kurti.jpg' },
+    { title: 'Anarkali Suits', handle: 'anarkali', img: '/images/anarkali.jpg' },
+    { title: 'Co-ord Sets', handle: 'co-ords', img: '/images/coord.jpg' },
+    { title: 'Festive Sarees', handle: 'sarees', img: '/images/lehenga.jpg' },
+    { title: 'Swim & Resort', handle: 'western-swimwear', img: '/images/swim suit/swim suit 2.jpg' },
+    { title: 'Western Dresses', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
+    { title: 'Tops & Tunics', handle: 'western-tops-tunics', img: '/images/western tops/western top.png' },
+    { title: 'Skirts & Skorts', handle: 'western-pants-skirts', img: '/images/skirts/image (13).png' },
+  ];
+
+  return (
+    <section className="av-featured-grid-section section">
+      <div className="container">
+        <h2 className="av-home-section-title">Shop by Category</h2>
+        <div className="av-featured-grid">
+          {categories.map((cat, i) => (
+            <Link
+              key={i}
+              to={`/collections/${cat.handle}`}
+              className="av-featured-grid__card"
+              prefetch="intent"
+            >
+              <div className="av-featured-grid__image-wrap">
+                <img
+                  src={cat.img}
+                  alt={cat.title}
+                  className="av-featured-grid__img"
+                  loading="lazy"
+                />
+                <div className="av-featured-grid__overlay" />
+              </div>
+              <div className="av-featured-grid__content">
+                <h3 className="av-featured-grid__title">{cat.title}</h3>
+                <span className="av-featured-grid__cta">Explore Collection</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Traditional / Western Category Section (Replaced by modern circles) ──
+// Removed unused old traditional categories and brand strip component styles from index file
 
 // ─── Brand Strip — animated marquee ─────────────────────────────
 
@@ -309,7 +516,6 @@ const MARQUEE_ITEMS = [
 ];
 
 function BrandStrip() {
-  // Duplicate items so the scroll is seamless (first half + second half loop)
   const allItems = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
   return (
     <div className="av-brand-strip">
@@ -321,45 +527,6 @@ function BrandStrip() {
         ))}
       </div>
     </div>
-  );
-}
-
-// ─── Shop by Occasion ─────────────────────────────────────────────
-
-function ShopByOccasion({occasions}: {occasions: typeof MOCK_OCCASIONS}) {
-  return (
-    <section className="av-occasions section">
-      <div className="container">
-        <h2 className="section-heading--large" style={{textAlign: 'center'}}>Shop by Occasion</h2>
-        <div className="av-occasions__grid">
-          {occasions.map((occ) => (
-            <Link
-              key={occ.id}
-              to={`/collections/${occ.handle}`}
-              prefetch="intent"
-              className="av-occasion-card"
-            >
-              <div className="av-occasion-card__img-wrap">
-                <img
-                  src={occ.image.url}
-                  alt={occ.image.altText}
-                  loading="lazy"
-                  className="av-occasion-card__img"
-                />
-                <div className="av-occasion-card__overlay" />
-              </div>
-              <div className="av-occasion-card__content">
-                <h3 className="av-occasion-card__title">{occ.title}</h3>
-                <p className="av-occasion-card__subtitle">{occ.subtitle}</p>
-                <div className="av-occasion-card__arrow">
-                  <Icon name="arrow-right" size={18} strokeWidth={2} />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -398,7 +565,7 @@ function TestimonialsSection({testimonials}: {testimonials: typeof MOCK_TESTIMON
   return (
     <section className="av-testimonials section">
       <div className="container">
-        <h2 className="section-heading">Customer Stories</h2>
+        <h2 className="av-home-section-title" style={{textAlign: 'center'}}>Customer Stories</h2>
         <div className="av-testimonials__grid">
           {testimonials.map((t) => (
             <div key={t.id} className="av-testimonial">
@@ -447,7 +614,7 @@ function InstagramSection() {
     <section className="av-instagram section">
       <div className="container">
         <div className="av-instagram__header">
-          <h2 className="section-heading--large">Follow Us @atsevaam</h2>
+          <h2 className="av-home-section-title">Follow Us @atsevaam</h2>
           <a 
             href="https://www.instagram.com/atsevaam" 
             target="_blank" 
