@@ -3685,15 +3685,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top !important;
 }
 
 .av-pdp__thumb--active {
-  border-color: var(--color-charcoal);
+  border-color: var(--color-brand) !important;
   border-width: 2px;
 }
 
 .av-pdp__thumb:hover {
-  border-color: var(--color-secondary);
+  border-color: var(--color-accent-warm) !important;
 }
 
 /* Main display image */
@@ -3711,6 +3712,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  object-position: center top !important;
 }
 
 /* ─── Essential Info (Right) ───────────────────────────────────── */
@@ -3987,15 +3989,16 @@
 
 .av-pdp__size-btn {
   min-width: 56px;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-4);
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--color-secondary);
   background: var(--color-white);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  border-radius: 0 !important;
   cursor: pointer;
+  min-height: 40px;
   transition:
     border-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out),
@@ -4003,14 +4006,15 @@
 }
 
 .av-pdp__size-btn:hover {
-  border-color: var(--color-charcoal);
-  color: var(--color-charcoal);
+  border-color: var(--color-accent-warm) !important;
+  color: var(--color-brand) !important;
 }
 
 .av-pdp__size-btn--active {
-  border-color: var(--color-charcoal);
-  background: var(--color-charcoal);
-  color: var(--color-white);
+  border: 1.5px solid var(--color-brand) !important;
+  background-color: var(--color-brand-pale) !important;
+  color: var(--color-brand) !important;
+  font-weight: var(--weight-semibold) !important;
 }
 
 /* Add to cart */
@@ -7901,38 +7905,40 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  padding: var(--space-2) var(--space-3);
+  min-width: 54px;
+  padding: var(--space-2) var(--space-4);
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  font-weight: var(--weight-regular);
+  font-weight: var(--weight-medium);
   color: var(--color-charcoal);
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: 0 !important;
   cursor: pointer;
   text-decoration: none;
   transition: border-color var(--duration-fast) var(--ease-out),
               background var(--duration-fast) var(--ease-out),
               color var(--duration-fast) var(--ease-out);
-  /* Good touch target */
-  min-height: 44px;
+  min-height: 40px;
 }
 
 .av-product-form__option-btn:hover:not(:disabled) {
-  border-color: var(--color-charcoal);
+  border-color: var(--color-accent-warm) !important;
+  color: var(--color-brand) !important;
 }
 
 .av-product-form__option-btn--active {
-  border-color: var(--color-charcoal);
-  background: var(--color-charcoal);
-  color: var(--color-white);
+  border: 1.5px solid var(--color-brand) !important;
+  background-color: var(--color-brand-pale) !important;
+  color: var(--color-brand) !important;
+  font-weight: var(--weight-semibold) !important;
 }
 
 .av-product-form__option-btn--unavailable {
   opacity: 0.35;
   cursor: not-allowed;
   text-decoration: line-through;
+  border-style: dashed !important;
 }
 
 /* Color swatch variant */
@@ -8299,18 +8305,31 @@
   margin-top: var(--space-2);
 }
 
-/* Override: ATC button on PDP gets brand color */
-.av-pdp__cart-section .btn-primary {
-  background: var(--color-brand);
-  border-color: var(--color-brand);
-  letter-spacing: var(--tracking-wider);
-  font-size: var(--text-sm);
-  height: 52px;
+/* Override: ATC button on PDP gets massive vibrant gold color */
+.av-pdp__cart-section .btn-primary,
+.av-pdp__atc {
+  background: #FFB800 !important;
+  border-color: #FFB800 !important;
+  color: #1E1418 !important;
+  font-weight: var(--weight-bold) !important;
+  letter-spacing: var(--tracking-wider) !important;
+  font-size: var(--text-sm) !important;
+  height: 54px !important;
+  border-radius: 0 !important;
+  text-transform: uppercase !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background var(--duration-base) var(--ease-out),
+              border-color var(--duration-base) var(--ease-out),
+              color var(--duration-base) var(--ease-out) !important;
 }
 
-.av-pdp__cart-section .btn-primary:hover {
-  background: var(--color-brand-dark);
-  border-color: var(--color-brand-dark);
+.av-pdp__cart-section .btn-primary:hover,
+.av-pdp__atc:hover {
+  background: var(--color-brand) !important;
+  border-color: var(--color-brand) !important;
+  color: var(--color-white) !important;
 }
 
 /* Buy Now stays ghost but inherits brand accent on hover */
@@ -8319,6 +8338,7 @@
   height: 48px;
   font-size: var(--text-sm);
   letter-spacing: var(--tracking-wider);
+  border-radius: 0 !important;
 }
 
 /* ─── Mobile cart overrides ────────────────────────────────── */
@@ -9184,75 +9204,97 @@
   text-transform: uppercase;
 }
 
-/* Custom reviews layout grid */
-.av-pdp__reviews-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-8);
-  margin-top: var(--space-8);
-  max-width: 1200px;
-  margin-inline: auto;
+/* Custom reviews layout summary bar */
+.av-pdp__reviews-summary-bar {
+  background: #f6f6f6 !important;
+  border: 1px solid var(--color-border);
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 960px;
+  margin: 0 auto var(--space-8);
 }
 
-@media (min-width: 768px) {
-  .av-pdp__reviews-layout {
-    grid-template-columns: 320px 1fr;
-    gap: var(--space-10);
+@media (max-width: 767px) {
+  .av-pdp__reviews-summary-bar {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-4);
   }
 }
 
-/* ── Overview / Left panel ── */
-.av-pdp__reviews-overview {
-  background: linear-gradient(135deg, #faf8f5 0%, #f5f0eb 100%);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl, 16px);
-  padding: var(--space-8) var(--space-6);
-  align-self: start;
-  position: sticky;
-  top: var(--space-6);
-}
-
-.av-pdp__reviews-avg-block {
+.av-pdp__reviews-summary-left {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-1);
-  margin-bottom: var(--space-1);
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
-.av-pdp__reviews-avg-rating {
-  font-size: clamp(3rem, 6vw, 4rem);
-  font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  color: var(--color-charcoal);
-  line-height: 1;
+@media (max-width: 767px) {
+  .av-pdp__reviews-summary-left {
+    justify-content: center;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
 }
 
-.av-pdp__reviews-avg-max {
-  font-size: var(--text-base);
-  color: var(--color-muted);
+.av-pdp__reviews-summary-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.av-pdp__reviews-summary-text {
   font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-charcoal);
 }
 
-.av-pdp__review-stars {
+.av-pdp__reviews-summary-actions {
   display: flex;
-  gap: 3px;
-  margin-bottom: var(--space-2);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .av-pdp__reviews-summary-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.av-pdp__reviews-btn {
+  background: var(--color-white);
+  border: 1.5px solid var(--color-charcoal);
+  color: var(--color-charcoal);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 0 !important;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.av-pdp__reviews-btn:hover,
+.av-pdp__reviews-btn--active {
+  background: var(--color-charcoal) !important;
+  color: var(--color-white) !important;
+}
+
+.av-pdp__reviews-layout-new {
+  margin-top: var(--space-4);
 }
 
 .av-pdp__review-star {
-  color: #c8973a;
+  color: #FFB800 !important;
 }
 
 .av-pdp__review-star--empty {
-  color: #ddd4c8;
-}
-
-.av-pdp__reviews-total {
-  font-size: var(--text-xs);
-  color: var(--color-subtle);
-  margin-bottom: var(--space-6);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  color: #DDD4C8 !important;
 }
 
 /* Rating bar breakdown */

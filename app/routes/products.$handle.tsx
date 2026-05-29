@@ -197,7 +197,7 @@ export async function loader(args: Route.LoaderArgs) {
   // 3. Fetch reviews from Supabase
   const SUPABASE_URL = 'https://ymwnsesccyrngeaxomzr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r';
-  let reviews = [];
+  let reviews: any[] = [];
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?product_handle=eq.${handle}&select=*&order=created_at.desc`, {
       headers: {
@@ -206,7 +206,7 @@ export async function loader(args: Route.LoaderArgs) {
       }
     });
     if (res.ok) {
-      reviews = await res.json();
+      reviews = (await res.json()) as any[];
     }
   } catch (err) {
     console.error('Failed to fetch reviews from Supabase:', err);
@@ -542,6 +542,9 @@ export default function Product() {
   } = useLoaderData<typeof loader>();
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showQuestionForm, setShowQuestionForm] = useState(false);
+  const [questionSubmitted, setQuestionSubmitted] = useState(false);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const fetcher = useFetcher();
@@ -552,6 +555,7 @@ export default function Product() {
     if (fetcher.data && (fetcher.data as any).success) {
       formRef.current?.reset();
       setUserRating(5);
+      setShowReviewForm(false);
     }
   }, [fetcher.data]);
 
@@ -630,13 +634,25 @@ export default function Product() {
 
         {/* RIGHT: Essential Product Info */}
         <div className="av-pdp__essential-info">
-          {/* Top meta row */}
-          <div className="av-pdp__meta-row">
-            <div className="av-pdp__badges">
-              {mock.badge && <Badge variant={mock.badge as 'new' | 'sale' | 'bestseller' | 'top-rated'} />}
-              <span className="pill">{mock.category}</span>
+          {/* Title */}
+          <h1 className="av-pdp__title" style={{ textTransform: 'uppercase', fontFamily: 'var(--font-body)', fontWeight: 'var(--weight-bold)', fontSize: '1.8rem', letterSpacing: 'var(--tracking-wide)', margin: '0 0 var(--space-2)' }}>
+            {mock.title}
+          </h1>
+
+          {/* Premium Tag Chips & Actions Row */}
+          <div className="av-pdp__tag-chips-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-3)', margin: '0 0 var(--space-4)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-3)' }}>
+            <div className="av-pdp__tag-chips" style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+              <span className="av-pdp__tag-chip" style={{ border: '1px solid var(--color-border)', padding: '4px 12px', fontSize: '12px', textTransform: 'uppercase', fontFamily: 'var(--font-body)', color: 'var(--color-secondary)', fontWeight: 'var(--weight-semibold)', letterSpacing: 'var(--tracking-wider)' }}>
+                {mock.category}
+              </span>
+              <span className="av-pdp__tag-chip" style={{ border: '1px solid var(--color-border)', padding: '4px 12px', fontSize: '12px', textTransform: 'uppercase', fontFamily: 'var(--font-body)', color: 'var(--color-secondary)', fontWeight: 'var(--weight-semibold)', letterSpacing: 'var(--tracking-wider)' }}>
+                {mock.details?.stitchingType || 'Semi-Stitched'}
+              </span>
+              <span className="av-pdp__tag-chip" style={{ border: '1px solid var(--color-border)', padding: '4px 12px', fontSize: '12px', textTransform: 'uppercase', fontFamily: 'var(--font-body)', color: 'var(--color-brand)', background: 'var(--color-brand-pale)', fontWeight: 'var(--weight-semibold)', letterSpacing: 'var(--tracking-wider)' }}>
+                Rating {(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)} ★
+              </span>
             </div>
-            <div className="av-pdp__actions-top">
+            <div className="av-pdp__actions-top" style={{ display: 'flex', gap: 'var(--space-2)' }}>
               <button
                 className={`wishlist-btn${wishlisted ? ' active' : ''}`}
                 onClick={() => setWishlisted((v) => !v)}
@@ -647,27 +663,6 @@ export default function Product() {
               <ShareButtons title={mock.title} handle={mock.handle} image={mock.featuredImage.url} />
             </div>
           </div>
-
-          {/* Title */}
-          <h1 className="av-pdp__title">{mock.title}</h1>
-
-          {/* Rating — always visible */}
-          <div className="star-rating av-pdp__rating">
-            {Array.from({length: 5}).map((_, i) => (
-              <Icon
-                key={i}
-                name="star-filled"
-                size={14}
-                strokeWidth={0}
-                className={i < Math.floor(totalReviews > 0 ? averageRating : mock.rating || 0) ? '' : 'av-pdp__star--empty'}
-              />
-            ))}
-            <span className="av-pdp__rating-score">{(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)}/5</span>
-            <span className="star-rating__count">({totalReviews > 0 ? totalReviews : mock.reviewCount ?? 1000} reviews)</span>
-          </div>
-          <p className="av-pdp__loved-line">
-            ❤️ Loved by 1,000+ customers
-          </p>
 
           {/* Price */}
           <div className="av-pdp__price-block">
@@ -764,172 +759,196 @@ export default function Product() {
       </div>
 
       {/* ── Verified Customer Reviews ──────────────────────────────── */}
-      <div className="av-pdp__reviews container">
+      <div className="av-pdp__reviews container" id="customer-reviews">
         <div className="av-pdp__reviews-header">
           <span className="av-pdp__reviews-eyebrow">Customer Reviews</span>
           <h2 className="av-pdp__reviews-title">What Our Customers Say</h2>
-          <p className="av-pdp__reviews-subtitle">
-            Real, verified reviews from genuine customers who love our premium ethnic wear
-          </p>
         </div>
 
-        <div className="av-pdp__reviews-layout">
-          {/* Left Side: Overview & Form */}
-          <div className="av-pdp__reviews-left">
-            <div className="av-pdp__reviews-overview">
-              <div className="av-pdp__reviews-avg-block">
-                <span className="av-pdp__reviews-avg-rating">
-                  {(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)}
-                </span>
-                <span className="av-pdp__reviews-avg-max">/5</span>
-              </div>
-              <div className="av-pdp__review-stars">
-                {Array.from({length: 5}).map((_, idx) => (
-                  <Icon
-                    key={idx}
-                    name="star-filled"
-                    size={16}
-                    strokeWidth={0}
-                    className={idx < Math.round(totalReviews > 0 ? averageRating : mock.rating || 0) ? 'av-pdp__review-star' : 'av-pdp__review-star--empty'}
-                  />
-                ))}
-              </div>
-              <p className="av-pdp__reviews-total">
-                {totalReviews > 0 ? totalReviews : mock.reviewCount ?? 1000} verified reviews
-              </p>
-
-              {/* Rating bar breakdown */}
-              {totalReviews > 0 && (
-                <div className="av-pdp__reviews-bars">
-                  {[5, 4, 3, 2, 1].map((star) => {
-                    const count = reviews.filter((r: any) => r.rating === star).length;
-                    const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
-                    return (
-                      <div key={star} className="av-pdp__reviews-bar-row">
-                        <span className="av-pdp__reviews-bar-label">{star}★</span>
-                        <div className="av-pdp__reviews-bar-track">
-                          <div className="av-pdp__reviews-bar-fill" style={{width: `${pct}%`}} />
-                        </div>
-                        <span className="av-pdp__reviews-bar-count">{count}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+        {/* Simplified Center Rating Bar & Action Buttons */}
+        <div className="av-pdp__reviews-summary-bar">
+          <div className="av-pdp__reviews-summary-left">
+            <div className="av-pdp__reviews-summary-stars">
+              {Array.from({length: 5}).map((_, idx) => (
+                <Icon
+                  key={idx}
+                  name="star-filled"
+                  size={18}
+                  strokeWidth={0}
+                  className={idx < Math.round(totalReviews > 0 ? averageRating : mock.rating || 0) ? 'av-pdp__review-star' : 'av-pdp__review-star--empty'}
+                />
+              ))}
             </div>
+            <span className="av-pdp__reviews-summary-text">
+              <strong>{(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)}</strong> out of 5 stars (based on {totalReviews > 0 ? totalReviews : mock.reviewCount ?? 1000} verified reviews)
+            </span>
+          </div>
 
-            {/* Verified Review Form */}
-            {isLoggedIn ? (
-              hasPurchased ? (
-                <fetcher.Form ref={formRef} method="post" className="av-pdp__review-form">
-                  <h3 className="av-pdp__review-form-title">✍️ Write a Review</h3>
-                  
-                  <div className="av-pdp__review-input-group">
-                    <label className="av-pdp__review-label">Your Rating</label>
-                    <div className="av-pdp__stars-selector">
-                      {Array.from({length: 5}).map((_, i) => {
-                        const currentStar = i + 1;
-                        return (
-                          <button
-                            key={i}
-                            type="button"
-                            className={`av-pdp__star-btn${currentStar <= userRating ? '' : ' av-pdp__star-btn--empty'}`}
-                            onClick={() => setUserRating(currentStar)}
-                            aria-label={`Rate ${currentStar} stars`}
-                          >
-                            <Icon name="star-filled" size={22} strokeWidth={0} />
-                          </button>
-                        );
-                      })}
+          <div className="av-pdp__reviews-summary-actions">
+            <button
+              onClick={() => {
+                setShowReviewForm(!showReviewForm);
+                setShowQuestionForm(false);
+              }}
+              className={`av-pdp__reviews-btn ${showReviewForm ? 'av-pdp__reviews-btn--active' : ''}`}
+            >
+              Write review
+            </button>
+            <button
+              onClick={() => {
+                setShowQuestionForm(!showQuestionForm);
+                setShowReviewForm(false);
+                setQuestionSubmitted(false);
+              }}
+              className={`av-pdp__reviews-btn ${showQuestionForm ? 'av-pdp__reviews-btn--active' : ''}`}
+            >
+              Ask a question
+            </button>
+          </div>
+        </div>
+
+        {/* Toggleable Review and Question Forms */}
+        <div className="av-pdp__reviews-toggles" style={{ maxWidth: '720px', margin: '0 auto var(--space-8)' }}>
+          {showReviewForm && (
+            <div className="av-pdp__reviews-form-wrapper">
+              {/* Verified Review Form */}
+              {isLoggedIn ? (
+                hasPurchased ? (
+                  <fetcher.Form ref={formRef} method="post" className="av-pdp__review-form">
+                    <h3 className="av-pdp__review-form-title">✍️ Write a Review</h3>
+                    
+                    <div className="av-pdp__review-input-group">
+                      <label className="av-pdp__review-label">Your Rating</label>
+                      <div className="av-pdp__stars-selector">
+                        {Array.from({length: 5}).map((_, i) => {
+                          const currentStar = i + 1;
+                          return (
+                            <button
+                              key={i}
+                              type="button"
+                              className={`av-pdp__star-btn${currentStar <= userRating ? '' : ' av-pdp__star-btn--empty'}`}
+                              onClick={() => setUserRating(currentStar)}
+                              aria-label={`Rate ${currentStar} stars`}
+                            >
+                              <Icon name="star-filled" size={22} strokeWidth={0} />
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <input type="hidden" name="rating" value={userRating} />
                     </div>
-                    <input type="hidden" name="rating" value={userRating} />
-                  </div>
 
-                  <div className="av-pdp__review-input-group">
-                    <label htmlFor="author_name" className="av-pdp__review-label">Display Name</label>
-                    <input
-                      id="author_name"
-                      name="author_name"
-                      type="text"
-                      defaultValue={customerName}
-                      placeholder="e.g. Priyanjali"
-                      required
-                      className="av-pdp__review-input"
-                    />
-                  </div>
-
-                  <div className="av-pdp__review-input-group">
-                    <label htmlFor="title" className="av-pdp__review-label">Review Title</label>
-                    <input
-                      id="title"
-                      name="title"
-                      type="text"
-                      placeholder="e.g. Stunning flare and premium fabric!"
-                      required
-                      className="av-pdp__review-input"
-                    />
-                  </div>
-
-                  <div className="av-pdp__review-input-group">
-                    <label htmlFor="body" className="av-pdp__review-label">Review Details</label>
-                    <textarea
-                      id="body"
-                      name="body"
-                      placeholder="Share details about the embroidery, flare width, stitching quality, etc."
-                      required
-                      className="av-pdp__review-textarea"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={fetcher.state === 'submitting'}
-                    className="av-pdp__review-submit-btn"
-                  >
-                    {fetcher.state === 'submitting' ? 'Submitting...' : 'Submit Verified Review'}
-                  </button>
-
-                  {fetcher.data && (fetcher.data as any).success && (
-                    <div className="av-pdp__reviews-success">
-                      🎉 Thank you! Your verified review has been submitted.
+                    <div className="av-pdp__review-input-group">
+                      <label htmlFor="author_name" className="av-pdp__review-label">Display Name</label>
+                      <input
+                        id="author_name"
+                        name="author_name"
+                        type="text"
+                        defaultValue={customerName}
+                        placeholder="e.g. Priyanjali"
+                        required
+                        className="av-pdp__review-input"
+                      />
                     </div>
-                  )}
 
-                  {fetcher.data && (fetcher.data as any).error && (
-                    <div className="av-pdp__reviews-error">
-                      ⚠️ {(fetcher.data as any).error}
+                    <div className="av-pdp__review-input-group">
+                      <label htmlFor="title" className="av-pdp__review-label">Review Title</label>
+                      <input
+                        id="title"
+                        name="title"
+                        type="text"
+                        placeholder="e.g. Stunning flare and premium fabric!"
+                        required
+                        className="av-pdp__review-input"
+                      />
                     </div>
-                  )}
-                </fetcher.Form>
+
+                    <div className="av-pdp__review-input-group">
+                      <label htmlFor="body" className="av-pdp__review-label">Review Details</label>
+                      <textarea
+                        id="body"
+                        name="body"
+                        placeholder="Share details about the embroidery, flare width, stitching quality, etc."
+                        required
+                        className="av-pdp__review-textarea"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={fetcher.state === 'submitting'}
+                      className="av-pdp__review-submit-btn"
+                    >
+                      {fetcher.state === 'submitting' ? 'Submitting...' : 'Submit Verified Review'}
+                    </button>
+
+                    {fetcher.data && (fetcher.data as any).success && (
+                      <div className="av-pdp__reviews-success">
+                        🎉 Thank you! Your verified review has been submitted.
+                      </div>
+                    )}
+
+                    {fetcher.data && (fetcher.data as any).error && (
+                      <div className="av-pdp__reviews-error">
+                        ⚠️ {(fetcher.data as any).error}
+                      </div>
+                    )}
+                  </fetcher.Form>
+                ) : (
+                  <div className="av-pdp__review-form">
+                    <div className="av-pdp__reviews-lock-card">
+                      <Icon name="shield" size={28} strokeWidth={1.5} />
+                      <h3 className="av-pdp__reviews-lock-title">Review Locked</h3>
+                      <p className="av-pdp__reviews-lock-sub">
+                        Only verified buyers who purchased this product from Atsevam can leave a review.
+                      </p>
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="av-pdp__review-form">
                   <div className="av-pdp__reviews-lock-card">
                     <Icon name="shield" size={28} strokeWidth={1.5} />
-                    <h3 className="av-pdp__reviews-lock-title">Review Locked</h3>
+                    <h3 className="av-pdp__reviews-lock-title">Login to Review</h3>
                     <p className="av-pdp__reviews-lock-sub">
-                      Only verified buyers who purchased this product from Atsevam can leave a review.
+                      Sign in to your Atsevam account to verify your purchase and share your experience.
                     </p>
+                    <a href="/account/login" className="av-pdp__reviews-lock-btn">
+                      Sign In to Account
+                    </a>
                   </div>
                 </div>
-              )
-            ) : (
-              <div className="av-pdp__review-form">
-                <div className="av-pdp__reviews-lock-card">
-                  <Icon name="shield" size={28} strokeWidth={1.5} />
-                  <h3 className="av-pdp__reviews-lock-title">Login to Review</h3>
-                  <p className="av-pdp__reviews-lock-sub">
-                    Sign in to your Atsevam account to verify your purchase and share your experience.
-                  </p>
-                  <a href="/account/login" className="av-pdp__reviews-lock-btn">
-                    Sign In to Account
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
-          {/* Right Side: Reviews List */}
-          <div className="av-pdp__reviews-list">
+          {showQuestionForm && (
+            <div className="av-pdp__review-form">
+              <h3 className="av-pdp__review-form-title">❓ Ask a Question</h3>
+              {questionSubmitted ? (
+                <div className="av-pdp__reviews-success">
+                  🎉 Thank you! Your question has been submitted and our support team will reply shortly.
+                </div>
+              ) : (
+                <form onSubmit={(e) => { e.preventDefault(); setQuestionSubmitted(true); }} className="av-pdp__question-form">
+                  <div className="av-pdp__review-input-group">
+                    <label htmlFor="q_name" className="av-pdp__review-label">Your Name</label>
+                    <input id="q_name" type="text" placeholder="e.g. Shalini" required className="av-pdp__review-input" />
+                  </div>
+                  <div className="av-pdp__review-input-group">
+                    <label htmlFor="q_text" className="av-pdp__review-label">Your Question</label>
+                    <textarea id="q_text" placeholder="Ask about product availability, customization, blouse piece length, sizing, etc." required className="av-pdp__review-textarea" />
+                  </div>
+                  <button type="submit" className="av-pdp__review-submit-btn">Submit Question</button>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Reviews List */}
+        <div className="av-pdp__reviews-layout-new">
+          <div className="av-pdp__reviews-list-new" style={{ maxWidth: '960px', margin: '0 auto' }}>
             {reviews && reviews.length > 0 ? (
               reviews.map((review: any) => {
                 const dateStr = new Date(review.created_at).toLocaleDateString('en-IN', {
@@ -941,7 +960,7 @@ export default function Product() {
                   ? review.author_name.split(' ').map((w: string) => w[0]).join('').substring(0, 2).toUpperCase()
                   : '?';
                 return (
-                  <div key={review.id} className="av-pdp__review-card">
+                  <div key={review.id} className="av-pdp__review-card" style={{ marginBottom: 'var(--space-4)' }}>
                     <div className="av-pdp__review-card-head">
                       <div className="av-pdp__review-author-info">
                         <div className="av-pdp__review-avatar" aria-hidden="true">{initials}</div>

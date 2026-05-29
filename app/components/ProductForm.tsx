@@ -24,12 +24,16 @@ export function ProductForm({
     <div className="av-product-form">
       {/* ── Variant selectors ──────────────────────────────────── */}
       {productOptions.map((option) => {
-        // Single-value options don't need a selector
-        if (option.optionValues.length === 1) return null;
-
         return (
           <div className="av-product-form__option-group" key={option.name}>
-            <h5 className="av-product-form__option-label">{option.name}</h5>
+            <div className="av-product-form__option-header" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+              <h5 className="av-product-form__option-label" style={{margin: 0}}>{option.name}</h5>
+              {(option.name.toLowerCase().includes('size') || option.name.toLowerCase().includes('sizing')) && (
+                <a href="/pages/size-guide" className="av-pdp__size-guide" style={{fontSize: 'var(--text-xs)', color: 'var(--color-brand)', textDecoration: 'underline', fontFamily: 'var(--font-body)', fontWeight: 'var(--weight-medium)'}}>
+                  Size Guide
+                </a>
+              )}
+            </div>
             <div className="av-product-form__option-grid">
               {option.optionValues.map((value) => {
                 const {
