@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {Icon} from '~/components/ui/Icon';
 import type {FilterGroup} from '~/lib/mock';
 
@@ -14,7 +14,7 @@ const COLOR_MAP: Record<string, string> = {
   'yellow': '#F1C40F',
   'orange': '#E67E22',
   'purple': '#9B59B6',
-  'black': '#2C3E50',
+  'black': '#2c2c2c',
   'white': '#FAFAFA',
   'grey': '#95A5A6',
   'gray': '#95A5A6',
@@ -91,50 +91,72 @@ function FilterGroupSection({
   onChange: (val: string) => void;
   onClear: () => void;
 }) {
-  const [expanded, setExpanded] = useState(true);
+  // REDESIGN: All filters closed by default, unless they have active items inside!
+  const [expanded, setExpanded] = useState(() => active.length > 0);
   const [showAll, setShowAll] = useState(false);
+  
   const isColor = group.id === 'color';
   const VISIBLE_LIMIT = 7;
   const visibleOptions = showAll ? group.options : group.options.slice(0, VISIBLE_LIMIT);
   const hasMore = group.options.length > VISIBLE_LIMIT;
 
+  // List of colors where a dark tick is more readable than a white tick
+  const LIGHT_COLORS = [
+    'white', 'cream', 'ivory', 'beige', 'yellow', 'silver', 'grey', 'gray', 'lavender', 'peach', 'mint', 'light yellow', 'light peach'
+  ];
+
   return (
-    <div className="av-fgroup">
+    <div className={`av-fgroup ${expanded ? 'av-fgroup--expanded' : ''} ${active.length > 0 ? 'av-fgroup--has-active' : ''}`}>
       {/* Group header - clickable to expand/collapse */}
       <button
         className="av-fgroup__header"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
       >
-        <span className="av-fgroup__title">{group.label.toUpperCase()}</span>
-        <Icon
-          name="chevron-down"
-          size={14}
-          strokeWidth={1.5}
-          className={`av-fgroup__chevron${expanded ? ' av-fgroup__chevron--open' : ''}`}
-        />
-      </button>
-
-      {/* Options list */}
-      {expanded && (
-        <div className="av-fgroup__body">
-          {/* Clear this group if any selected */}
+        <span className="av-fgroup__title">
+          {group.label}
           {active.length > 0 && (
-            <button className="av-fgroup__clear" onClick={onClear}>
-              clear
+            <span className="av-fgroup__active-badge">{active.length}</span>
+          )}
+        </span>
+        <div className="av-fgroup__header-right">
+          {active.length > 0 && (
+            <button
+              className="av-fgroup__clear"
+              onClick={(e) => {
+                e.stopPropagation(); // Avoid toggling expansion when clicking reset
+                onClear();
+              }}
+            >
+              Reset
             </button>
           )}
+          <Icon
+            name="chevron-down"
+            size={12}
+            strokeWidth={1.5}
+            className={`av-fgroup__chevron ${expanded ? 'av-fgroup__chevron--open' : ''}`}
+          />
+        </div>
+      </button>
 
+      {/* Options list wrapped in a smooth CSS Grid height transition container */}
+      <div className={`av-fgroup__body-wrapper ${expanded ? 'av-fgroup__body-wrapper--expanded' : ''}`}>
+        <div className="av-fgroup__body">
           {isColor ? (
             <div className="av-fgroup__colors">
               {visibleOptions.map((opt) => {
                 const checked = active.includes(opt.value);
-                const hex = COLOR_MAP[opt.value.toLowerCase()] || '#95A5A6';
+                const colorKey = opt.value.toLowerCase();
+                const hex = COLOR_MAP[colorKey] || '#95A5A6';
+                const isLight = LIGHT_COLORS.includes(colorKey);
+                const tickColor = isLight ? '#2c2c2c' : '#ffffff';
+
                 return (
                   <label
                     key={opt.value}
-                    className={`av-color-option${checked ? ' av-color-option--active' : ''}`}
-                    title={opt.label}
+                    className={`av-color-option ${checked ? 'av-color-option--active' : ''}`}
+                    title={`${opt.label} (${opt.count})`}
                   >
                     <input
                       type="checkbox"
@@ -142,11 +164,21 @@ function FilterGroupSection({
                       onChange={() => onChange(opt.value)}
                       className="sr-only"
                     />
-                    <span
-                      className="av-color-option__swatch"
-                      style={{backgroundColor: hex}}
-                    />
+                    <span className="av-color-option__swatch-wrapper">
+                      <span
+                        className="av-color-option__swatch"
+                        style={{backgroundColor: hex}}
+                      />
+                      {checked && (
+                        <span className="av-color-option__tick" style={{color: tickColor}}>
+                          <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                            <path d="M1 3L3 5L7 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
+                      )}
+                    </span>
                     <span className="av-color-option__name">{opt.label}</span>
+                    <span className="av-color-option__count">{opt.count}</span>
                   </label>
                 );
               })}
@@ -158,7 +190,7 @@ function FilterGroupSection({
                 return (
                   <label
                     key={opt.value}
-                    className={`av-foption${checked ? ' av-foption--checked' : ''}`}
+                    className={`av-foption ${checked ? 'av-foption--checked' : ''}`}
                   >
                     <span className="av-foption__check">
                       <input
@@ -168,14 +200,14 @@ function FilterGroupSection({
                       />
                       <span className="av-foption__box">
                         {checked && (
-                          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                            <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <svg width="8" height="6" viewBox="0 0 10 8" fill="none">
+                            <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         )}
                       </span>
                     </span>
                     <span className="av-foption__label">{opt.label}</span>
-                    <span className="av-foption__count">({opt.count})</span>
+                    <span className="av-foption__count">{opt.count}</span>
                   </label>
                 );
               })}
@@ -189,12 +221,12 @@ function FilterGroupSection({
               onClick={() => setShowAll((v) => !v)}
             >
               {showAll
-                ? '- Show less'
+                ? 'Show less'
                 : `+ ${group.options.length - VISIBLE_LIMIT} more`}
             </button>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

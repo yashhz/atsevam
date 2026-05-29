@@ -1,4 +1,4 @@
-import {Suspense, useState} from 'react';
+import {Suspense, useState, useEffect} from 'react';
 import {Await, NavLink, useAsyncValue, useLocation} from 'react-router';
 import {
   type CartViewPayload,
@@ -82,8 +82,25 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   const location = useLocation();
   const isProductPage = location.pathname.startsWith('/products/');
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!isProductPage) return;
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 150);
+    };
+    window.addEventListener('scroll', handleScroll, {passive: true});
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isProductPage]);
+
   return (
-    <div className={isProductPage ? 'av-header-wrapper--pdp' : 'av-header-wrapper'}>
+    <div
+      className={
+        isProductPage
+          ? `av-header-wrapper--pdp ${isScrolled ? 'is-scrolled' : ''}`
+          : 'av-header-wrapper'
+      }
+    >
       {/* Announcement bar */}
       <AnnouncementBar />
 

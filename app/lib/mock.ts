@@ -17,6 +17,7 @@ export type MockProduct = {
   reviewCount?: number;
   featuredImage: {url: string; altText: string};
   hoverImage?: {url: string; altText: string};
+  tags?: string[];
 };
 
 export type MockCategory = {

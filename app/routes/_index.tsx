@@ -331,24 +331,22 @@ function CategoryCirclesSection() {
 
   return (
     <section className="av-circles-section section">
-      <div className="container">
-        <div className="av-circles-row">
-          {categories.map((cat, i) => (
-            <Link
-              key={i}
-              to={`/collections/${cat.handle}`}
-              className="av-circle-item"
-              prefetch="intent"
-            >
-              <div className="av-circle-item__image-wrap">
-                <div className="av-circle-item__inner-wrap">
-                  <img src={cat.img} alt={cat.name} className="av-circle-item__img" loading="lazy" />
-                </div>
+      <div className="av-circles-row">
+        {categories.map((cat, i) => (
+          <Link
+            key={i}
+            to={`/collections/${cat.handle}`}
+            className="av-circle-item"
+            prefetch="intent"
+          >
+            <div className="av-circle-item__image-wrap">
+              <div className="av-circle-item__inner-wrap">
+                <img src={cat.img} alt={cat.name} className="av-circle-item__img" loading="lazy" />
               </div>
-              <span className="av-circle-item__name">{cat.name}</span>
-            </Link>
-          ))}
-        </div>
+            </div>
+            <span className="av-circle-item__name">{cat.name}</span>
+          </Link>
+        ))}
       </div>
     </section>
   );

@@ -322,101 +322,106 @@ export default function Collection() {
 
   return (
     <div className="av-collection">
-      {/* Breadcrumb */}
-      <nav className="av-breadcrumb container" aria-label="Breadcrumb">
-        <a href="/" className="av-breadcrumb__link">Home</a>
-        <span className="av-breadcrumb__sep">/</span>
-        <a href="/collections" className="av-breadcrumb__link">Collections</a>
-        <span className="av-breadcrumb__sep">/</span>
-        <span className="av-breadcrumb__current">{collection.title}</span>
-      </nav>
+      <div className="av-collection__container container">
+        {/* Breadcrumb */}
+        <nav className="av-breadcrumb" aria-label="Breadcrumb">
+          <a href="/" className="av-breadcrumb__link">Home</a>
+          <span className="av-breadcrumb__sep">&gt;</span>
+          <a href="/collections" className="av-breadcrumb__link">Collections</a>
+          <span className="av-breadcrumb__sep">&gt;</span>
+          <span className="av-breadcrumb__current">{collection.title}</span>
+        </nav>
 
-      {/* Collection header */}
-      <div className="av-collection__header container">
-        <h1 className="av-collection__title">
-          {collection.title}
-          <span className="av-collection__count"> - {products.length} items</span>
-        </h1>
-      </div>
-
-      {/* Toolbar — filters label + active chips + sort */}
-      <div className="av-collection__toolbar container">
-        <div className="av-collection__toolbar-left">
-          <span className="av-toolbar__filters-label">FILTERS</span>
-          {activeCount > 0 && (
-            <button className="av-toolbar__clear-all" onClick={clearAll}>
-              CLEAR ALL
-            </button>
-          )}
+        {/* Collection header */}
+        <div className="av-collection__header">
+          <h1 className="av-collection__title">
+            {collection.title}
+            <span className="av-collection__count"> - {products.length} items</span>
+          </h1>
         </div>
 
-        {/* Active filter chips in toolbar - Myntra style */}
-        {activeChips.length > 0 && (
-          <div className="av-toolbar__chips">
-            {activeChips.map((chip) => (
-              <button
-                key={`${chip.groupId}-${chip.value}`}
-                className="av-toolbar__chip"
-                onClick={() => toggleFilter(chip.groupId, chip.value)}
-              >
-                <span>{chip.label}</span>
-                <Icon name="close" size={10} strokeWidth={2.5} />
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Mobile filter trigger */}
-        <MobileFilterTrigger
-          activeCount={activeCount}
-          onClick={() => setMobileFilterOpen(true)}
-        />
-
-        <div className="av-collection__toolbar-right">
-          <div className="av-sort">
-            <label className="av-sort__label" htmlFor="sort-select">Sort by :</label>
-            <select
-              id="sort-select"
-              className="av-sort__select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-            <Icon name="chevron-down" size={14} strokeWidth={1.5} className="av-sort__icon" />
-          </div>
-        </div>
-      </div>
-
-      {/* Main layout: sidebar + grid */}
-      <div className="av-collection__body container">
-        {/* Desktop filter sidebar */}
-        <FilterSidebar
-          filters={filters}
-          activeFilters={activeFilters}
-          onFilterChange={toggleFilter}
-          onClearAll={clearAll}
-          onClearGroup={clearGroup}
-          totalCount={products.length}
-        />
-
-        {/* Product grid */}
-        <div className="av-collection__main">
-          {products.length === 0 ? (
-            <EmptyState onClear={clearAll} />
-          ) : (
-            <div className={`av-product-grid${isUpdating ? ' av-product-grid--updating' : ''}`}>
-              {products.map((product, i) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  loading={i < 8 ? 'eager' : 'lazy'}
-                />
-              ))}
+        {/* Toolbar & Body Architectural Grid */}
+        <div className="av-collection__grid">
+          {/* Toolbar */}
+          <div className="av-collection__toolbar">
+            <div className="av-collection__toolbar-left">
+              <span className="av-toolbar__filters-label">FILTERS</span>
+              {activeCount > 0 && (
+                <button className="av-toolbar__clear-all" onClick={clearAll}>
+                  CLEAR ALL
+                </button>
+              )}
             </div>
-          )}
+
+            <div className="av-collection__toolbar-right">
+              {/* Active filter chips in toolbar - Myntra style */}
+              {activeChips.length > 0 && (
+                <div className="av-toolbar__chips">
+                  {activeChips.map((chip) => (
+                    <button
+                      key={`${chip.groupId}-${chip.value}`}
+                      className="av-toolbar__chip"
+                      onClick={() => toggleFilter(chip.groupId, chip.value)}
+                    >
+                      <span>{chip.label}</span>
+                      <Icon name="close" size={10} strokeWidth={2.5} />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Mobile filter trigger */}
+              <MobileFilterTrigger
+                activeCount={activeCount}
+                onClick={() => setMobileFilterOpen(true)}
+              />
+
+              <div className="av-sort">
+                <label className="av-sort__label" htmlFor="sort-select">Sort by :</label>
+                <select
+                  id="sort-select"
+                  className="av-sort__select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+                <Icon name="chevron-down" size={14} strokeWidth={1.5} className="av-sort__icon" />
+              </div>
+            </div>
+          </div>
+
+          {/* Main content row */}
+          <div className="av-collection__body">
+            {/* Desktop filter sidebar */}
+            <FilterSidebar
+              filters={filters}
+              activeFilters={activeFilters}
+              onFilterChange={toggleFilter}
+              onClearAll={clearAll}
+              onClearGroup={clearGroup}
+              totalCount={products.length}
+            />
+
+            {/* Product grid */}
+            <div className="av-collection__main">
+              {products.length === 0 ? (
+                <EmptyState onClear={clearAll} />
+              ) : (
+                <div className={`av-product-grid${isUpdating ? ' av-product-grid--updating' : ''}`}>
+                  {products.map((product, i) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      loading={i < 8 ? 'eager' : 'lazy'}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 

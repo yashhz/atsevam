@@ -2,7 +2,6 @@ import {useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/collections._index';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -20,7 +19,7 @@ export async function loader(args: Route.LoaderArgs) {
  */
 async function loadCriticalData({context, request}: Route.LoaderArgs) {
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 4,
+    pageBy: 250,
   });
 
   const [{collections}] = await Promise.all([
@@ -46,20 +45,35 @@ export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
-      <PaginatedResourceSection<CollectionFragment>
-        connection={collections}
-        resourcesClassName="collections-grid"
-      >
-        {({node: collection, index}) => (
-          <CollectionItem
-            key={collection.id}
-            collection={collection}
-            index={index}
-          />
-        )}
-      </PaginatedResourceSection>
+    <div className="av-collections-page">
+      {/* Breadcrumb */}
+      <nav className="av-breadcrumb container" aria-label="Breadcrumb">
+        <a href="/" className="av-breadcrumb__link">Home</a>
+        <span className="av-breadcrumb__sep">&gt;</span>
+        <span className="av-breadcrumb__current">Collections</span>
+      </nav>
+
+      {/* Header section */}
+      <div className="av-collections-page__header container">
+        <span className="av-collections-page__eyebrow">OUR HERITAGE</span>
+        <h1 className="av-collections-page__title">Curated Collections</h1>
+        <p className="av-collections-page__subtitle">
+          Explore premium handcrafted Indian ethnic wear celebrating traditional artistry, vibrant colors, and timeless silhouettes.
+        </p>
+      </div>
+
+      {/* Grid section */}
+      <div className="container">
+        <div className="av-collections-grid">
+          {(collections?.nodes || []).map((collection, index) => (
+            <CollectionItem
+              key={collection.id}
+              collection={collection}
+              index={index}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -73,21 +87,37 @@ function CollectionItem({
 }) {
   return (
     <Link
-      className="collection-item"
+      className="av-collection-card"
       key={collection.id}
       to={`/collections/${collection.handle}`}
       prefetch="intent"
     >
-      {collection?.image && (
-        <Image
-          alt={collection.image.altText || collection.title}
-          aspectRatio="1/1"
-          data={collection.image}
-          loading={index < 3 ? 'eager' : undefined}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <h5>{collection.title}</h5>
+      <div className="av-collection-card__image-wrap">
+        {collection?.image ? (
+          <Image
+            alt={collection.image.altText || collection.title}
+            aspectRatio="3/4"
+            data={collection.image}
+            loading={index < 4 ? 'eager' : 'lazy'}
+            sizes="(min-width: 45em) 400px, 100vw"
+            className="av-collection-card__img"
+          />
+        ) : (
+          <img
+            src={`https://picsum.photos/seed/${collection.handle}/600/800`}
+            alt={collection.title}
+            loading={index < 4 ? 'eager' : 'lazy'}
+            className="av-collection-card__img"
+          />
+        )}
+        <div className="av-collection-card__overlay" />
+      </div>
+      <div className="av-collection-card__info">
+        <h3 className="av-collection-card__title">{collection.title}</h3>
+        <span className="av-collection-card__cta">
+          Explore Collection <span className="av-collection-card__arrow">→</span>
+        </span>
+      </div>
     </Link>
   );
 }

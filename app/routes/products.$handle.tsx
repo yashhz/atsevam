@@ -593,15 +593,15 @@ export default function Product() {
   return (
     <div className="av-pdp">
       {/* Breadcrumb */}
-      <div className="av-breadcrumb container">
-        <a href="/" className="av-breadcrumb__item">Home</a>
-        <span className="av-breadcrumb__sep">/</span>
-        <a href={`/collections/${mock.category.toLowerCase()}`} className="av-breadcrumb__item">
+      <nav className="av-breadcrumb container" aria-label="Breadcrumb">
+        <a href="/" className="av-breadcrumb__link">Home</a>
+        <span className="av-breadcrumb__sep">&gt;</span>
+        <a href={`/collections/${mock.category.toLowerCase()}`} className="av-breadcrumb__link">
           {mock.category}
         </a>
-        <span className="av-breadcrumb__sep">/</span>
-        <span className="av-breadcrumb__item av-breadcrumb__item--active">{mock.title}</span>
-      </div>
+        <span className="av-breadcrumb__sep">&gt;</span>
+        <span className="av-breadcrumb__current">{mock.title}</span>
+      </nav>
 
       {/* TOP SECTION: Image Gallery + Essential Info */}
       <div className="av-pdp__top container">

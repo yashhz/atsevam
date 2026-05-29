@@ -131,17 +131,6 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
         </div>
       </div>
 
-      {/* Category Sub-Footer (Reveals categories bar on hover) */}
-      <div className="av-footer__categories-bar">
-        <div className="container">
-          <div className="av-footer__categories-inner">
-            <NavLink to="/collections/sarees" className="av-footer__category-tab-link">Saree</NavLink>
-            <NavLink to="/collections/blouse" className="av-footer__category-tab-link">Blouse</NavLink>
-            <NavLink to="/collections/western-dresses" className="av-footer__category-tab-link">Women</NavLink>
-            <NavLink to="/collections/lehengas" className="av-footer__category-tab-link">Heartwork</NavLink>
-          </div>
-        </div>
-      </div>
     </footer>
   );
 }

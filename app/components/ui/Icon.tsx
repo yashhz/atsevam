@@ -234,6 +234,21 @@ const icons = {
       d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3zM5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1zM19 13l.5 1.5L21 15l-1.5.5L19 17l-.5-1.5L17 15l1.5-.5L19 13z"
     />
   ),
+  grid: (
+    <>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  'starburst-new': (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 2l2.4 2.4 3.4-.6.6 3.4 2.4 2.4-2.4 2.4-.6 3.4-3.4-.6-2.4 2.4-2.4-2.4-3.4.6-.6-3.4-2.4-2.4 2.4-2.4.6-3.4 3.4.6L12 2z"
+    />
+  ),
 };
 
 export function Icon({name, size = 20, className = '', strokeWidth = 1.5}: IconProps) {

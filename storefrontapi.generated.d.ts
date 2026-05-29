@@ -493,6 +493,74 @@ export type HomepageBestSellersQuery = {
   }>;
 };
 
+export type HomepageLehengasQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type HomepageLehengasQuery = {
+  collection?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          'id' | 'title' | 'handle' | 'productType' | 'tags'
+        > & {
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          compareAtPriceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+          >;
+          images: {nodes: Array<Pick<StorefrontAPI.Image, 'url' | 'altText'>>};
+        }
+      >;
+    };
+  }>;
+};
+
+export type HomepageKurtisQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type HomepageKurtisQuery = {
+  collection?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          'id' | 'title' | 'handle' | 'productType' | 'tags'
+        > & {
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          compareAtPriceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+          >;
+          images: {nodes: Array<Pick<StorefrontAPI.Image, 'url' | 'altText'>>};
+        }
+      >;
+    };
+  }>;
+};
+
 export type ArticleQueryVariables = StorefrontAPI.Exact<{
   articleHandle: StorefrontAPI.Scalars['String']['input'];
   blogHandle: StorefrontAPI.Scalars['String']['input'];
@@ -1439,9 +1507,17 @@ interface GeneratedQueryTypes {
     return: HomepageNewArrivalsQuery;
     variables: HomepageNewArrivalsQueryVariables;
   };
-  '#graphql\n      #graphql\n    fragment HomepageProduct on Product {\n      id\n      title\n      handle\n      productType\n      tags\n      priceRange { minVariantPrice { amount currencyCode } }\n      compareAtPriceRange { minVariantPrice { amount currencyCode } }\n      featuredImage { url altText width height }\n      images(first: 2) { nodes { url altText } }\n    }\n  \n      query HomepageBestSellers {\n        collection(handle: "bestsellers") {\n          products(first: 8, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }\n        }\n      }\n    ': {
+  '#graphql\n      #graphql\n    fragment HomepageProduct on Product {\n      id\n      title\n      handle\n      productType\n      tags\n      priceRange { minVariantPrice { amount currencyCode } }\n      compareAtPriceRange { minVariantPrice { amount currencyCode } }\n      featuredImage { url altText width height }\n      images(first: 2) { nodes { url altText } }\n    }\n  \n      query HomepageBestSellers {\n        collection(handle: "bestsellers") {\n          products(first: 9, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }\n        }\n      }\n    ': {
     return: HomepageBestSellersQuery;
     variables: HomepageBestSellersQueryVariables;
+  };
+  '#graphql\n      #graphql\n    fragment HomepageProduct on Product {\n      id\n      title\n      handle\n      productType\n      tags\n      priceRange { minVariantPrice { amount currencyCode } }\n      compareAtPriceRange { minVariantPrice { amount currencyCode } }\n      featuredImage { url altText width height }\n      images(first: 2) { nodes { url altText } }\n    }\n  \n      query HomepageLehengas {\n        collection(handle: "lehengas") {\n          products(first: 9, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }\n        }\n      }\n    ': {
+    return: HomepageLehengasQuery;
+    variables: HomepageLehengasQueryVariables;
+  };
+  '#graphql\n      #graphql\n    fragment HomepageProduct on Product {\n      id\n      title\n      handle\n      productType\n      tags\n      priceRange { minVariantPrice { amount currencyCode } }\n      compareAtPriceRange { minVariantPrice { amount currencyCode } }\n      featuredImage { url altText width height }\n      images(first: 2) { nodes { url altText } }\n    }\n  \n      query HomepageKurtis {\n        collection(handle: "kurtis") {\n          products(first: 9, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }\n        }\n      }\n    ': {
+    return: HomepageKurtisQuery;
+    variables: HomepageKurtisQueryVariables;
   };
   '#graphql\n  query Article(\n    $articleHandle: String!\n    $blogHandle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(language: $language, country: $country) {\n    blog(handle: $blogHandle) {\n      handle\n      articleByHandle(handle: $articleHandle) {\n        handle\n        title\n        contentHtml\n        publishedAt\n        author: authorV2 {\n          name\n        }\n        image {\n          id\n          altText\n          url\n          width\n          height\n        }\n        seo {\n          description\n          title\n        }\n      }\n    }\n  }\n': {
     return: ArticleQuery;

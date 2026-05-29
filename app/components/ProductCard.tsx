@@ -177,12 +177,25 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
             />
           )}
 
-          {/* Badge */}
-          {product.badge && (
-            <div className="av-card__badge">
+          {/* Badges Stack */}
+          <div className="av-card__badges-stack">
+            {product.discount && product.discount > 0 ? (
+              <Badge variant="sale" label={`${product.discount}% OFF`} />
+            ) : null}
+            {(product.badge === 'new' || product.tags?.includes('new')) && (
+              <Badge variant="new" label="NEW ARRIVAL" />
+            )}
+            {(product.badge === 'bestseller' || product.tags?.includes('bestseller')) && (
+              <Badge variant="bestseller" label="BESTSELLER" />
+            )}
+            {/* Fallback for other single badges */}
+            {product.badge && 
+             product.badge !== 'new' && 
+             product.badge !== 'bestseller' && 
+             !(product.discount && product.discount > 0) && (
               <Badge variant={product.badge} />
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Image indicators */}
           {hasMultipleImages && (
