@@ -432,21 +432,32 @@ function PriceDropSection({ products }: { products: MockProduct[] }) {
 // ─── 4. Shop By Size Section ──────────────────────────────────────
 
 function ShopBySizeSection() {
-  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const sizes = [
+    { value: 'XS', label: 'Extra Small' },
+    { value: 'S', label: 'Small Size' },
+    { value: 'M', label: 'Medium Size' },
+    { value: 'L', label: 'Large Size' },
+    { value: 'XL', label: 'Extra Large' },
+    { value: 'XXL', label: 'Double Extra' },
+  ];
 
   return (
     <section className="av-size-section section">
       <div className="container">
         <h2 className="av-home-section-title">Shop By Size</h2>
-        <div className="av-size-row">
-          {sizes.map((size, i) => (
+        <div className="av-size-grid">
+          {sizes.map((sz, i) => (
             <Link
               key={i}
-              to={`/collections/all?size=${size}`}
-              className="av-size-pill"
+              to={`/collections/all?size=${sz.value}`}
+              className="av-size-card"
               prefetch="intent"
             >
-              <span className="av-size-pill__text">{size}</span>
+              <div className="av-size-card__inner">
+                <span className="av-size-card__value">{sz.value}</span>
+                <span className="av-size-card__label">{sz.label}</span>
+                <span className="av-size-card__cta">Shop Size →</span>
+              </div>
             </Link>
           ))}
         </div>
