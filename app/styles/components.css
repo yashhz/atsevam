@@ -11012,29 +11012,67 @@ a {
   align-items: center;
   text-align: center;
   flex-shrink: 0;
-  width: 82px;
+  width: 134px; /* Increased item width for larger desktop visual footprint */
   text-decoration: none;
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
 .av-circle-item:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
 }
 
 .av-circle-item__image-wrap {
-  width: 76px;
-  height: 76px;
+  width: 128px; /* Boosted category circle diameter to 128px */
+  height: 128px;
   border-radius: var(--radius-full);
-  overflow: hidden;
-  border: 2px solid var(--color-border);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: var(--space-3);
-  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* Conic gradient swirling border matching Atsevam brand maroon */
+.av-circle-item__image-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: conic-gradient(
+    from 0deg,
+    var(--color-brand) 0deg,
+    rgba(123, 45, 78, 0.1) 90deg,
+    var(--color-brand) 180deg,
+    rgba(123, 45, 78, 0.1) 270deg,
+    var(--color-brand) 360deg
+  );
+  animation: swirl-spin 5s linear infinite;
+  z-index: 1;
+}
+
+/* Inner masking container, leaving a perfect 4px swirling brand border */
+.av-circle-item__inner-wrap {
+  position: relative;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  overflow: hidden;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 
 .av-circle-item:hover .av-circle-item__image-wrap {
-  border-color: var(--color-brand);
-  box-shadow: 0 4px 12px rgba(123, 45, 78, 0.15);
+  box-shadow: 0 6px 18px rgba(123, 45, 78, 0.3);
+}
+
+.av-circle-item:hover .av-circle-item__inner-wrap {
+  transform: scale(1.02);
 }
 
 .av-circle-item__img {
@@ -11045,8 +11083,8 @@ a {
 
 .av-circle-item__name {
   font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.85rem; /* Larger prominent font label */
+  font-weight: 700;
   color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -11055,6 +11093,11 @@ a {
 
 .av-circle-item:hover .av-circle-item__name {
   color: var(--color-brand);
+}
+
+@keyframes swirl-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* 2. Shop By Discount Section */
