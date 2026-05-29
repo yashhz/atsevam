@@ -83,7 +83,7 @@ export async function loader({context}: Route.LoaderArgs) {
       ${PRODUCT_FIELDS}
       query HomepageBestSellers {
         collection(handle: "bestsellers") {
-          products(first: 8, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }
+          products(first: 9, sortKey: BEST_SELLING) { nodes { ...HomepageProduct } }
         }
       }
     `).catch(() => ({collection: null})),
@@ -261,9 +261,10 @@ export default function Homepage() {
           eyebrow="Customer Favourites"
           title="Best Selling Products"
           subtitle="The hot pieces our customers keep coming back for"
-          products={bestSellers}
+          products={bestSellers.slice(0, 9)}
           viewAllHref="/collections/bestsellers"
           loading="lazy"
+          columns={3}
         />
       )}
 
@@ -279,6 +280,7 @@ export default function Homepage() {
           products={lehengas.slice(0, 9)}
           viewAllHref="/collections/lehengas"
           loading="lazy"
+          columns={3}
         />
       )}
 
@@ -291,6 +293,7 @@ export default function Homepage() {
           products={kurtis.slice(0, 9)}
           viewAllHref="/collections/kurtis"
           loading="lazy"
+          columns={3}
         />
       )}
 
