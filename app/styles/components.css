@@ -10983,7 +10983,7 @@ a {
 
 /* 1. Category Circles Section */
 .av-circles-section {
-  padding-block: var(--space-2) var(--space-6) !important;
+  padding-block: var(--space-4) var(--space-6) !important;
   margin: 0 !important;
 }
 
@@ -11018,20 +11018,26 @@ a {
   align-items: center;
   text-align: center;
   flex-shrink: 0;
-  width: 116px; /* Closely fitted size to prevent empty space */
+  width: 144px; /* Perfectly sized to accommodate the larger 140px circle */
   text-decoration: none;
   transition: transform var(--duration-fast) var(--ease-out);
   margin: 0 !important;
   padding: 0 !important;
 }
 
+@media (max-width: 640px) {
+  .av-circle-item {
+    width: 96px; /* Responsive mobile width */
+  }
+}
+
 .av-circle-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
 
 .av-circle-item__image-wrap {
-  width: 104px; /* Perfectly large circular thumbnails */
-  height: 104px;
+  width: 140px; /* Luxurious, large circular thumbnails */
+  height: 140px;
   border-radius: var(--radius-full);
   position: relative;
   display: flex;
@@ -11040,11 +11046,18 @@ a {
   margin-bottom: var(--space-2);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  border: 2px solid #E6B800; /* Beautiful, simple gold solid ring from the screenshot! */
+  border: 2px solid #E6B800; /* Solid gold ring matching reference */
   background: var(--color-white);
   transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
   margin: 0 !important;
   padding: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .av-circle-item__image-wrap {
+    width: 92px; /* Responsive mobile circle size */
+    height: 92px;
+  }
 }
 
 /* Remove conic swirl pseudo-elements entirely */
@@ -11055,10 +11068,10 @@ a {
 /* Inner masking wrapper goes completely to the edge inside the gold ring */
 .av-circle-item__inner-wrap {
   position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--radius-full);
-  overflow: hidden;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: var(--radius-full) !important;
+  overflow: hidden !important;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -11072,21 +11085,23 @@ a {
   box-shadow: 0 4px 12px rgba(123, 45, 78, 0.2);
 }
 
+/* Force image to stretch completely to edge, overriding global auto sizes */
 .av-circle-item__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
 }
 
 .av-circle-item__name {
   font-family: var(--font-body);
   font-size: 0.85rem;
-  font-weight: 500; /* Clean normal weight as shown in the screenshot */
+  font-weight: 600; /* Sleek semibold weight */
   color: var(--color-primary);
   text-transform: capitalize; /* Clean capitalization instead of forced uppercase */
   letter-spacing: normal;
   transition: color var(--duration-fast) var(--ease-out);
-  margin-top: 4px;
+  margin-top: var(--space-2);
 }
 
 .av-circle-item:hover .av-circle-item__name {
