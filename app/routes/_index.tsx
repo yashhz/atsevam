@@ -338,7 +338,9 @@ function CategoryCirclesSection() {
               prefetch="intent"
             >
               <div className="av-circle-item__image-wrap">
-                <img src={cat.img} alt={cat.name} className="av-circle-item__img" loading="lazy" />
+                <div className="av-circle-item__inner-wrap">
+                  <img src={cat.img} alt={cat.name} className="av-circle-item__img" loading="lazy" />
+                </div>
               </div>
               <span className="av-circle-item__name">{cat.name}</span>
             </Link>

@@ -10326,6 +10326,86 @@
   margin-bottom: var(--space-2) !important;
 }
 
+.av-circle-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex-shrink: 0;
+  width: 114px; /* Increased overall width for larger circle items */
+  text-decoration: none;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.av-circle-item:hover {
+  transform: translateY(-5px);
+}
+
+.av-circle-item__image-wrap {
+  width: 108px; /* Significantly increased circle size */
+  height: 108px;
+  border-radius: var(--radius-full);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden; /* Mask the rotating pseudo element */
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* Swirling border pseudo-element with Conic Gradient matching Logo Maroon */
+.av-circle-item__image-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: conic-gradient(
+    from 0deg,
+    var(--color-brand) 0deg,
+    rgba(123, 45, 78, 0.1) 90deg,
+    var(--color-brand) 180deg,
+    rgba(123, 45, 78, 0.1) 270deg,
+    var(--color-brand) 360deg
+  );
+  animation: swirl-spin 5s linear infinite;
+  z-index: 1;
+}
+
+/* Inner wrapper masking, leaving a clean 3.5px swirling border */
+.av-circle-item__inner-wrap {
+  position: relative;
+  width: calc(100% - 7px);
+  height: calc(100% - 7px);
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  overflow: hidden;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.av-circle-item:hover .av-circle-item__image-wrap {
+  box-shadow: 0 6px 16px rgba(123, 45, 78, 0.25);
+}
+
+.av-circle-item:hover .av-circle-item__inner-wrap {
+  transform: scale(1.02);
+}
+
+.av-circle-item__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes swirl-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Review date */
 .jdgm-rev__timestamp {
   font-family: var(--font-body) !important;
