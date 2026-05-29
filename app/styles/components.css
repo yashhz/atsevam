@@ -8332,13 +8332,30 @@
   color: var(--color-white) !important;
 }
 
-/* Buy Now stays ghost but inherits brand accent on hover */
+/* Buy Now: premium solid black button */
 .av-pdp__cart-section .av-product-form__buy-now {
-  border-color: var(--color-charcoal);
-  height: 48px;
-  font-size: var(--text-sm);
-  letter-spacing: var(--tracking-wider);
+  background: var(--color-black) !important;
+  border: 1px solid var(--color-black) !important;
+  color: var(--color-white) !important;
+  height: 54px !important;
+  font-size: var(--text-sm) !important;
+  font-weight: var(--weight-bold) !important;
+  letter-spacing: var(--tracking-wider) !important;
   border-radius: 0 !important;
+  text-transform: uppercase !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-top: var(--space-3) !important;
+  transition: background var(--duration-base) var(--ease-out),
+              border-color var(--duration-base) var(--ease-out),
+              color var(--duration-base) var(--ease-out) !important;
+}
+
+.av-pdp__cart-section .av-product-form__buy-now:hover {
+  background: var(--color-brand) !important;
+  border-color: var(--color-brand) !important;
+  color: var(--color-white) !important;
 }
 
 /* ─── Mobile cart overrides ────────────────────────────────── */
@@ -11594,10 +11611,10 @@ a {
   top: 0;
   left: 0;
   right: 0;
-  height: 20px; /* Invisible trigger zone at the very top */
+  height: 25px; /* Symmetrical comfortable trigger zone at the very top */
   z-index: 9999 !important;
-  background: transparent;
-  transition: height 0.2s ease;
+  background: rgba(0, 0, 0, 0); /* Ensures robust hover capture across browsers */
+  transition: height 0.15s ease;
 }
 
 .av-header-wrapper--pdp .av-announcement,
@@ -11621,7 +11638,7 @@ a {
 }
 
 .av-header-wrapper--pdp:hover {
-  height: auto; /* Expand trigger area to contain categories when hovered */
+  height: 90px !important; /* Locks it fully open to avoid hover loss while mouse moves to click */
 }
 
 .av-header-wrapper--pdp:hover .av-tabs {

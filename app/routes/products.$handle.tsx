@@ -678,6 +678,18 @@ export default function Product() {
             <span className="av-pdp__tax-note">MRP inclusive of all taxes</span>
           </div>
 
+          {/* Sizing & In-Stock Status Badge */}
+          <div className="av-pdp__stock-status" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', margin: 'var(--space-2) 0 var(--space-4)' }}>
+            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2D6A4F' }} />
+            <span style={{ fontSize: '12px', color: '#2D6A4F', fontWeight: 600, fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-wide)' }}>
+              In Stock (Only 3 left!)
+            </span>
+            <span style={{ fontSize: '12px', color: 'var(--color-muted)', margin: '0 var(--space-1)' }}>•</span>
+            <span style={{ fontSize: '12px', color: 'var(--color-secondary)', fontFamily: 'var(--font-body)' }}>
+              ✓ Ready to dispatch
+            </span>
+          </div>
+
           {/* Direct from manufacturer badge */}
           <div className="av-pdp__manufacturer-badge">
             <Icon name="shield" size={16} strokeWidth={1.5} />
