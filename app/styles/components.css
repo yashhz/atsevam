@@ -11588,3 +11588,47 @@ a {
   color: var(--color-brand) !important; /* Maroon hover color */
 }
 
+/* ─── PDP Header Hover Reveal (Only Category Tab Bar) ─── */
+.av-header-wrapper--pdp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px; /* Invisible trigger zone at the very top */
+  z-index: 9999 !important;
+  background: transparent;
+  transition: height 0.2s ease;
+}
+
+.av-header-wrapper--pdp .av-announcement,
+.av-header-wrapper--pdp .av-header {
+  display: none !important; /* Hide announcement bar and main header completely */
+}
+
+.av-header-wrapper--pdp .av-tabs {
+  display: block !important;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(-30px);
+  background: var(--color-white) !important;
+  border-bottom: none;
+  box-shadow: none;
+  transition: max-height 0.4s var(--ease-out),
+              opacity 0.4s var(--ease-out),
+              transform 0.4s var(--ease-out),
+              box-shadow 0.4s var(--ease-out);
+}
+
+.av-header-wrapper--pdp:hover {
+  height: auto; /* Expand trigger area to contain categories when hovered */
+}
+
+.av-header-wrapper--pdp:hover .av-tabs {
+  opacity: 1 !important;
+  max-height: 100px !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  border-bottom: 1px solid var(--color-border-light) !important;
+}
+

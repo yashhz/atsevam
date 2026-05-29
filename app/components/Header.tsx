@@ -1,5 +1,5 @@
 import {Suspense, useState} from 'react';
-import {Await, NavLink, useAsyncValue} from 'react-router';
+import {Await, NavLink, useAsyncValue, useLocation} from 'react-router';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -79,9 +79,11 @@ const DEFAULT_CATEGORY_TABS = [
 
 export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProps) {
   const {shop, menu} = header;
+  const location = useLocation();
+  const isProductPage = location.pathname.startsWith('/products/');
 
   return (
-    <>
+    <div className={isProductPage ? 'av-header-wrapper--pdp' : 'av-header-wrapper'}>
       {/* Announcement bar */}
       <AnnouncementBar />
 
@@ -120,7 +122,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
       {/* Category tab bar */}
       <CategoryTabBar />
-    </>
+    </div>
   );
 }
 
