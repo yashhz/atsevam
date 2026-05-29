@@ -10982,16 +10982,22 @@ a {
 }
 
 /* 1. Category Circles Section */
+.av-circles-section {
+  padding-block: var(--space-2) var(--space-6) !important;
+  margin: 0 !important;
+}
+
 .av-circles-row {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-2) !important; /* Close-packed gap from reference image */
   overflow-x: auto;
-  padding-block: var(--space-4) var(--space-6);
+  padding-block: var(--space-2) var(--space-3);
   scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  margin: 0 !important;
 }
 
 .av-circles-row::-webkit-scrollbar {
@@ -11001,8 +11007,8 @@ a {
 @media (min-width: 1024px) {
   .av-circles-row {
     justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--space-8);
+    flex-wrap: nowrap; /* Horizontal close-packed flow */
+    gap: var(--space-3) !important; /* Tight gaps on desktop */
   }
 }
 
@@ -11012,67 +11018,58 @@ a {
   align-items: center;
   text-align: center;
   flex-shrink: 0;
-  width: 134px; /* Increased item width for larger desktop visual footprint */
+  width: 116px; /* Closely fitted size to prevent empty space */
   text-decoration: none;
   transition: transform var(--duration-fast) var(--ease-out);
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .av-circle-item:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
 }
 
 .av-circle-item__image-wrap {
-  width: 128px; /* Boosted category circle diameter to 128px */
-  height: 128px;
+  width: 104px; /* Perfectly large circular thumbnails */
+  height: 104px;
   border-radius: var(--radius-full);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  transition: box-shadow var(--duration-fast) var(--ease-out);
+  border: 2px solid #E6B800; /* Beautiful, simple gold solid ring from the screenshot! */
+  background: var(--color-white);
+  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Conic gradient swirling border matching Atsevam brand maroon */
+/* Remove conic swirl pseudo-elements entirely */
 .av-circle-item__image-wrap::before {
-  content: '';
-  position: absolute;
-  inset: -20px;
-  background: conic-gradient(
-    from 0deg,
-    var(--color-brand) 0deg,
-    rgba(123, 45, 78, 0.1) 90deg,
-    var(--color-brand) 180deg,
-    rgba(123, 45, 78, 0.1) 270deg,
-    var(--color-brand) 360deg
-  );
-  animation: swirl-spin 5s linear infinite;
-  z-index: 1;
+  display: none !important;
 }
 
-/* Inner masking container, leaving a perfect 4px swirling brand border */
+/* Inner masking wrapper goes completely to the edge inside the gold ring */
 .av-circle-item__inner-wrap {
   position: relative;
-  width: calc(100% - 8px);
-  height: calc(100% - 8px);
+  width: 100%;
+  height: 100%;
   border-radius: var(--radius-full);
-  background: var(--color-white);
   overflow: hidden;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform var(--duration-fast) var(--ease-out);
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .av-circle-item:hover .av-circle-item__image-wrap {
-  box-shadow: 0 6px 18px rgba(123, 45, 78, 0.3);
-}
-
-.av-circle-item:hover .av-circle-item__inner-wrap {
-  transform: scale(1.02);
+  border-color: var(--color-brand); /* Turns to signature brand burgundy on hover */
+  box-shadow: 0 4px 12px rgba(123, 45, 78, 0.2);
 }
 
 .av-circle-item__img {
@@ -11083,21 +11080,17 @@ a {
 
 .av-circle-item__name {
   font-family: var(--font-body);
-  font-size: 0.85rem; /* Larger prominent font label */
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 500; /* Clean normal weight as shown in the screenshot */
   color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: capitalize; /* Clean capitalization instead of forced uppercase */
+  letter-spacing: normal;
   transition: color var(--duration-fast) var(--ease-out);
+  margin-top: 4px;
 }
 
 .av-circle-item:hover .av-circle-item__name {
   color: var(--color-brand);
-}
-
-@keyframes swirl-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 /* 2. Shop By Discount Section */
