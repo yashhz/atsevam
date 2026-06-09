@@ -13,59 +13,24 @@ type CategorySlide = {
 const CATEGORY_SLIDES: CategorySlide[] = [
   {
     id: '1',
-    title: 'Lehengas',
-    handle: 'lehengas',
-    image: '/images/homepage/lehenga.jpeg',
-    description: 'Bridal & Festive Collection',
+    title: 'Summer Sale',
+    handle: 'summer-sale',
+    image: '/images/homepage/banner 1.png',
+    description: 'Exclusive Festive & Summer Collection',
   },
   {
     id: '2',
-    title: 'Anarkali Suits',
-    handle: 'anarkali',
-    image: '/images/homepage/anarkali1.jpeg',
-    description: 'Elegant Traditional Wear',
+    title: 'Top Lehengas',
+    handle: 'lehengas',
+    image: '/images/homepage/banner 2.jpeg',
+    description: 'Bridal & Festive Lehenga Cholis',
   },
   {
     id: '3',
-    title: 'Designer Kurtis',
-    handle: 'kurtis',
-    image: '/images/homepage/kurti.jpeg',
-    description: 'Contemporary Ethnic Style',
-  },
-  {
-    id: '4',
     title: 'Co-ord Sets',
     handle: 'co-ords',
-    image: '/images/homepage/co ord set.jpeg',
-    description: 'Modern Fusion Wear',
-  },
-  {
-    id: '5',
-    title: 'Traditional Sarees',
-    handle: 'sarees',
-    image: '/images/homepage/1 (3).jpeg',
-    description: 'Timeless Elegance & Grace',
-  },
-  {
-    id: '6',
-    title: 'Navratri Special',
-    handle: 'navratri-lehenga-choli',
-    image: '/images/homepage/lehenga choli.jpeg',
-    description: 'Vibrant Festive Collection',
-  },
-  {
-    id: '7',
-    title: 'Western Wear',
-    handle: 'western-dresses',
-    image: '/images/homepage/1 (7).jpeg',
-    description: 'Modern Silhouettes, Classic Craft',
-  },
-  {
-    id: '8',
-    title: 'New Arrivals',
-    handle: 'new-arrivals',
-    image: '/images/homepage/1 (8).jpeg',
-    description: 'Fresh Runway Handcrafts',
+    image: '/images/homepage/banner 3.png',
+    description: 'Modern Fusion & Chic Styles',
   },
 ];
 
@@ -180,14 +145,6 @@ export function CategoryBanner() {
                   className="av-category-banner__image"
                   loading={index === 0 ? 'eager' : 'lazy'}
                 />
-                <div className="av-category-banner__overlay" />
-              </div>
-              <div className="av-category-banner__content">
-                <h2 className="av-category-banner__title">{slide.title}</h2>
-                <p className="av-category-banner__description">{slide.description}</p>
-                <span className="av-category-banner__cta">
-                  Shop Now <Icon name="arrow-right" size={18} strokeWidth={2} />
-                </span>
               </div>
             </Link>
           ))}

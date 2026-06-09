@@ -1,3 +1,4 @@
+import {useState, useRef, useCallback, useEffect} from 'react';
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import {ProductCard} from '~/components/ProductCard';
@@ -250,10 +251,19 @@ export default function Homepage() {
         <PriceDropSection products={priceDropDeals} />
       )}
 
-      {/* 4. Shop By Size selector pill buttons */}
-      <ShopBySizeSection />
+      {/* 4. Video Reel Carousel */}
+      <VideoReelSection />
 
       <BrandStrip />
+
+      {/* Western Wear Promo Banner (Banner 4) */}
+      <div className="av-promo-banner section">
+        <div className="container">
+          <Link to="/collections/western-dresses" className="av-promo-banner__link" prefetch="intent">
+            <img src="/images/homepage/banner 4.png" alt="Shop Western Wear" className="av-promo-banner__img" loading="lazy" />
+          </Link>
+        </div>
+      </div>
 
       {/* 5. Best Selling Products Category section */}
       {bestSellers.length > 0 && (
@@ -283,6 +293,15 @@ export default function Homepage() {
           columns={3}
         />
       )}
+
+      {/* Kurtis Promo Banner (Banner 5) */}
+      <div className="av-promo-banner section">
+        <div className="container">
+          <Link to="/collections/kurtis" className="av-promo-banner__link" prefetch="intent">
+            <img src="/images/homepage/banner 5.jpeg" alt="Shop Kurtis Collection" className="av-promo-banner__img" loading="lazy" />
+          </Link>
+        </div>
+      </div>
 
       {/* 8. Top Kurtis grid (6 to 9 products) */}
       {kurtis.length > 0 && (
@@ -430,37 +449,139 @@ function PriceDropSection({ products }: { products: MockProduct[] }) {
   );
 }
 
-// ─── 4. Shop By Size Section ──────────────────────────────────────
+// ─── 4. Video Reel Section ───────────────────────────────────────
 
-function ShopBySizeSection() {
-  const sizes = [
-    { value: 'XS', label: 'Extra Small' },
-    { value: 'S', label: 'Small Size' },
-    { value: 'M', label: 'Medium Size' },
-    { value: 'L', label: 'Large Size' },
-    { value: 'XL', label: 'Extra Large' },
-    { value: 'XXL', label: 'Double Extra' },
-  ];
+const VIDEO_REELS = [
+  {
+    src: 'https://cdn.shopify.com/videos/c/o/v/71c58deb154c44efa65269c149fa9642.mp4',
+    label: 'Ethnic Elegance',
+    description: 'Timeless traditional pieces showcasing handcrafted heritage, intricate embroideries, and classic silhouettes designed to make every occasion memorable.',
+  },
+  {
+    src: 'https://cdn.shopify.com/videos/c/o/v/d663ea9a75014af89566ff4098ba7954.mp4',
+    label: 'Bridal Collection',
+    description: 'Exquisite lehengas and royal designs woven with passion, gold embellishments, and artisanal mastery for your most special day.',
+  },
+  {
+    src: 'https://cdn.shopify.com/videos/c/o/v/196d28b210dc4a2797426f3ca1fadc8f.mp4',
+    label: 'Festival Wear',
+    description: 'Celebrate in style with vibrant colours, flowing fabrics, and celebratory details that capture the true spirit of Indian festivals.',
+  },
+  {
+    src: 'https://cdn.shopify.com/videos/c/o/v/861bf40422f64d98857444d953cf460c.mp4',
+    label: 'Western Edit',
+    description: 'Contemporary cuts and modern fusion wear blending global aesthetics with Indian comfort, perfect for effortless evening wear.',
+  },
+  {
+    src: 'https://cdn.shopify.com/videos/c/o/v/34c46409d1d647ddad15523e6ccecf5a.mp4',
+    label: 'New Arrivals',
+    description: 'Be the first to explore our latest collection of kurtis, skirts, and coord sets fresh off the design house.',
+  },
+];
+
+
+
+function VideoReelSection() {
+  const [current, setCurrent] = useState(0);
+  const [muted, setMuted] = useState(true);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  // Fix: React's muted prop doesn't always set the HTML attribute.
+  // Use useEffect to set muted directly on the DOM element and trigger play.
+  useEffect(() => {
+    const vid = videoRefs.current[0];
+    if (vid) {
+      vid.muted = true;
+      vid.play().catch(() => {});
+    }
+  }, []);
+
+  const goTo = useCallback((index: number) => {
+    const prev = videoRefs.current[current];
+    if (prev) { prev.pause(); prev.currentTime = 0; }
+    setCurrent(index);
+    setTimeout(() => {
+      const next = videoRefs.current[index];
+      if (next) {
+        next.muted = muted;
+        next.play().catch(() => {});
+      }
+    }, 50);
+  }, [current, muted]);
+
+  const goPrev = () => goTo((current - 1 + VIDEO_REELS.length) % VIDEO_REELS.length);
+  const goNext = () => goTo((current + 1) % VIDEO_REELS.length);
+
+  const toggleMute = () => {
+    const newMuted = !muted;
+    setMuted(newMuted);
+    const vid = videoRefs.current[current];
+    if (vid) vid.muted = newMuted;
+  };
 
   return (
-    <section className="av-size-section section">
-      <div className="container">
-        <h2 className="av-home-section-title">Shop By Size</h2>
-        <div className="av-size-grid">
-          {sizes.map((sz, i) => (
-            <Link
-              key={i}
-              to={`/collections/all?size=${sz.value}`}
-              className="av-size-card"
-              prefetch="intent"
-            >
-              <div className="av-size-card__inner">
-                <span className="av-size-card__value">{sz.value}</span>
-                <span className="av-size-card__label">{sz.label}</span>
-                <span className="av-size-card__cta">Shop Size →</span>
-              </div>
+    // No .section class — av-video-reel has its own padding
+    <section className="av-video-reel">
+      <div className="av-video-reel__inner">
+        {/* Left Column: Text Info */}
+        <div className="av-video-reel__info-col">
+          <div className="av-video-reel__info">
+            <span className="av-video-reel__eyebrow">Atsevam Reels</span>
+            <h2 className="av-video-reel__title">{VIDEO_REELS[current].label}</h2>
+            <p className="av-video-reel__description">{VIDEO_REELS[current].description}</p>
+            <Link to="/collections/all" className="av-video-reel__cta" prefetch="intent">
+              Shop Now →
             </Link>
-          ))}
+          </div>
+        </div>
+
+        {/* Right Column: Carousel Stage & Navigation */}
+        <div className="av-video-reel__carousel-col">
+          <div className="av-video-reel__carousel-container">
+            <button className="av-video-reel__arrow av-video-reel__arrow--prev" onClick={goPrev} aria-label="Previous video">
+              ‹
+            </button>
+            
+            <div className="av-video-reel__stage">
+              {VIDEO_REELS.map((reel, i) => (
+                <video
+                  key={i}
+                  ref={(el) => {
+                    videoRefs.current[i] = el;
+                    if (el) el.muted = true;
+                  }}
+                  src={reel.src}
+                  className={`av-video-reel__video ${i === current ? 'is-active' : ''}`}
+                  loop
+                  playsInline
+                  preload="metadata"
+                />
+              ))}
+              <button
+                className="av-video-reel__mute"
+                onClick={toggleMute}
+                aria-label={muted ? 'Unmute' : 'Mute'}
+              >
+                {muted ? '🔇' : '🔊'}
+              </button>
+            </div>
+
+            <button className="av-video-reel__arrow av-video-reel__arrow--next" onClick={goNext} aria-label="Next video">
+              ›
+            </button>
+          </div>
+
+          {/* Dot indicators */}
+          <div className="av-video-reel__dots">
+            {VIDEO_REELS.map((_, i) => (
+              <button
+                key={i}
+                className={`av-video-reel__dot ${i === current ? 'is-active' : ''}`}
+                onClick={() => goTo(i)}
+                aria-label={`Video ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

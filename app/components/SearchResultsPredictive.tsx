@@ -303,7 +303,7 @@ function usePredictiveSearch(): UsePredictiveSearchReturn {
 
   useEffect(() => {
     if (!inputRef.current) {
-      inputRef.current = document.querySelector('input[type="search"]');
+      inputRef.current = document.querySelector('input[data-search-input]');
     }
   }, []);
 
