@@ -12638,7 +12638,7 @@ a {
     position: absolute;
     font-size: 6px;
     font-weight: 800;
-    color: var(--color-white);
+    color: var(--color-brand);
     letter-spacing: -0.5px;
     text-transform: uppercase;
   }
@@ -12680,15 +12680,33 @@ a {
     color: var(--color-secondary);
   }
 
-  /* Simplify Top Header on Mobile (hide nav items & center logo) */
-  .av-header__actions,
-  .av-header__mobile-toggle {
+  /* Simplify Top Header on Mobile (hide actions & center logo, keep mobile-toggle) */
+  .av-header__actions {
     display: none !important;
   }
 
+  .av-header__mobile-toggle {
+    display: flex !important;
+    transition: transform 0.2s var(--ease-out), opacity 0.2s ease;
+  }
+
+  .av-header__mobile-toggle:active {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+
   .av-header__logo {
-    margin-inline: auto !important;
-    transform: none !important;
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    z-index: 10;
+  }
+
+  /* Disable expensive backdrop-filter on mobile for jank-free 60fps/120fps animations */
+  .overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   /* Left-side Drawer Animation for Mobile Menu */

@@ -106,14 +106,6 @@ export function MobileBottomNavbar({cart}: {cart: any}) {
 
   return (
     <div className="av-mobile-bottom-nav">
-      {/* Menu / Sidebar Toggle (Left) */}
-      <button onClick={() => open('mobile')} className="av-mobile-bottom-nav__item" aria-label="Open Menu">
-        <span className="av-mobile-bottom-nav__icon-wrapper">
-          <Icon name="menu" size={20} strokeWidth={1.5} />
-        </span>
-        <span>Menu</span>
-      </button>
-
       {/* Collections */}
       <NavLink
         to="/collections"
