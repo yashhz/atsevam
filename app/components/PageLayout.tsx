@@ -15,7 +15,7 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {Icon} from '~/components/ui/Icon';
-import {FloatingDock, SocialDock} from '~/components/FloatingDock';
+import {FloatingDock, SocialDock, MobileBottomNavbar} from '~/components/FloatingDock';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -47,6 +47,7 @@ export function PageLayout({
 
       <FloatingDock />
       <SocialDock />
+      <MobileBottomNavbar cart={cart} />
 
       {header && (
         <Header

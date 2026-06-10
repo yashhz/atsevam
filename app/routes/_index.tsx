@@ -251,8 +251,6 @@ export default function Homepage() {
         <PriceDropSection products={priceDropDeals} />
       )}
 
-      {/* 4. Video Reel Carousel */}
-      <VideoReelSection />
 
       <BrandStrip />
 
@@ -326,6 +324,9 @@ export default function Homepage() {
           ))}
         </Carousel>
       )}
+
+      {/* Video Reel Section (Moved Lower) */}
+      <VideoReelSection />
 
       <TrustBar />
       <TestimonialsSection testimonials={testimonials} />

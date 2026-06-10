@@ -1,6 +1,8 @@
-import {NavLink} from 'react-router';
+import {NavLink, Await, useAsyncValue} from 'react-router';
 import {useAside} from '~/components/Aside';
 import {Icon} from '~/components/ui/Icon';
+import {Suspense} from 'react';
+import {useOptimisticCart} from '@shopify/hydrogen';
 
 // ─── Main right-side dock ─────────────────────────────────────────
 
@@ -96,3 +98,105 @@ export function SocialDock() {
     </div>
   );
 }
+
+// ─── Mobile Bottom Navbar ─────────────────────────────────────────
+
+export function MobileBottomNavbar({cart}: {cart: any}) {
+  const {open} = useAside();
+
+  return (
+    <div className="av-mobile-bottom-nav">
+      {/* Menu / Sidebar Toggle (Left) */}
+      <button onClick={() => open('mobile')} className="av-mobile-bottom-nav__item" aria-label="Open Menu">
+        <span className="av-mobile-bottom-nav__icon-wrapper">
+          <Icon name="menu" size={20} strokeWidth={1.5} />
+        </span>
+        <span>Menu</span>
+      </button>
+
+      {/* Collections */}
+      <NavLink
+        to="/collections"
+        className={({isActive}) =>
+          `av-mobile-bottom-nav__item ${isActive ? 'is-active' : ''}`
+        }
+        aria-label="Collections"
+      >
+        <span className="av-mobile-bottom-nav__icon-wrapper">
+          <Icon name="grid" size={20} strokeWidth={1.5} />
+        </span>
+        <span>Categories</span>
+      </NavLink>
+
+      {/* New Arrivals */}
+      <NavLink
+        to="/collections/all"
+        className={({isActive}) =>
+          `av-mobile-bottom-nav__item ${isActive ? 'is-active' : ''}`
+        }
+        aria-label="New Arrivals"
+      >
+        <div className="av-mobile-bottom-nav__starburst-wrap">
+          <Icon name="starburst-new" size={24} strokeWidth={1} className="av-starburst-icon" />
+          <span className="av-starburst-text">NEW</span>
+        </div>
+        <span>New Arrivals</span>
+      </NavLink>
+
+      {/* Search Bar (Middle) */}
+      <div className="av-mobile-bottom-nav__search-wrap" onClick={() => open('search')}>
+        <div className="av-mobile-bottom-nav__search-bar">
+          <Icon name="search" size={14} strokeWidth={1.5} className="av-search-icon" />
+          <span>Search...</span>
+        </div>
+      </div>
+
+      {/* Account */}
+      <NavLink
+        to="/account"
+        className={({isActive}) =>
+          `av-mobile-bottom-nav__item ${isActive ? 'is-active' : ''}`
+        }
+        aria-label="Account"
+      >
+        <span className="av-mobile-bottom-nav__icon-wrapper">
+          <Icon name="user" size={20} strokeWidth={1.5} />
+        </span>
+        <span>Profile</span>
+      </NavLink>
+
+      {/* Cart */}
+      <Suspense fallback={<CartBottomIcon count={0} />}>
+        <Await resolve={cart}>
+          <CartBottomIconBanner />
+        </Await>
+      </Suspense>
+    </div>
+  );
+}
+
+function CartBottomIconBanner() {
+  const originalCart = useAsyncValue() as any;
+  const cart = useOptimisticCart(originalCart);
+  return <CartBottomIcon count={cart?.totalQuantity ?? 0} />;
+}
+
+function CartBottomIcon({count}: {count: number}) {
+  const {open} = useAside();
+  return (
+    <button
+      onClick={() => open('cart')}
+      className="av-mobile-bottom-nav__item av-mobile-bottom-nav__cart-btn"
+      aria-label={`Cart, ${count} items`}
+    >
+      <span className="av-mobile-bottom-nav__icon-wrapper">
+        <Icon name="cart" size={20} strokeWidth={1.5} />
+        {count > 0 && (
+          <span className="av-mobile-bottom-nav__badge">{count}</span>
+        )}
+      </span>
+      <span>Cart</span>
+    </button>
+  );
+}
+
