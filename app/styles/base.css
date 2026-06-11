@@ -55,6 +55,15 @@ h4 { font-size: var(--text-xl); }
 h5 { font-size: var(--text-lg); }
 h6 { font-size: var(--text-md); }
 
+@media (max-width: 767px) {
+  h1 { font-size: var(--text-2xl); } /* 40px */
+  h2 { font-size: var(--text-xl); }  /* 30px */
+  h3 { font-size: var(--text-lg); }  /* 24px */
+  h4 { font-size: var(--text-md); }  /* 20px */
+  h5 { font-size: var(--text-sm); }  /* 15px */
+  h6 { font-size: var(--text-xs); }  /* 13px */
+}
+
 p {
   line-height: var(--leading-normal);
   color: var(--color-secondary);
@@ -123,6 +132,15 @@ ul, ol { list-style: none; }
 
 .section--lg {
   padding-block: var(--space-24);
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding-block: var(--space-10);
+  }
+  .section--lg {
+    padding-block: var(--space-16);
+  }
 }
 
 /* ─── Section heading ────────────────────────────────────────── */
