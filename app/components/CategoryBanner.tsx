@@ -7,6 +7,7 @@ type CategorySlide = {
   title: string;
   handle: string;
   image: string;
+  mobileImage?: string;
   description: string;
 };
 
@@ -16,20 +17,15 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     title: 'Summer Sale',
     handle: 'summer-sale',
     image: '/images/homepage/banner 1.png',
+    mobileImage: '/images/homepage/banner 1 mobile.png',
     description: 'Exclusive Festive & Summer Collection',
-  },
-  {
-    id: '2',
-    title: 'Top Lehengas',
-    handle: 'lehengas',
-    image: '/images/homepage/banner 2.jpeg',
-    description: 'Bridal & Festive Lehenga Cholis',
   },
   {
     id: '3',
     title: 'Co-ord Sets',
     handle: 'co-ords',
     image: '/images/homepage/banner 3.png',
+    mobileImage: '/images/homepage/banner 3 mobile.png',
     description: 'Modern Fusion & Chic Styles',
   },
 ];
@@ -138,14 +134,17 @@ export function CategoryBanner() {
               aria-hidden={index !== currentSlide}
               tabIndex={index === currentSlide ? 0 : -1}
             >
-              <div className="av-category-banner__image-wrap">
+              <picture className="av-category-banner__image-wrap">
+                {slide.mobileImage && (
+                  <source media="(max-width: 767px)" srcSet={slide.mobileImage} />
+                )}
                 <img
                   src={slide.image}
                   alt={slide.title}
                   className="av-category-banner__image"
                   loading={index === 0 ? 'eager' : 'lazy'}
                 />
-              </div>
+              </picture>
             </Link>
           ))}
         </div>

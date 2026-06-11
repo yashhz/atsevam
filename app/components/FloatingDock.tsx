@@ -44,10 +44,9 @@ export function FloatingDock() {
         }
         aria-label="New Arrivals"
       >
-        <div className="av-floating-dock__starburst-wrap">
-          <Icon name="starburst-new" size={24} strokeWidth={1} className="av-starburst-icon" />
-          <span className="av-starburst-text">NEW</span>
-        </div>
+        <span className="av-floating-dock__icon-wrapper">
+          <Icon name="tag" size={18} strokeWidth={1.25} />
+        </span>
         <span className="av-floating-dock__tooltip">New Arrivals</span>
       </NavLink>
 
@@ -128,11 +127,10 @@ export function MobileBottomNavbar({cart}: {cart: any}) {
         }
         aria-label="New Arrivals"
       >
-        <div className="av-mobile-bottom-nav__starburst-wrap">
-          <Icon name="starburst-new" size={24} strokeWidth={1} className="av-starburst-icon" />
-          <span className="av-starburst-text">NEW</span>
-        </div>
-        <span>New Arrivals</span>
+        <span className="av-mobile-bottom-nav__icon-wrapper">
+          <Icon name="tag" size={20} strokeWidth={1.5} />
+        </span>
+        <span>New In</span>
       </NavLink>
 
       {/* Search Bar (Middle) */}

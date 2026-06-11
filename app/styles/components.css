@@ -367,6 +367,20 @@
   line-height: 1;
 }
 
+@media (max-width: 767px) {
+  .av-announcement__text {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    padding-inline: var(--space-2);
+  }
+  .av-announcement {
+    height: auto;
+    min-height: 30px;
+    padding-block: 4px;
+  }
+}
+
 /* Main header shell */
 .av-header {
   position: sticky;
@@ -1370,7 +1384,7 @@
   .av-category-banner__container {
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 2172 / 724 !important;
+    aspect-ratio: 2172 / 724 !important; /* Match wide banner aspect ratio */
   }
 }
 
@@ -1402,7 +1416,7 @@
 .av-category-banner__image {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: cover;
   object-position: center top; /* Align strictly to the top to ensure heads are never cropped, cropping exclusively from the bottom */
   transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
@@ -11346,8 +11360,9 @@ a {
 }
 @media (max-width: 640px) {
   .av-category-banner__container {
-    height: 220px !important; /* Elegantly compact on mobile screen */
-    aspect-ratio: auto !important;
+    height: auto !important;
+    min-height: auto !important;
+    aspect-ratio: 2172 / 724 !important;
   }
 }
 
@@ -11639,17 +11654,48 @@ a {
   color: var(--color-accent-warm);
 }
 
+/* Mobile adjustments for Shop By Discount */
+@media (max-width: 767px) {
+  .av-discount-card__inner {
+    padding: var(--space-4) var(--space-2);
+  }
+  .av-discount-card__value {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-1);
+  }
+  .av-discount-card__label {
+    font-size: 10px;
+    margin-bottom: var(--space-2);
+    letter-spacing: var(--tracking-wide);
+  }
+  .av-discount-card__cta {
+    font-size: 10px;
+  }
+}
+
 /* 3. Price Drop Deals Section */
 .av-price-drop-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .av-price-drop-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-6);
+  }
+}
+
+@media (max-width: 767px) {
+  .av-price-drop-card__content {
+    padding: var(--space-2);
+  }
+  .av-price-drop-card__badge {
+    top: var(--space-2);
+    left: var(--space-2);
+    font-size: 10px;
+    padding: 2px 6px;
   }
 }
 
@@ -12150,37 +12196,6 @@ a {
   transform: translateY(-50%) translateX(0);
 }
 
-/* Starburst "NEW" Icon Styling */
-.av-floating-dock__starburst-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.25s ease;
-}
-
-.av-starburst-icon {
-  color: var(--color-foreground, #0f172a);
-  animation: av-pulse-gentle 4s infinite ease-in-out;
-}
-
-.av-floating-dock__item:hover .av-floating-dock__starburst-wrap {
-  transform: scale(1.1);
-}
-
-.av-starburst-text {
-  position: absolute;
-  font-size: 6px;
-  font-weight: 800;
-  color: var(--color-foreground, #0f172a);
-  letter-spacing: 0.02em;
-  transform: translateY(0.5px);
-  font-family: system-ui, -apple-system, sans-serif;
-  pointer-events: none;
-}
-
 /* Responsive Rules */
 @media (max-width: 768px) {
   .av-floating-dock {
@@ -12615,32 +12630,6 @@ a {
     justify-content: center;
     padding-inline: 2px;
     line-height: 1;
-  }
-
-  /* Starburst Badge (New Arrivals) */
-  .av-mobile-bottom-nav__starburst-wrap {
-    position: relative;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-brand);
-    margin-bottom: -2px;
-  }
-
-  .av-mobile-bottom-nav__starburst-wrap .av-starburst-icon {
-    width: 22px;
-    height: 22px;
-  }
-
-  .av-mobile-bottom-nav__starburst-wrap .av-starburst-text {
-    position: absolute;
-    font-size: 6px;
-    font-weight: 800;
-    color: var(--color-brand);
-    letter-spacing: -0.5px;
-    text-transform: uppercase;
   }
 
   /* Search box wrapper (Middle element) */
