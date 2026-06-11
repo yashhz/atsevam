@@ -2146,6 +2146,28 @@
   gap: 1.5rem;
 }
 
+@media (max-width: 639px) {
+  .av-testimonials__grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-inline: var(--gutter) !important;
+    margin-inline: calc(-1 * var(--gutter)) !important;
+    gap: var(--space-4);
+  }
+  .av-testimonials__grid::-webkit-scrollbar {
+    display: none;
+  }
+  .av-testimonial {
+    flex-shrink: 0;
+    width: 280px;
+    scroll-snap-align: start;
+    padding: var(--space-6) var(--space-5) !important;
+  }
+}
+
 @media (min-width: 640px) {
   .av-testimonials__grid {
     grid-template-columns: repeat(2, 1fr);
@@ -4525,6 +4547,15 @@
   align-items: flex-end;
 }
 
+@media (max-width: 639px) {
+  .av-story__hero {
+    height: 280px;
+  }
+  .av-story__hero-content {
+    padding-bottom: var(--space-8) !important;
+  }
+}
+
 .av-story__hero-bg {
   position: absolute;
   inset: 0;
@@ -4770,6 +4801,13 @@
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s;
 }
 
+@media (max-width: 639px) {
+  .av-story__value-card {
+    padding: var(--space-6) var(--space-5);
+    gap: var(--space-3);
+  }
+}
+
 .av-story__value-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 36px rgba(128, 0, 32, 0.06);
@@ -4873,6 +4911,12 @@
   line-height: 1.85;
   padding-bottom: var(--space-10);
   text-align: left;
+}
+
+@media (max-width: 639px) {
+  .av-story__milestone-text {
+    padding-bottom: var(--space-6);
+  }
 }
 
 /* ─── CTA Banner ───────────────────────────────────────────────── */
@@ -6063,12 +6107,25 @@
   .av-contact-page__grid,
   .av-wholesale-page__benefits-grid,
   .av-wholesale-page__steps,
-  .av-size-guide__measure-grid {
-    gap: var(--space-6);
+  .av-size-guide__measure-grid,
+  .av-faq__categories {
+    gap: var(--space-5);
   }
 
   .av-track-order-form {
-    padding: var(--space-6);
+    padding: var(--space-5);
+  }
+
+  .av-faq-page,
+  .av-contact-page,
+  .av-size-guide-page,
+  .av-policy-page {
+    padding-block: var(--space-8);
+  }
+
+  .av-wholesale-page__hero {
+    padding-block: var(--space-10);
+    margin-bottom: var(--space-8);
   }
 }
 
@@ -11886,14 +11943,30 @@ a {
 /* 6. Featured Categories Grid Section */
 .av-featured-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
 }
 
 @media (min-width: 640px) {
   .av-featured-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-6);
+  }
+}
+
+@media (max-width: 639px) {
+  .av-featured-grid__content {
+    bottom: var(--space-4) !important;
+    left: var(--space-2) !important;
+    right: var(--space-2) !important;
+  }
+  .av-featured-grid__title {
+    font-size: var(--text-sm) !important;
+    margin-bottom: var(--space-1) !important;
+  }
+  .av-featured-grid__cta {
+    font-size: 0.65rem !important;
+    padding: var(--space-1) var(--space-2) !important;
   }
 }
 
