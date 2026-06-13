@@ -190,7 +190,7 @@ export default function App() {
     shopDomain: 'bgenfh-zn.myshopify.com',
     publicToken: 'JA1uQ-vNN6FTT5kLMRHJysHX-h8',
     cdnHost: 'https://cdn.judge.me',
-    nonce,
+    nonce: nonce ?? '',
   });
 
   if (!data) {

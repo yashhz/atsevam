@@ -254,15 +254,6 @@ export default function Homepage() {
 
       <BrandStrip />
 
-      {/* Western Wear Promo Banner (Banner 4) */}
-      <div className="av-promo-banner section">
-        <div className="container">
-          <Link to="/collections/western-dresses" className="av-promo-banner__link" prefetch="intent">
-            <img src="/images/homepage/banner 4.png" alt="Shop Western Wear" className="av-promo-banner__img" loading="lazy" />
-          </Link>
-        </div>
-      </div>
-
       {/* 5. Best Selling Products Category section */}
       {bestSellers.length > 0 && (
         <ProductGrid

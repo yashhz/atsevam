@@ -48,6 +48,7 @@ export const CUSTOMER_ORDER_QUERY = `#graphql
     confirmationNumber
     statusPageUrl
     fulfillmentStatus
+    financialStatus
     processedAt
     fulfillments(first: 1) {
       nodes {
@@ -67,6 +68,7 @@ export const CUSTOMER_ORDER_QUERY = `#graphql
       name
       formatted(withName: true)
       formattedArea
+      phoneNumber
     }
     discountApplications(first: 100) {
       nodes {

@@ -141,3 +141,28 @@
   /* Cart */
   --cart-summary-height:    260px;
 }
+
+@media (max-width: 767px) {
+  :root {
+    /* Fluid typography scale for mobile viewports */
+    --text-xs:    0.75rem;     /* 12px */
+    --text-sm:    0.875rem;    /* 14px */
+    --text-base:  1rem;        /* 16px */
+    --text-md:    1.125rem;    /* 18px */
+    --text-lg:    1.25rem;     /* 20px */
+    --text-xl:    1.5rem;      /* 24px */
+    --text-2xl:   1.75rem;     /* 28px */
+    --text-3xl:   2.25rem;     /* 36px */
+    --text-4xl:   2.75rem;     /* 44px */
+    --text-5xl:   3.5rem;      /* 56px */
+
+    /* Adjusted large spacing values on mobile to reduce excessive gaps */
+    --space-10:  2rem;        /* 32px (down from 40px) */
+    --space-12:  2.25rem;     /* 36px (down from 48px) */
+    --space-16:  2.5rem;      /* 40px (down from 64px) */
+    --space-20:  3rem;        /* 48px (down from 80px) */
+    --space-24:  3.5rem;      /* 56px (down from 96px) */
+    --space-32:  4.5rem;      /* 72px (down from 128px) */
+  }
+}
+

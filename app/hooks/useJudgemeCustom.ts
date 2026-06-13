@@ -1,5 +1,16 @@
 import {useEffect} from 'react';
 
+declare global {
+  interface Window {
+    jdgm?: any;
+    jdgm_preloader?: () => void;
+    jdgm_rerender?: number;
+    jdgmCacheServer?: {
+      reloadAll: () => void;
+    };
+  }
+}
+
 interface UseJudgemeProps {
   shopDomain: string;
   publicToken: string;

@@ -129,27 +129,27 @@ export default function AccountLayout() {
           </Form>
         </div>
 
+        {/* ── Mobile inline nav ──────────────────────────────── */}
+        <nav className="av-acct__mobile-nav" aria-label="Account navigation">
+          {NAV_ITEMS.map(item => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({isActive}) =>
+                `av-acct__mobile-nav-item${isActive ? ' av-acct__mobile-nav-item--active' : ''}`
+              }
+            >
+              <span className="av-acct__mobile-nav-icon">{item.icon}</span>
+              <span className="av-acct__mobile-nav-label">{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
         {/* ── Main content ───────────────────────────────────── */}
         <main className="av-acct__main">
           <Outlet context={{customer}} />
         </main>
       </div>
-
-      {/* ── Mobile bottom nav ──────────────────────────────── */}
-      <nav className="av-acct__mobile-nav" aria-label="Account navigation">
-        {NAV_ITEMS.map(item => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={({isActive}) =>
-              `av-acct__mobile-nav-item${isActive ? ' av-acct__mobile-nav-item--active' : ''}`
-            }
-          >
-            <span className="av-acct__mobile-nav-icon">{item.icon}</span>
-            <span className="av-acct__mobile-nav-label">{item.label}</span>
-          </NavLink>
-        ))}
-      </nav>
     </div>
   );
 }

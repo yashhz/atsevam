@@ -133,13 +133,18 @@ export function MobileBottomNavbar({cart}: {cart: any}) {
         <span>New In</span>
       </NavLink>
 
-      {/* Search Bar (Middle) */}
-      <div className="av-mobile-bottom-nav__search-wrap" onClick={() => open('search')}>
-        <div className="av-mobile-bottom-nav__search-bar">
-          <Icon name="search" size={14} strokeWidth={1.5} className="av-search-icon" />
-          <span>Search...</span>
-        </div>
-      </div>
+      {/* Search */}
+      <button
+        type="button"
+        onClick={() => open('search')}
+        className="av-mobile-bottom-nav__item"
+        aria-label="Search"
+      >
+        <span className="av-mobile-bottom-nav__icon-wrapper">
+          <Icon name="search" size={20} strokeWidth={1.5} />
+        </span>
+        <span>Search</span>
+      </button>
 
       {/* Account */}
       <NavLink
