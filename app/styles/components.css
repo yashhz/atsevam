@@ -11552,7 +11552,6 @@ a {
 
 /* Bold, Capitalized Section Headers with Color-Changing Hover Transitions */
 .av-home-section-title,
-.av-product-grid-section__title,
 .av-category-section__heading,
 .av-testimonials .section-heading,
 .av-instagram .av-home-section-title {
@@ -11573,27 +11572,58 @@ a {
 }
 
 .av-home-section-title:hover,
-.av-product-grid-section__title:hover,
 .av-category-section__heading:hover,
 .av-testimonials .section-heading:hover,
 .av-instagram .av-home-section-title:hover {
   color: var(--color-brand) !important; /* Transition smoothly on hover */
 }
 
-/* Center grid headers */
-.av-product-grid-section__title-row {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: var(--space-2) !important;
-  text-align: center !important;
-  width: 100% !important;
-}
+/* Center grid headers on Mobile only */
+@media (max-width: 767px) {
+  .av-product-grid-section__header {
+    text-align: center !important;
+    margin-bottom: var(--space-8) !important;
+  }
 
-.av-product-grid-section__header {
-  text-align: center !important;
-  margin-bottom: var(--space-10) !important;
+  .av-product-grid-section__title-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: var(--space-2) !important;
+    width: 100% !important;
+  }
+
+  .av-product-grid-section__title {
+    font-family: var(--font-body) !important;
+    font-size: var(--text-lg) !important; /* Elegant size on mobile */
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: var(--tracking-wider) !important;
+    color: var(--color-charcoal) !important;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: var(--space-2) !important;
+    margin-top: var(--space-1) !important;
+    transition: color var(--duration-base) var(--ease-out) !important;
+  }
+
+  .av-product-grid-section__title:hover {
+    color: var(--color-brand) !important;
+  }
+
+  .av-product-grid-section__subtitle {
+    font-size: var(--text-xs) !important;
+    color: var(--color-subtle) !important;
+    margin-top: 0 !important;
+    margin-bottom: var(--space-3) !important;
+  }
+
+  .av-product-grid-section__view-all {
+    margin-top: var(--space-1) !important;
+  }
 }
 
 /* 1. Category Circles Section */

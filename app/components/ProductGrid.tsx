@@ -47,7 +47,12 @@ export function ProductGrid({
           <p className="av-product-grid-section__eyebrow">{eyebrow}</p>
         )}
         <div className="av-product-grid-section__title-row">
-          <h2 className="av-product-grid-section__title">{title}</h2>
+          <div className="av-product-grid-section__title-group">
+            <h2 className="av-product-grid-section__title">{title}</h2>
+            {subtitle && (
+              <p className="av-product-grid-section__subtitle">{subtitle}</p>
+            )}
+          </div>
           {viewAllHref && (
             <Link
               to={viewAllHref}
@@ -59,9 +64,6 @@ export function ProductGrid({
             </Link>
           )}
         </div>
-        {subtitle && (
-          <p className="av-product-grid-section__subtitle">{subtitle}</p>
-        )}
       </div>
 
       {/* Grid */}
