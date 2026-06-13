@@ -54,11 +54,14 @@ export default function Wholesale() {
       <div className="container container--narrow">
         {/* Intro */}
         <section className="av-wholesale-page__intro">
+          <h2 className="av-wholesale-page__section-title" style={{marginTop: 0, textAlign: 'left'}}>
+            About Our Manufacturing & Wholesale Services
+          </h2>
           <p className="av-wholesale-page__lead">
-            We work with boutiques, retailers, and fashion entrepreneurs across India to bring our handcrafted collections to more women.
+            Atsevam is a Surat-based women's wear manufacturer and wholesale supplier specializing in kurtis, co-ord sets, anarkalis, lehengas, and ethnic wear collections. We serve boutiques, retailers, resellers, and fashion businesses across India with premium-quality products, competitive wholesale pricing, and reliable delivery.
           </p>
           <p>
-            Whether you're a brick-and-mortar store, an online retailer, or planning a pop-up, we offer flexible wholesale programs with competitive pricing, reliable delivery, and dedicated support.
+            Our experienced team focuses on quality craftsmanship, modern designs, and consistent production standards. Whether you need bulk orders, wholesale sourcing, or private label solutions, Atsevam provides dependable manufacturing support to help grow your fashion business.
           </p>
         </section>
 

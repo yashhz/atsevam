@@ -11550,16 +11550,16 @@ a {
   }
 }
 
-/* Bold, Capitalized Section Headers with Color-Changing Hover Transitions */
+/* Elegant Display Section Headers (Cormorant Garamond) with Color-Changing Hover Transitions */
 .av-home-section-title,
 .av-category-section__heading,
 .av-testimonials .section-heading,
 .av-instagram .av-home-section-title {
-  font-family: var(--font-body) !important;
-  font-size: clamp(1.4rem, 3.2vw, 2.0rem) !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-  letter-spacing: var(--tracking-wider) !important;
+  font-family: var(--font-display) !important;
+  font-size: clamp(1.8rem, 4vw, 2.6rem) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: var(--tracking-tight) !important;
   color: var(--color-charcoal) !important;
   text-align: center !important;
   display: block !important;
@@ -11595,12 +11595,16 @@ a {
     width: 100% !important;
   }
 
+  .av-home-section-title,
+  .av-category-section__heading,
+  .av-testimonials .section-heading,
+  .av-instagram .av-home-section-title,
   .av-product-grid-section__title {
-    font-family: var(--font-body) !important;
-    font-size: var(--text-lg) !important; /* Elegant size on mobile */
-    font-weight: 800 !important;
-    text-transform: uppercase !important;
-    letter-spacing: var(--tracking-wider) !important;
+    font-family: var(--font-display) !important;
+    font-size: var(--text-2xl) !important; /* Unified elegant title size on mobile */
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: var(--tracking-tight) !important;
     color: var(--color-charcoal) !important;
     text-align: center !important;
     display: block !important;
@@ -11610,6 +11614,10 @@ a {
     transition: color var(--duration-base) var(--ease-out) !important;
   }
 
+  .av-home-section-title:hover,
+  .av-category-section__heading:hover,
+  .av-testimonials .section-heading:hover,
+  .av-instagram .av-home-section-title:hover,
   .av-product-grid-section__title:hover {
     color: var(--color-brand) !important;
   }
@@ -12739,7 +12747,21 @@ a {
 
 @media (max-width: 768px) {
   .av-social-dock {
-    display: none !important;
+    display: flex !important;
+    right: 12px !important;
+    bottom: 72px !important; /* Floats perfectly above the mobile bottom nav bar */
+    gap: 8px !important;
+  }
+  .av-social-dock__item {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .av-social-dock__item svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .av-social-dock__tooltip {
+    display: none !important; /* Hide tooltips on tap screens */
   }
 }
 
