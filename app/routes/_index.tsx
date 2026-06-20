@@ -401,41 +401,25 @@ function ShopByDiscountSection() {
 // ─── 3. Price Drop Deals Section ──────────────────────────────────
 
 function PriceDropSection({ products }: { products: MockProduct[] }) {
+  if (!products || products.length === 0) return null;
+
   return (
-    <section className="av-price-drop-section section">
-      <div className="container">
-        <h2 className="av-home-section-title">Price Drop Deals</h2>
-        <div className="av-price-drop-grid">
-          {products.map((product) => (
-            <Link
-              key={product.id}
-              to={`/products/${product.handle}`}
-              className="av-price-drop-card"
-              prefetch="intent"
-            >
-              <div className="av-price-drop-card__image-wrap">
-                <img
-                  src={product.featuredImage.url}
-                  alt={product.title}
-                  className="av-price-drop-card__img"
-                  loading="lazy"
-                />
-                {product.discount && (
-                  <span className="av-price-drop-card__badge">-{product.discount}%</span>
-                )}
-              </div>
-              <div className="av-price-drop-card__content">
-                <h3 className="av-price-drop-card__title">{product.title}</h3>
-                <div className="av-price-drop-card__prices">
-                  <span className="av-price-drop-card__price">{product.price}</span>
-                  {product.compareAtPrice && (
-                    <span className="av-price-drop-card__compare">{product.compareAtPrice}</span>
-                  )}
-                </div>
-              </div>
-            </Link>
-          ))}
+    <section className="av-product-grid-section av-price-drop-section">
+      <div className="av-product-grid-section__header container">
+        <div className="av-product-grid-section__title-row">
+          <div className="av-product-grid-section__title-group">
+            <h2 className="av-product-grid-section__title">Price Drop Deals</h2>
+          </div>
         </div>
+      </div>
+      <div className="av-product-grid container av-product-grid--cols-3">
+        {products.map((product, i) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            loading={i < 3 ? 'eager' : 'lazy'}
+          />
+        ))}
       </div>
     </section>
   );
