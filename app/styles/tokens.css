@@ -136,7 +136,7 @@
   --aside-width:            420px;
 
   /* Product card */
-  --card-image-ratio:       4 / 5;   /* portrait, elegant */
+  --card-image-ratio:       3 / 4;   /* portrait, elegant */
 
   /* Cart */
   --cart-summary-height:    260px;
@@ -163,6 +163,12 @@
     --space-20:  3rem;        /* 48px (down from 80px) */
     --space-24:  3.5rem;      /* 56px (down from 96px) */
     --space-32:  4.5rem;      /* 72px (down from 128px) */
+  }
+}
+
+@media (min-width: 1025px) {
+  :root {
+    --card-image-ratio:     2 / 3;   /* taller crop on desktop to prevent cutting model faces */
   }
 }
 

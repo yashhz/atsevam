@@ -1108,7 +1108,7 @@
   overflow: hidden;
   background: #f7f7f7;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: var(--card-image-ratio);
   contain: layout style paint;
   border-radius: 0;
 }
@@ -3973,7 +3973,7 @@
 
 .av-coming-soon__card-image {
   width: 100%;
-  aspect-ratio: 3/4;
+  aspect-ratio: var(--card-image-ratio);
   overflow: hidden;
   border-radius: var(--radius-lg, 8px);
   margin-bottom: var(--space-3);
