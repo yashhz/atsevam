@@ -1,4 +1,4 @@
-import {redirect, useLoaderData, Link} from 'react-router';
+import {redirect, useLoaderData, Link, useSearchParams} from 'react-router';
 import {useState, useMemo, useCallback} from 'react';
 import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
@@ -167,6 +167,9 @@ const SORT_OPTIONS = [
 
 export default function Collection() {
   const {collection, products: allProducts, filters} = useLoaderData<typeof loader>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const discountParam = searchParams.get('discount');
+  const discountVal = discountParam ? parseInt(discountParam, 10) : null;
 
   // Filter state
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
@@ -189,18 +192,29 @@ export default function Collection() {
   const clearAll = useCallback(() => {
     setIsUpdating(true);
     setActiveFilters({});
+    setSearchParams((prev) => {
+      prev.delete('discount');
+      return prev;
+    });
     setTimeout(() => setIsUpdating(false), 300);
-  }, []);
+  }, [setSearchParams]);
 
   const clearGroup = useCallback((groupId: string) => {
     setIsUpdating(true);
-    setActiveFilters((prev) => {
-      const next = {...prev};
-      delete next[groupId];
-      return next;
-    });
+    if (groupId === 'discount') {
+      setSearchParams((prev) => {
+        prev.delete('discount');
+        return prev;
+      });
+    } else {
+      setActiveFilters((prev) => {
+        const next = {...prev};
+        delete next[groupId];
+        return next;
+      });
+    }
     setTimeout(() => setIsUpdating(false), 300);
-  }, []);
+  }, [setSearchParams]);
 
   // Client-side filter + sort
   const products = useMemo(() => {
@@ -223,15 +237,21 @@ export default function Collection() {
       }
     });
 
+    if (discountVal !== null && !isNaN(discountVal)) {
+      result = result.filter((p) => {
+        return p.discount && p.discount >= discountVal;
+      });
+    }
+
     if (sortBy === 'newest') result = result.filter((p) => p.badge === 'new').concat(result.filter((p) => p.badge !== 'new'));
     if (sortBy === 'price-asc') result.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
     if (sortBy === 'price-desc') result.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
     if (sortBy === 'top-rated') result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
 
     return result;
-  }, [allProducts, activeFilters, sortBy]);
+  }, [allProducts, activeFilters, sortBy, discountVal]);
 
-  const activeCount = Object.values(activeFilters).flat().length;
+  const activeCount = Object.values(activeFilters).flat().length + (discountVal !== null ? 1 : 0);
 
   // Active filter chips for toolbar display
   const activeChips = Object.entries(activeFilters).flatMap(([groupId, values]) =>
@@ -241,6 +261,14 @@ export default function Collection() {
       return {groupId, value: val, label: opt?.label ?? val};
     })
   );
+
+  if (discountVal !== null) {
+    activeChips.push({
+      groupId: 'discount',
+      value: discountParam!,
+      label: `${discountVal}% OFF or more`,
+    });
+  }
 
   const isCollectionEmpty = allProducts.length === 0;
 
@@ -304,7 +332,16 @@ export default function Collection() {
                     <button
                       key={`${chip.groupId}-${chip.value}`}
                       className="av-toolbar__chip"
-                      onClick={() => toggleFilter(chip.groupId, chip.value)}
+                      onClick={() => {
+                        if (chip.groupId === 'discount') {
+                          setSearchParams((prev) => {
+                            prev.delete('discount');
+                            return prev;
+                          });
+                        } else {
+                          toggleFilter(chip.groupId, chip.value);
+                        }
+                      }}
                     >
                       <span>{chip.label}</span>
                       <Icon name="close" size={10} strokeWidth={2.5} />

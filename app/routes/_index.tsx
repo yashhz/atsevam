@@ -367,10 +367,10 @@ function CategoryCirclesSection() {
 
 function ShopByDiscountSection() {
   const discounts = [
-    { value: '20% OFF', label: 'Festive Starter', handle: 'kurtis' },
-    { value: '30% OFF', label: 'Occasion Special', handle: 'co-ords' },
-    { value: '40% OFF', label: 'Grand Celebrations', handle: 'anarkali' },
-    { value: '50% OFF', label: 'Mega Value Deals', handle: 'lehengas' },
+    { value: '20% OFF', label: 'Festive Starter', url: '/collections/all?discount=20' },
+    { value: '30% OFF', label: 'Occasion Special', url: '/collections/all?discount=30' },
+    { value: '40% OFF', label: 'Grand Celebrations', url: '/collections/all?discount=40' },
+    { value: '50% OFF', label: 'Mega Value Deals', url: '/collections/all?discount=50' },
   ];
 
   return (
@@ -381,7 +381,7 @@ function ShopByDiscountSection() {
           {discounts.map((disc, i) => (
             <Link
               key={i}
-              to={`/collections/${disc.handle}`}
+              to={disc.url}
               className="av-discount-card"
               prefetch="intent"
             >
