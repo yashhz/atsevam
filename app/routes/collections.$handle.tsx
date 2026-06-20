@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {redirect, useLoaderData, Link} from 'react-router';
 import {useState, useMemo, useCallback} from 'react';
 import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
@@ -57,8 +57,9 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   // Redirect common singular categories to their plural equivalents
   if (handle === 'kurti') throw redirect('/collections/kurtis');
   if (handle === 'lehenga') throw redirect('/collections/lehengas');
-  if (handle === 'co-ord') throw redirect('/collections/co-ords');
+  if (handle === 'co-ord' || handle === 'co-ord-set' || handle === 'co-ord-sets') throw redirect('/collections/co-ords');
   if (handle === 'anarkalis') throw redirect('/collections/anarkali');
+  if (handle === 'saree') throw redirect('/collections/sarees');
 
   // Map collection handles to display names
   const getCategoryName = (collectionHandle: string): string => {
@@ -69,6 +70,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       'co-ords': 'Co-ord Set',
       'bestsellers': 'Bestseller',
       'new-arrivals': 'New Arrival',
+      'sarees': 'Saree',
     };
     return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
   };
@@ -80,97 +82,17 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     }),
   ]);
 
-  // If collection doesn't exist, fetch all products instead
+  // If collection doesn't exist, return empty state
   if (!collection) {
-    const {products} = await storefront.query(
-      `#graphql
-        query AllProducts($first: Int) {
-          products(first: $first) {
-            nodes {
-              id
-              handle
-              title
-              tags
-              featuredImage { 
-                id 
-                altText 
-                url 
-                width 
-                height 
-              }
-              images(first: 2) {
-                nodes {
-                  url
-                  altText
-                }
-              }
-              priceRange {
-                minVariantPrice { 
-                  amount 
-                  currencyCode 
-                }
-              }
-              compareAtPriceRange {
-                minVariantPrice {
-                  amount
-                  currencyCode
-                }
-              }
-            }
-          }
-        }
-      `,
-      {variables: {first: 50}}
-    );
-
-    const transformedProducts = products.nodes.map((product: any) => {
-      const price = parseFloat(product.priceRange.minVariantPrice.amount);
-      const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
-        ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
-        : undefined;
-      
-      let badge: 'new' | 'sale' | 'bestseller' | 'top-rated' | undefined;
-      if (product.tags?.includes('new')) badge = 'new';
-      else if (product.tags?.includes('bestseller')) badge = 'bestseller';
-      else if (product.tags?.includes('top-rated')) badge = 'top-rated';
-      else if (compareAtPrice && compareAtPrice > price) badge = 'sale';
-
-      return {
-        id: product.id,
-        title: product.title,
-        handle: product.handle,
-        price: `₹${Math.round(price).toLocaleString('en-IN')}`,
-        compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
-        discount: compareAtPrice && compareAtPrice > price
-          ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
-          : undefined,
-        featuredImage: {
-          url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
-          altText: product.featuredImage?.altText || product.title,
-        },
-        hoverImage: product.images?.nodes[1] ? {
-          url: product.images.nodes[1].url,
-          altText: product.images.nodes[1].altText || product.title,
-        } : undefined,
-        category: getCategoryName(handle),
-        badge,
-        rating: undefined,
-        reviewCount: undefined,
-        tags: product.tags || [],
-      };
-    });
-
-    const filters = parseFilters(products.nodes);
-
     return {
       collection: {
-        id: 'all',
+        id: handle,
         handle: handle,
-        title: handle.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-        description: 'Browse our collection of handcrafted ethnic wear',
+        title: getCategoryName(handle),
+        description: 'Explore our curated collections.',
       },
-      products: transformedProducts,
-      filters,
+      products: [],
+      filters: [],
     };
   }
   
@@ -320,6 +242,27 @@ export default function Collection() {
     })
   );
 
+  const isCollectionEmpty = allProducts.length === 0;
+
+  if (isCollectionEmpty) {
+    return (
+      <div className="av-collection">
+        <div className="av-collection__container container">
+          {/* Breadcrumb */}
+          <nav className="av-breadcrumb" aria-label="Breadcrumb">
+            <a href="/" className="av-breadcrumb__link">Home</a>
+            <span className="av-breadcrumb__sep">&gt;</span>
+            <a href="/collections" className="av-breadcrumb__link">Collections</a>
+            <span className="av-breadcrumb__sep">&gt;</span>
+            <span className="av-breadcrumb__current">{collection.title}</span>
+          </nav>
+
+          <ComingSoonState collectionTitle={collection.title} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="av-collection">
       <div className="av-collection__container container">
@@ -459,6 +402,63 @@ function EmptyState({onClear}: {onClear: () => void}) {
       <button className="btn btn-secondary" onClick={onClear}>
         Clear All Filters
       </button>
+    </div>
+  );
+}
+
+// ─── Coming Soon empty state ──────────────────────────────────────
+
+function ComingSoonState({collectionTitle}: {collectionTitle: string}) {
+  return (
+    <div className="av-collection__coming-soon">
+      <div className="av-coming-soon__icon-wrap">
+        <Icon name="sparkles" size={44} strokeWidth={1.2} />
+      </div>
+      <h2 className="av-coming-soon__title">Curating {collectionTitle}</h2>
+      <p className="av-coming-soon__subtext">
+        We are handpicking the finest designs for our {collectionTitle} collection.
+        Please check back soon to explore our new arrivals!
+      </p>
+
+      <div className="av-coming-soon__cta-group">
+        <Link to="/collections/all" className="btn btn-primary">
+          Shop All Products
+        </Link>
+        <Link to="/" className="btn btn-secondary">
+          Go To Home
+        </Link>
+      </div>
+
+      <div className="av-coming-soon__divider">
+        <span>EXPLORE OTHER COLLECTIONS</span>
+      </div>
+
+      <div className="av-coming-soon__explore-grid">
+        <Link to="/collections/kurtis" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/kurti.jpg" alt="Kurtis" />
+          </div>
+          <span className="av-coming-soon__card-title">Kurtis</span>
+        </Link>
+        <Link to="/collections/anarkali" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/anarkali.jpg" alt="Anarkalis" />
+          </div>
+          <span className="av-coming-soon__card-title">Anarkalis</span>
+        </Link>
+        <Link to="/collections/co-ords" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/coord.jpg" alt="Co-ord Sets" />
+          </div>
+          <span className="av-coming-soon__card-title">Co-ord Sets</span>
+        </Link>
+        <Link to="/collections/lehengas" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/lehenga.jpg" alt="Lehengas" />
+          </div>
+          <span className="av-coming-soon__card-title">Lehengas</span>
+        </Link>
+      </div>
     </div>
   );
 }
