@@ -51,7 +51,7 @@ const CATEGORY_GROUPS = {
   'navratri': {
     title: 'Navratri Collection',
     items: [
-      {title: 'Lehenga Choli',  url: '/collections/navratri-lehenga-choli'},
+      {title: 'Lehenga Choli',  url: '/collections/navratri-lehengas'},
       {title: 'Kurtis',         url: '/collections/navratri-kurtis'},
       {title: 'Chaniya Choli',  url: '/collections/navratri-chaniya-choli'},
     ],
@@ -72,7 +72,7 @@ const DEFAULT_CATEGORY_TABS = [
   {title: 'Co-ords',            url: '/collections/co-ords',                   group: 'ethnic'},
   {title: 'Sarees',             url: '/collections/saree',                     group: 'saree'},
   {title: 'Western Wear',       url: '/collections/western-dresses',           group: 'western'},
-  {title: 'Navratri',           url: '/collections/navratri-lehenga-choli',    group: 'navratri'},
+  {title: 'Navratri',           url: '/collections/navratri-lehengas',         group: 'navratri'},
 ];
 
 // ─── Main Header ─────────────────────────────────────────────────

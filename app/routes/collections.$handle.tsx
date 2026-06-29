@@ -19,9 +19,9 @@ export const meta: Route.MetaFunction = ({data}) => {
     'kurtis': 'Browse designer kurtis and kurtas for women. Comfortable, stylish ethnic wear perfect for daily wear and casual occasions. Premium fabrics with modern designs.',
     'co-ords': 'Trendy co-ord sets and matching sets. Modern ethnic wear with contemporary designs. Perfect for parties, casual outings, and festive occasions.',
     'western-dresses': 'Shop western dresses, tops, and tunics. Modern fashion with elegant designs. Perfect for parties and casual wear.',
-    'saree': 'Traditional sarees with modern drapes and styles. Premium silk, cotton, and georgette sarees handcrafted by Indian artisans.',
+    'saree': 'Traditional sarees with drapes and styles. Premium silk, cotton, georgette sarees handcrafted by Indian artisans.',
     'navratri-kurtis': 'Navratri special designer kurtis. Colorful festive kurtis with mirror work and traditional embroidery for Garba celebrations.',
-    'navratri-lehenga-choli': 'Navratri special lehenga choli collection. Vibrant colors and traditional designs perfect for Garba and Dandiya nights.',
+    'navratri-lehengas': 'Navratri special lehenga choli collection. Vibrant colors and traditional designs perfect for Garba and Dandiya nights.',
   };
   
   const description = descriptions[handle] || `Shop ${title} collection at Atsevam. Premium handcrafted ethnic wear with traditional craftsmanship.`;
@@ -61,6 +61,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   if (handle === 'co-ord' || handle === 'co-ord-set' || handle === 'co-ord-sets') throw redirect('/collections/co-ords');
   if (handle === 'anarkalis') throw redirect('/collections/anarkali');
   if (handle === 'sarees') throw redirect('/collections/saree');
+  if (handle === 'navratri-lehenga-choli') throw redirect('/collections/navratri-lehengas');
 
   // Map collection handles to display names
   const getCategoryName = (collectionHandle: string): string => {
@@ -73,7 +74,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       'new-arrivals': 'New Arrival',
       'saree': 'Saree',
       'navratri-kurtis': 'Navratri Kurti',
-      'navratri-lehenga-choli': 'Navratri Lehenga Choli',
+      'navratri-lehengas': 'Navratri Lehenga Choli',
     };
     return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
   };
@@ -515,7 +516,7 @@ function ComingSoonState({collectionTitle}: {collectionTitle: string}) {
           </div>
           <span className="av-coming-soon__card-title">Navratri Kurtis</span>
         </Link>
-        <Link to="/collections/navratri-lehenga-choli" className="av-coming-soon__card">
+        <Link to="/collections/navratri-lehengas" className="av-coming-soon__card">
           <div className="av-coming-soon__card-image">
             <img src="/images/lehenga.jpg" alt="Navratri Lehengas" />
           </div>

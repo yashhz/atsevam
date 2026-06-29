@@ -336,7 +336,7 @@ function CategoryCirclesSection() {
     { name: 'Co-ords', handle: 'co-ords', img: '/images/coord.jpg' },
     { name: 'Sarees', handle: 'saree', img: '/images/lehenga.jpg' },
     { name: 'Navratri Kurtis', handle: 'navratri-kurtis', img: '/images/kurti.jpg' },
-    { name: 'Navratri Lehengas', handle: 'navratri-lehenga-choli', img: '/images/lehenga.jpg' },
+    { name: 'Navratri Lehengas', handle: 'navratri-lehengas', img: '/images/lehenga.jpg' },
     { name: 'Western', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
     { name: 'New In', handle: 'new-arrivals', img: '/images/western tops/western top.png' },
   ];
@@ -575,7 +575,7 @@ function FeaturedCategoriesGrid() {
     { title: 'Co-ord Sets', handle: 'co-ords', img: '/images/coord.jpg' },
     { title: 'Festive Sarees', handle: 'saree', img: '/images/lehenga.jpg' },
     { title: 'Navratri Kurtis', handle: 'navratri-kurtis', img: '/images/kurti.jpg' },
-    { title: 'Navratri Lehengas', handle: 'navratri-lehenga-choli', img: '/images/lehenga.jpg' },
+    { title: 'Navratri Lehengas', handle: 'navratri-lehengas', img: '/images/lehenga.jpg' },
     { title: 'Western Dresses', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
     { title: 'Tops & Tunics', handle: 'western-tops-tunics', img: '/images/western tops/western top.png' },
     { title: 'Skirts & Skorts', handle: 'western-pants-skirts', img: '/images/skirts/image (13).png' },
