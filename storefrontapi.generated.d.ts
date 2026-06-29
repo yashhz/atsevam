@@ -680,38 +680,6 @@ export type BlogsQuery = {
   };
 };
 
-export type AllProductsQueryVariables = StorefrontAPI.Exact<{
-  first?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['Int']['input']>;
-}>;
-
-export type AllProductsQuery = {
-  products: {
-    nodes: Array<
-      Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'tags'> & {
-        featuredImage?: StorefrontAPI.Maybe<
-          Pick<
-            StorefrontAPI.Image,
-            'id' | 'altText' | 'url' | 'width' | 'height'
-          >
-        >;
-        images: {nodes: Array<Pick<StorefrontAPI.Image, 'url' | 'altText'>>};
-        priceRange: {
-          minVariantPrice: Pick<
-            StorefrontAPI.MoneyV2,
-            'amount' | 'currencyCode'
-          >;
-        };
-        compareAtPriceRange: {
-          minVariantPrice: Pick<
-            StorefrontAPI.MoneyV2,
-            'amount' | 'currencyCode'
-          >;
-        };
-      }
-    >;
-  };
-};
-
 export type CollectionQueryVariables = StorefrontAPI.Exact<{
   handle: StorefrontAPI.Scalars['String']['input'];
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -1530,10 +1498,6 @@ interface GeneratedQueryTypes {
   '#graphql\n  query Blogs(\n    $country: CountryCode\n    $endCursor: String\n    $first: Int\n    $language: LanguageCode\n    $last: Int\n    $startCursor: String\n  ) @inContext(country: $country, language: $language) {\n    blogs(\n      first: $first,\n      last: $last,\n      before: $startCursor,\n      after: $endCursor\n    ) {\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n      nodes {\n        title\n        handle\n        seo {\n          title\n          description\n        }\n      }\n    }\n  }\n': {
     return: BlogsQuery;
     variables: BlogsQueryVariables;
-  };
-  '#graphql\n        query AllProducts($first: Int) {\n          products(first: $first) {\n            nodes {\n              id\n              handle\n              title\n              tags\n              featuredImage { \n                id \n                altText \n                url \n                width \n                height \n              }\n              images(first: 2) {\n                nodes {\n                  url\n                  altText\n                }\n              }\n              priceRange {\n                minVariantPrice { \n                  amount \n                  currencyCode \n                }\n              }\n              compareAtPriceRange {\n                minVariantPrice {\n                  amount\n                  currencyCode\n                }\n              }\n            }\n          }\n        }\n      ': {
-    return: AllProductsQuery;
-    variables: AllProductsQueryVariables;
   };
   '#graphql\n  query Collection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n    $first: Int\n    $last: Int\n    $startCursor: String\n    $endCursor: String\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      handle\n      title\n      description\n      products(first: $first, last: $last, before: $startCursor, after: $endCursor) {\n        nodes {\n          id\n          handle\n          title\n          tags\n          featuredImage { \n            id \n            altText \n            url \n            width \n            height \n          }\n          images(first: 2) {\n            nodes {\n              url\n              altText\n            }\n          }\n          priceRange {\n            minVariantPrice { \n              amount \n              currencyCode \n            }\n          }\n          compareAtPriceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n        }\n        pageInfo {\n          hasPreviousPage\n          hasNextPage\n          endCursor\n          startCursor\n        }\n      }\n    }\n  }\n': {
     return: CollectionQuery;

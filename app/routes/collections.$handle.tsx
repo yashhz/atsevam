@@ -325,31 +325,6 @@ export default function Collection() {
             </div>
 
             <div className="av-collection__toolbar-right">
-              {/* Active filter chips in toolbar - Myntra style */}
-              {activeChips.length > 0 && (
-                <div className="av-toolbar__chips">
-                  {activeChips.map((chip) => (
-                    <button
-                      key={`${chip.groupId}-${chip.value}`}
-                      className="av-toolbar__chip"
-                      onClick={() => {
-                        if (chip.groupId === 'discount') {
-                          setSearchParams((prev) => {
-                            prev.delete('discount');
-                            return prev;
-                          });
-                        } else {
-                          toggleFilter(chip.groupId, chip.value);
-                        }
-                      }}
-                    >
-                      <span>{chip.label}</span>
-                      <Icon name="close" size={10} strokeWidth={2.5} />
-                    </button>
-                  ))}
-                </div>
-              )}
-
               {/* Mobile filter trigger */}
               <MobileFilterTrigger
                 activeCount={activeCount}
@@ -372,6 +347,36 @@ export default function Collection() {
               </div>
             </div>
           </div>
+
+          {/* Active filter chips row */}
+          {activeChips.length > 0 && (
+            <div className="av-collection__active-chips-row">
+              <div className="av-toolbar__chips">
+                {activeChips.map((chip) => (
+                  <button
+                    key={`${chip.groupId}-${chip.value}`}
+                    className="av-toolbar__chip"
+                    onClick={() => {
+                      if (chip.groupId === 'discount') {
+                        setSearchParams((prev) => {
+                          prev.delete('discount');
+                          return prev;
+                        });
+                      } else {
+                        toggleFilter(chip.groupId, chip.value);
+                      }
+                    }}
+                  >
+                    <span>{chip.label}</span>
+                    <Icon name="close" size={10} strokeWidth={2.5} />
+                  </button>
+                ))}
+                <button className="av-toolbar__clear-all-mobile" onClick={clearAll}>
+                  Clear All
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Main content row */}
           <div className="av-collection__body">

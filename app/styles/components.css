@@ -3297,6 +3297,53 @@
   margin-right: var(--space-4);
 }
 
+.av-collection__active-chips-row {
+  padding: var(--space-3) var(--gutter);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background-soft, #fcf8f9);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.av-collection__active-chips-row::-webkit-scrollbar {
+  display: none;
+}
+
+.av-collection__active-chips-row .av-toolbar__chips {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: 0;
+  margin-right: 0;
+}
+
+.av-toolbar__clear-all-mobile {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-brand);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 4px var(--space-2);
+}
+
+@media (min-width: 900px) {
+  .av-collection__active-chips-row {
+    overflow-x: visible;
+    background: transparent;
+    padding: var(--space-3) var(--space-6);
+  }
+
+  .av-collection__active-chips-row .av-toolbar__chips {
+    flex-wrap: wrap;
+  }
+}
+
 .av-toolbar__chip {
   display: inline-flex;
   align-items: center;
@@ -3921,6 +3968,16 @@
   margin-bottom: var(--space-12);
 }
 
+@media (max-width: 640px) {
+  .av-coming-soon__cta-group {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+    padding-inline: var(--space-4);
+    gap: var(--space-3);
+  }
+}
+
 .av-coming-soon__divider {
   width: 100%;
   display: flex;
@@ -4259,8 +4316,7 @@
 .av-pdp__thumb img {
   width: 100%;
   height: 100%;
-  /* contain in thumbnails too — no head cropping */
-  object-fit: contain;
+  object-fit: cover;
   object-position: center top !important;
 }
 
@@ -4278,20 +4334,18 @@
   flex: 1;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--color-surface);
-  /* No fixed aspect-ratio: let image dictate its natural proportions */
+  background: var(--color-background-soft, #fcf8f9);
+  aspect-ratio: var(--card-image-ratio);
   max-height: 780px;
   min-height: 340px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  display: block;
+  width: 100%;
 }
 
 .av-pdp__main-image img {
   width: 100%;
   height: 100%;
-  /* contain: shows the full image, never crops head or feet */
-  object-fit: contain;
+  object-fit: cover;
   object-position: center top !important;
   display: block;
 }
