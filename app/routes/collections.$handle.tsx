@@ -507,19 +507,19 @@ function ComingSoonState({collectionTitle}: {collectionTitle: string}) {
         </Link>
         <Link to="/collections/saree" className="av-coming-soon__card">
           <div className="av-coming-soon__card-image">
-            <img src="/images/saree.webp" alt="Sarees" />
+            <img src="/images/saree.jpg" alt="Sarees" />
           </div>
           <span className="av-coming-soon__card-title">Sarees</span>
         </Link>
         <Link to="/collections/navratri-kurits" className="av-coming-soon__card">
           <div className="av-coming-soon__card-image">
-            <img src="/images/navratri.webp" alt="Navratri Kurtis" />
+            <img src="/images/navratri%20kurtis.jpg" alt="Navratri Kurtis" />
           </div>
           <span className="av-coming-soon__card-title">Navratri Kurtis</span>
         </Link>
         <Link to="/collections/navratri-lehengas" className="av-coming-soon__card">
           <div className="av-coming-soon__card-image">
-            <img src="/images/navratri.webp" alt="Navratri Lehengas" />
+            <img src="/images/navratri%20lehenga.jpg" alt="Navratri Lehengas" />
           </div>
           <span className="av-coming-soon__card-title">Navratri Lehengas</span>
         </Link>
