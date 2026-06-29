@@ -47,8 +47,9 @@ export const MOCK_TRADITIONAL_CATEGORIES: MockCategory[] = [
   {id: '2', title: 'Anarkalis',   handle: 'anarkali',     image: {url: '/images/anarkali.jpg', altText: 'Elegant Anarkali Suits'}},
   {id: '3', title: 'Kurtis',      handle: 'kurtis',       image: {url: '/images/kurti.jpg', altText: 'Designer Kurtis'}},
   {id: '4', title: 'Co-ord Sets', handle: 'co-ords',      image: {url: '/images/coord.jpg', altText: 'Trendy Co-ord Sets'}},
-  {id: '5', title: 'Sarees',      handle: 'sarees',       image: {url: '/images/lehenga.jpg', altText: 'Traditional Sarees'}},
-  {id: '6', title: 'Navratri',    handle: 'navratri-lehenga-choli', image: {url: '/images/lehenga.jpg', altText: 'Navratri Special Collection'}},
+  {id: '5', title: 'Sarees',      handle: 'saree',        image: {url: '/images/lehenga.jpg', altText: 'Traditional Sarees'}},
+  {id: '6', title: 'Navratri Kurtis', handle: 'navratri-kurtis', image: {url: '/images/kurti.jpg', altText: 'Navratri Kurtis Collection'}},
+  {id: '7', title: 'Navratri Lehengas', handle: 'navratri-lehenga-choli', image: {url: '/images/lehenga.jpg', altText: 'Navratri Special Collection'}},
 ];
 
 // Western wear categories

@@ -334,8 +334,9 @@ function CategoryCirclesSection() {
     { name: 'Anarkali', handle: 'anarkali', img: '/images/anarkali.jpg' },
     { name: 'Kurtis', handle: 'kurtis', img: '/images/kurti.jpg' },
     { name: 'Co-ords', handle: 'co-ords', img: '/images/coord.jpg' },
-    { name: 'Sarees', handle: 'sarees', img: '/images/lehenga.jpg' },
-    { name: 'Navratri', handle: 'navratri-lehenga-choli', img: '/images/lehenga.jpg' },
+    { name: 'Sarees', handle: 'saree', img: '/images/lehenga.jpg' },
+    { name: 'Navratri Kurtis', handle: 'navratri-kurtis', img: '/images/kurti.jpg' },
+    { name: 'Navratri Lehengas', handle: 'navratri-lehenga-choli', img: '/images/lehenga.jpg' },
     { name: 'Western', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
     { name: 'New In', handle: 'new-arrivals', img: '/images/western tops/western top.png' },
   ];
@@ -572,11 +573,14 @@ function FeaturedCategoriesGrid() {
     { title: 'Kurti Sets', handle: 'kurtis', img: '/images/kurti.jpg' },
     { title: 'Anarkali Suits', handle: 'anarkali', img: '/images/anarkali.jpg' },
     { title: 'Co-ord Sets', handle: 'co-ords', img: '/images/coord.jpg' },
-    { title: 'Festive Sarees', handle: 'sarees', img: '/images/lehenga.jpg' },
-    { title: 'Swim & Resort', handle: 'western-swimwear', img: '/images/swim suit/swim suit 2.jpg' },
+    { title: 'Festive Sarees', handle: 'saree', img: '/images/lehenga.jpg' },
+    { title: 'Navratri Kurtis', handle: 'navratri-kurtis', img: '/images/kurti.jpg' },
+    { title: 'Navratri Lehengas', handle: 'navratri-lehenga-choli', img: '/images/lehenga.jpg' },
     { title: 'Western Dresses', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
     { title: 'Tops & Tunics', handle: 'western-tops-tunics', img: '/images/western tops/western top.png' },
     { title: 'Skirts & Skorts', handle: 'western-pants-skirts', img: '/images/skirts/image (13).png' },
+    { title: 'Swim & Resort', handle: 'western-swimwear', img: '/images/swim suit/swim suit 2.jpg' },
+    { title: 'New Arrivals', handle: 'new-arrivals', img: '/images/western tops/western top.png' },
   ];
 
   return (

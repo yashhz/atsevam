@@ -19,7 +19,8 @@ export const meta: Route.MetaFunction = ({data}) => {
     'kurtis': 'Browse designer kurtis and kurtas for women. Comfortable, stylish ethnic wear perfect for daily wear and casual occasions. Premium fabrics with modern designs.',
     'co-ords': 'Trendy co-ord sets and matching sets. Modern ethnic wear with contemporary designs. Perfect for parties, casual outings, and festive occasions.',
     'western-dresses': 'Shop western dresses, tops, and tunics. Modern fashion with elegant designs. Perfect for parties and casual wear.',
-    'sarees': 'Traditional sarees with modern designs. Premium fabrics and beautiful drapes. Perfect for weddings and festive occasions.',
+    'saree': 'Traditional sarees with modern drapes and styles. Premium silk, cotton, and georgette sarees handcrafted by Indian artisans.',
+    'navratri-kurtis': 'Navratri special designer kurtis. Colorful festive kurtis with mirror work and traditional embroidery for Garba celebrations.',
     'navratri-lehenga-choli': 'Navratri special lehenga choli collection. Vibrant colors and traditional designs perfect for Garba and Dandiya nights.',
   };
   
@@ -54,12 +55,12 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   if (!handle) throw redirect('/collections');
 
-  // Redirect common singular categories to their plural equivalents
+  // Redirect common category naming mismatches
   if (handle === 'kurti') throw redirect('/collections/kurtis');
   if (handle === 'lehenga') throw redirect('/collections/lehengas');
   if (handle === 'co-ord' || handle === 'co-ord-set' || handle === 'co-ord-sets') throw redirect('/collections/co-ords');
   if (handle === 'anarkalis') throw redirect('/collections/anarkali');
-  if (handle === 'saree') throw redirect('/collections/sarees');
+  if (handle === 'sarees') throw redirect('/collections/saree');
 
   // Map collection handles to display names
   const getCategoryName = (collectionHandle: string): string => {
@@ -70,7 +71,9 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       'co-ords': 'Co-ord Set',
       'bestsellers': 'Bestseller',
       'new-arrivals': 'New Arrival',
-      'sarees': 'Saree',
+      'saree': 'Saree',
+      'navratri-kurtis': 'Navratri Kurti',
+      'navratri-lehenga-choli': 'Navratri Lehenga Choli',
     };
     return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
   };
@@ -499,6 +502,30 @@ function ComingSoonState({collectionTitle}: {collectionTitle: string}) {
             <img src="/images/lehenga.jpg" alt="Lehengas" />
           </div>
           <span className="av-coming-soon__card-title">Lehengas</span>
+        </Link>
+        <Link to="/collections/saree" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/lehenga.jpg" alt="Sarees" />
+          </div>
+          <span className="av-coming-soon__card-title">Sarees</span>
+        </Link>
+        <Link to="/collections/navratri-kurtis" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/kurti.jpg" alt="Navratri Kurtis" />
+          </div>
+          <span className="av-coming-soon__card-title">Navratri Kurtis</span>
+        </Link>
+        <Link to="/collections/navratri-lehenga-choli" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/lehenga.jpg" alt="Navratri Lehengas" />
+          </div>
+          <span className="av-coming-soon__card-title">Navratri Lehengas</span>
+        </Link>
+        <Link to="/collections/western-dresses" className="av-coming-soon__card">
+          <div className="av-coming-soon__card-image">
+            <img src="/images/western dresses/image (12).png" alt="Western Dresses" />
+          </div>
+          <span className="av-coming-soon__card-title">Western Dresses</span>
         </Link>
       </div>
     </div>

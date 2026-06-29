@@ -56,10 +56,10 @@ const CATEGORY_GROUPS = {
       {title: 'Chaniya Choli',  url: '/collections/navratri-chaniya-choli'},
     ],
   },
-  'sarees': {
+  'saree': {
     title: 'Sarees',
     items: [
-      {title: 'Sarees',  url: '/collections/sarees'},
+      {title: 'Sarees',  url: '/collections/saree'},
     ],
   },
 };
@@ -70,7 +70,7 @@ const DEFAULT_CATEGORY_TABS = [
   {title: 'Anarkalis',          url: '/collections/anarkali',                  group: 'ethnic'},
   {title: 'Kurtis',             url: '/collections/kurtis',                    group: 'ethnic'},
   {title: 'Co-ords',            url: '/collections/co-ords',                   group: 'ethnic'},
-  {title: 'Sarees',             url: '/collections/sarees',                    group: 'sarees'},
+  {title: 'Sarees',             url: '/collections/saree',                     group: 'saree'},
   {title: 'Western Wear',       url: '/collections/western-dresses',           group: 'western'},
   {title: 'Navratri',           url: '/collections/navratri-lehenga-choli',    group: 'navratri'},
 ];
@@ -236,7 +236,7 @@ function CategoryTabBar() {
 
         {/* Sarees - Direct Link */}
         <NavLink
-          to="/collections/sarees"
+          to="/collections/saree"
           prefetch="intent"
           className={({isActive}) =>
             `av-tabs__item${isActive ? ' av-tabs__item--active' : ''}`
