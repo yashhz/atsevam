@@ -20,7 +20,7 @@ export const meta: Route.MetaFunction = ({data}) => {
     'co-ords': 'Trendy co-ord sets and matching sets. Modern ethnic wear with contemporary designs. Perfect for parties, casual outings, and festive occasions.',
     'western-dresses': 'Shop western dresses, tops, and tunics. Modern fashion with elegant designs. Perfect for parties and casual wear.',
     'saree': 'Traditional sarees with drapes and styles. Premium silk, cotton, georgette sarees handcrafted by Indian artisans.',
-    'navratri-kurtis': 'Navratri special designer kurtis. Colorful festive kurtis with mirror work and traditional embroidery for Garba celebrations.',
+    'navratri-kurits': 'Navratri special designer kurtis. Colorful festive kurtis with mirror work and traditional embroidery for Garba celebrations.',
     'navratri-lehengas': 'Navratri special lehenga choli collection. Vibrant colors and traditional designs perfect for Garba and Dandiya nights.',
   };
   
@@ -62,6 +62,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   if (handle === 'anarkalis') throw redirect('/collections/anarkali');
   if (handle === 'sarees') throw redirect('/collections/saree');
   if (handle === 'navratri-lehenga-choli') throw redirect('/collections/navratri-lehengas');
+  if (handle === 'navratri-kurtis') throw redirect('/collections/navratri-kurits');
 
   // Map collection handles to display names
   const getCategoryName = (collectionHandle: string): string => {
@@ -73,7 +74,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       'bestsellers': 'Bestseller',
       'new-arrivals': 'New Arrival',
       'saree': 'Saree',
-      'navratri-kurtis': 'Navratri Kurti',
+      'navratri-kurits': 'Navratri Kurti',
       'navratri-lehengas': 'Navratri Lehenga Choli',
     };
     return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
@@ -510,7 +511,7 @@ function ComingSoonState({collectionTitle}: {collectionTitle: string}) {
           </div>
           <span className="av-coming-soon__card-title">Sarees</span>
         </Link>
-        <Link to="/collections/navratri-kurtis" className="av-coming-soon__card">
+        <Link to="/collections/navratri-kurits" className="av-coming-soon__card">
           <div className="av-coming-soon__card-image">
             <img src="/images/navratri.webp" alt="Navratri Kurtis" />
           </div>

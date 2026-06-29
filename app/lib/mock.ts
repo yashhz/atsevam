@@ -48,7 +48,7 @@ export const MOCK_TRADITIONAL_CATEGORIES: MockCategory[] = [
   {id: '3', title: 'Kurtis',      handle: 'kurtis',       image: {url: '/images/kurti.jpg', altText: 'Designer Kurtis'}},
   {id: '4', title: 'Co-ord Sets', handle: 'co-ords',      image: {url: '/images/coord.jpg', altText: 'Trendy Co-ord Sets'}},
   {id: '5', title: 'Sarees',      handle: 'saree',        image: {url: '/images/saree.webp', altText: 'Traditional Sarees'}},
-  {id: '6', title: 'Navratri Kurtis', handle: 'navratri-kurtis', image: {url: '/images/navratri.webp', altText: 'Navratri Kurtis Collection'}},
+  {id: '6', title: 'Navratri Kurtis', handle: 'navratri-kurits', image: {url: '/images/navratri.webp', altText: 'Navratri Kurtis Collection'}},
   {id: '7', title: 'Navratri Lehengas', handle: 'navratri-lehengas', image: {url: '/images/navratri.webp', altText: 'Navratri Special Collection'}},
 ];
 

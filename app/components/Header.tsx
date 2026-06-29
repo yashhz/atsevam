@@ -52,7 +52,7 @@ const CATEGORY_GROUPS = {
     title: 'Navratri Collection',
     items: [
       {title: 'Lehenga Choli',  url: '/collections/navratri-lehengas'},
-      {title: 'Kurtis',         url: '/collections/navratri-kurtis'},
+      {title: 'Kurtis',         url: '/collections/navratri-kurits'},
       {title: 'Chaniya Choli',  url: '/collections/navratri-chaniya-choli'},
     ],
   },
