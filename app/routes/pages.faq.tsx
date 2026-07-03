@@ -13,7 +13,7 @@ const FAQS = [
     questions: [
       {
         q: 'How long does delivery take?',
-        a: 'We deliver within 5-7 business days across India. You\'ll receive a tracking number once your order ships.',
+        a: 'We dispatch all orders on the same day (for orders placed before cut-off time). Delivery takes 5–7 business days across India. You will receive a tracking number via Email and SMS once your order is dispatched.',
       },
       {
         q: 'Do you ship internationally?',
@@ -21,11 +21,15 @@ const FAQS = [
       },
       {
         q: 'How can I track my order?',
-        a: 'Once your order ships, you\'ll receive a tracking link via email and SMS. You can also track your order from your account dashboard.',
+        a: 'Once your order is dispatched, you will receive a tracking link via Email and SMS. You can also track your order from your account dashboard on atsevam.com.',
       },
       {
         q: 'What if my order is delayed?',
-        a: 'If your order is delayed beyond 7 business days, please contact us at atsevam1@gmail.com or +91 99799 05952 with your order number.',
+        a: 'If your order is delayed beyond 7 business days, please contact us at atsevam1@gmail.com or call +91 99799 05952 with your order number. We will resolve it at the earliest.',
+      },
+      {
+        q: 'Can I cancel my order?',
+        a: 'Yes, orders can be cancelled within 24 hours of placement. Once dispatched, orders cannot be cancelled. To cancel, email us at atsevam1@gmail.com or call +91 99799 05952.',
       },
     ],
   },
@@ -34,19 +38,19 @@ const FAQS = [
     questions: [
       {
         q: 'What is your return policy?',
-        a: 'We accept returns within 7 days of delivery. Items must be unworn, unwashed, and in original condition with tags attached.',
+        a: 'We accept returns within 48 hours of delivery for damaged, wrong, or quality-issue products only. Items must be in original condition with tags attached.',
       },
       {
-        q: 'How do I initiate a return?',
-        a: 'Go to your account dashboard, select the order, and click "Request Return". Our team will arrange a pickup within 2-3 business days.',
+        q: 'How do I initiate a return or exchange?',
+        a: 'Email us at atsevam1@gmail.com or call +91 99799 05952 within 48 hours of receiving your order. Share your order number and photos/video of the issue. Our team will guide you through the process.',
       },
       {
-        q: 'Can I exchange for a different size?',
-        a: 'Yes! Select "Exchange" when initiating your return and choose your preferred size. We\'ll ship the new size once we receive the original item.',
+        q: 'Can I exchange for a different size or color?',
+        a: 'Yes! Exchange is available for a different size or color of the same product, subject to availability. We will ship the replacement once we receive and inspect the original item.',
       },
       {
         q: 'When will I receive my refund?',
-        a: 'Refunds are processed within 5-7 business days after we receive and inspect the returned item.',
+        a: 'Refunds are processed within 5–7 business days after we receive and inspect the returned item. Refund will be credited to your original payment method (bank account / UPI).',
       },
     ],
   },
@@ -55,19 +59,19 @@ const FAQS = [
     questions: [
       {
         q: 'How do I choose the right size?',
-        a: 'Check our detailed size guide for measurements. If you\'re between sizes, we recommend sizing up for a comfortable fit.',
+        a: 'Please refer to our detailed size guide available on each product page. If you are between sizes, we recommend sizing up for a comfortable fit. You can also contact us for sizing assistance.',
       },
       {
-        q: 'Are your products handmade?',
-        a: 'Yes! Every piece is handcrafted by skilled artisans. This means each item is unique and may have slight variations.',
+        q: 'Are your products handcrafted?',
+        a: 'Yes! Our ethnic wear collection features intricate handcrafted work by skilled artisans. Each piece may have slight natural variations which add to its uniqueness.',
       },
       {
         q: 'How do I care for my Atsevam garment?',
-        a: 'We recommend dry cleaning for embroidered pieces. For everyday kurtis and co-ords, gentle hand wash or machine wash on delicate cycle.',
+        a: 'Dry cleaning is recommended for embroidered and embellished pieces. For kurtis and co-ords, gentle hand wash or machine wash on delicate cycle is advised. Avoid direct sunlight when drying.',
       },
       {
         q: 'Can I customize a design?',
-        a: 'For bulk orders (10+ pieces), we offer customization. Contact us at atsevam1@gmail.com or +91 99799 05952 for details.',
+        a: 'We offer customization for bulk orders (10+ pieces). Contact us at atsevam1@gmail.com or +91 99799 05952 for details and pricing.',
       },
     ],
   },
@@ -76,19 +80,19 @@ const FAQS = [
     questions: [
       {
         q: 'What payment methods do you accept?',
-        a: 'We accept all major credit/debit cards, UPI, net banking, and cash on delivery (COD) for orders under ₹10,000.',
+        a: 'We accept all major credit cards, debit cards, UPI, net banking, and digital wallets. All transactions are processed securely.',
       },
       {
-        q: 'Is COD available?',
-        a: 'Yes, COD is available for orders under ₹10,000. A small COD fee of ₹50 applies.',
-      },
-      {
-        q: 'Do you offer discounts for bulk orders?',
-        a: 'Yes! We have a B2B wholesale program with special pricing for boutiques and retailers. Visit our Wholesale page for details.',
+        q: 'Is COD (Cash on Delivery) available?',
+        a: 'Yes, COD is available for orders above ₹2,000. A mandatory advance payment of ₹99 is required at the time of order placement to confirm your COD order. The remaining amount is paid at the time of delivery.',
       },
       {
         q: 'Are prices inclusive of GST?',
-        a: 'Yes, all prices displayed include GST. No hidden charges.',
+        a: 'Yes, all prices displayed on our website are inclusive of GST. There are no hidden charges.',
+      },
+      {
+        q: 'Do you offer discounts for bulk orders?',
+        a: 'Yes! We have a B2B wholesale program with special pricing for boutiques and retailers. Visit our Wholesale page or contact us at atsevam1@gmail.com for details.',
       },
     ],
   },
