@@ -107,7 +107,7 @@ export function ProductForm({
         {/* ── Buy Now (direct to checkout) ──────────────────────── */}
         {isAvailable && selectedVariant && (
           <a
-            href={`https://${storeDomain}/cart/${selectedVariant.id.split('/').pop()}:1`}
+            href={`https://${storeDomain}/cart/${selectedVariant.id.split('/').pop()}:1?checkout=1`}
             className="btn btn-ghost btn-full btn-lg av-product-form__buy-now"
             onClick={(e) => {
               // Use cart checkout URL if available via data attribute,
