@@ -287,7 +287,10 @@ export default function Homepage() {
       <div className="av-promo-banner section">
         <div className="container">
           <Link to="/collections/kurtis" className="av-promo-banner__link" prefetch="intent">
-            <img src="/images/homepage/banner 5.jpeg" alt="Shop Kurtis Collection" className="av-promo-banner__img" loading="lazy" />
+            <picture>
+              <source media="(max-width: 767px)" srcSet="/images/banner mobile/2.png" />
+              <img src="/images/homepage/banner 5.jpeg" alt="Shop Kurtis Collection" className="av-promo-banner__img" loading="lazy" />
+            </picture>
           </Link>
         </div>
       </div>
