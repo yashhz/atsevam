@@ -4280,8 +4280,10 @@
     width: 80px;
     max-height: 600px;
     overflow-y: auto;
+    overflow-x: hidden;
     gap: var(--space-3);
     padding-block: 0;
+    padding-inline: 0;
   }
 }
 
