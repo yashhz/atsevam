@@ -1,5 +1,5 @@
 import {Await, Link} from 'react-router';
-import {Suspense, useId} from 'react';
+import {Suspense, useId, useState, useEffect} from 'react';
 import type {
   CartApiQueryFragment,
   FooterQuery,
@@ -48,6 +48,7 @@ export function PageLayout({
       <FloatingDock />
       <SocialDock />
       <MobileBottomNavbar cart={cart} />
+      <ScrollToTopButton />
 
       {header && (
         <Header
@@ -200,5 +201,50 @@ function MobileMenuAside({
         />
       </Aside>
     )
+  );
+}
+
+// ─── Scroll To Top Button ──────────────────────────────────────────
+
+function ScrollToTopButton() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility, {passive: true});
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <button
+      onClick={scrollToTop}
+      className={`av-scroll-to-top${isVisible ? ' av-scroll-to-top--visible' : ''}`}
+      aria-label="Scroll to top"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2.5}
+        stroke="currentColor"
+        style={{width: '20px', height: '20px'}}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+      </svg>
+    </button>
   );
 }

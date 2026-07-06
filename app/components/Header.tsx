@@ -428,10 +428,13 @@ export function MobileMenu({
   publicStoreDomain: string;
 }) {
   const {close} = useAside();
-  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   const toggleGroup = (groupKey: string) => {
-    setExpandedGroup(expandedGroup === groupKey ? null : groupKey);
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [groupKey]: !prev[groupKey],
+    }));
   };
 
   return (
@@ -452,10 +455,10 @@ export function MobileMenu({
               name="chevron-down" 
               size={16} 
               strokeWidth={2}
-              className={expandedGroup === key ? 'rotate-180' : ''}
+              className={expandedGroups[key] ? 'rotate-180' : ''}
             />
           </button>
-          {expandedGroup === key && (
+          {expandedGroups[key] && (
             <div className="av-mobile-menu__submenu">
               {group.items.map((item, i) => (
                 <NavLink
@@ -485,12 +488,6 @@ export function MobileMenu({
       </NavLink>
       <NavLink to="/pages/contact" onClick={close} className="av-mobile-menu__item">
         Contact
-      </NavLink>
-      <NavLink to="/account" onClick={close} className="av-mobile-menu__item">
-        Account / Sign In
-      </NavLink>
-      <NavLink to="/search" onClick={close} className="av-mobile-menu__item">
-        Search
       </NavLink>
     </nav>
   );

@@ -1421,7 +1421,7 @@
   .av-category-banner__container {
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 2172 / 724 !important; /* Match wide banner aspect ratio */
+    aspect-ratio: 4 / 5 !important; /* Elegant vertical banner ratio for mobile screens (4:5) */
   }
 }
 
@@ -4258,7 +4258,7 @@
 .av-pdp__thumbs {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--space-2);
   width: 100%;
   flex-shrink: 0;
@@ -4266,6 +4266,7 @@
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
   padding-block: var(--space-1);
+  padding-inline: var(--gutter);
 }
 
 @media (min-width: 768px) {
@@ -12070,6 +12071,23 @@ a {
 
 /* Mobile adjustments for Shop By Discount */
 @media (max-width: 767px) {
+  .av-discount-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--space-3);
+    padding-inline: var(--gutter) !important;
+    margin-inline: calc(-1 * var(--gutter)) !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: var(--space-2);
+  }
+  .av-discount-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .av-discount-card {
+    flex: 0 0 135px;
+  }
   .av-discount-card__inner {
     padding: var(--space-4) var(--space-2);
   }
@@ -12862,9 +12880,12 @@ a {
 
 /* Mobile */
 @media (max-width: 768px) {
+  .av-video-reel {
+    padding-block: var(--space-4);
+  }
   .av-video-reel__inner {
     flex-direction: column;
-    gap: var(--space-6);
+    gap: var(--space-5);
     padding-inline: var(--space-3);
   }
   .av-video-reel__info-col {
@@ -12874,12 +12895,24 @@ a {
   .av-video-reel__info {
     text-align: center;
     align-items: center;
+    gap: var(--space-2);
+  }
+  .av-video-reel__title {
+    font-size: 1.5rem;
+  }
+  .av-video-reel__description {
+    font-size: var(--text-sm);
   }
   .av-video-reel__carousel-container {
     gap: var(--space-3);
   }
   .av-video-reel__stage {
-    width: min(70vw, 240px);
+    width: min(50vw, 175px);
+  }
+  .av-video-reel__arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1.4rem;
   }
 }
 
@@ -13185,6 +13218,53 @@ a {
 
   .overlay.expanded aside.aside-mobile {
     transform: translateX(100vw) !important;
+  }
+}
+
+/* ─── Scroll To Top Button ─── */
+.av-scroll-to-top {
+  position: fixed;
+  bottom: 80px; /* Stay clear of mobile bottom navbar dock (65px) */
+  right: var(--space-4);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  color: var(--color-white);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(123, 45, 78, 0.25);
+  cursor: pointer;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.av-scroll-to-top--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.av-scroll-to-top:hover {
+  background: #90224d;
+  box-shadow: 0 6px 16px rgba(123, 45, 78, 0.35);
+}
+
+.av-scroll-to-top:active {
+  transform: scale(0.92);
+}
+
+@media (min-width: 768px) {
+  .av-scroll-to-top {
+    bottom: var(--space-6);
+    right: var(--space-6);
+    width: 48px;
+    height: 48px;
   }
 }
 
