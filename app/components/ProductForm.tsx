@@ -1,5 +1,6 @@
-import {Link, useNavigate} from 'react-router';
+import {Link, useNavigate, useRouteLoaderData} from 'react-router';
 import {type MappedProductOptions} from '@shopify/hydrogen';
+import type {RootLoader} from '~/root';
 import type {
   Maybe,
   ProductOptionValueSwatch,
@@ -17,6 +18,8 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const storeDomain = rootData?.publicStoreDomain || 'atsevam.myshopify.com';
 
   const isAvailable = selectedVariant?.availableForSale;
 
@@ -104,7 +107,7 @@ export function ProductForm({
         {/* ── Buy Now (direct to checkout) ──────────────────────── */}
         {isAvailable && selectedVariant && (
           <a
-            href={`https://checkout.shopify.com/cart/${selectedVariant.id.split('/').pop()}:1`}
+            href={`https://${storeDomain}/cart/${selectedVariant.id.split('/').pop()}:1`}
             className="btn btn-ghost btn-full btn-lg av-product-form__buy-now"
             onClick={(e) => {
               // Use cart checkout URL if available via data attribute,
