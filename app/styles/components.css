@@ -12991,7 +12991,8 @@ a {
 @media (max-width: 768px) {
   .av-social-dock {
     display: flex !important;
-    right: 12px !important;
+    left: 12px !important;
+    right: auto !important;
     bottom: 72px !important; /* Floats perfectly above the mobile bottom nav bar */
     gap: 8px !important;
   }
