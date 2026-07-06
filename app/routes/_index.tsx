@@ -288,7 +288,7 @@ export default function Homepage() {
         <div className="container">
           <Link to="/collections/kurtis" className="av-promo-banner__link" prefetch="intent">
             <picture>
-              <source media="(max-width: 767px)" srcSet="/images/banner mobile/2.png" />
+              <source media="(max-width: 767px)" srcSet="/images/banner%20mobile/2.png" />
               <img src="/images/homepage/banner 5.jpeg" alt="Shop Kurtis Collection" className="av-promo-banner__img" loading="lazy" />
             </picture>
           </Link>

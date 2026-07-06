@@ -17,7 +17,7 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     title: 'Summer Sale',
     handle: 'summer-sale',
     image: '/images/homepage/banner 1.png',
-    mobileImage: '/images/banner mobile/1.jpg.jpeg',
+    mobileImage: '/images/banner%20mobile/1.jpg.jpeg',
     description: 'Exclusive Festive & Summer Collection',
   },
   {
@@ -25,7 +25,7 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     title: 'Luxury Lehengas',
     handle: 'lehengas',
     image: '/images/homepage/banner 2.jpeg',
-    mobileImage: '/images/banner mobile/3.png',
+    mobileImage: '/images/banner%20mobile/3.png',
     description: 'Handcrafted Heritage Designs',
   },
   {
@@ -33,7 +33,7 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     title: 'Co-ord Sets',
     handle: 'co-ords',
     image: '/images/homepage/banner 3.png',
-    mobileImage: '/images/banner mobile/4.png',
+    mobileImage: '/images/banner%20mobile/4.png',
     description: 'Modern Fusion & Chic Styles',
   },
   {
@@ -41,7 +41,7 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     title: 'Western Wear',
     handle: 'western-dresses',
     image: '/images/homepage/banner 4.png',
-    mobileImage: '/images/banner mobile/5.png',
+    mobileImage: '/images/banner%20mobile/5.png',
     description: 'Elegant Western Silhouettes',
   },
 ];
