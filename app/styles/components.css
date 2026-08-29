@@ -11739,14 +11739,32 @@ a {
    ═══════════════════════════════════════════════════════════════ */
 
 /* Homepage Revamp — Hero Banner Adjustments */
-.av-category-banner__container {
-  aspect-ratio: 3.4 / 1 !important; /* Shorter on desktop to prevent occupying too much space */
-}
-@media (max-width: 640px) {
+@media (min-width: 769px) {
   .av-category-banner__container {
+    aspect-ratio: 2.5 / 1 !important;
+    min-height: 440px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .av-category-banner__container {
+    width: 100% !important;
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 2172 / 724 !important;
+    aspect-ratio: 4 / 5 !important;
+  }
+
+  .av-category-banner__image-wrap {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .av-category-banner__image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
   }
 }
 
