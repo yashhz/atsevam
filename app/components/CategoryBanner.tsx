@@ -14,10 +14,10 @@ type CategorySlide = {
 const CATEGORY_SLIDES: CategorySlide[] = [
   {
     id: '1',
-    title: 'Summer Sale',
-    handle: 'summer-sale',
+    title: 'Festive Collection',
+    handle: 'all',
     image: '/images/homepage/Desktop%20Banner.png',
-    mobileImage: '/images/banner%20mobile/Mobile%20Cover.png',
+    mobileImage: '/images/banner%20mobile/Mobile%20Cover%20-%201.png',
     description: 'Exclusive Festive & Summer Collection',
   },
   {
@@ -25,7 +25,7 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     title: 'Luxury Lehengas',
     handle: 'lehengas',
     image: '/images/homepage/banner%202.jpeg',
-    mobileImage: '/images/banner%20mobile/Mobile%20Cover%20-%202.png',
+    mobileImage: '/images/banner%20mobile/Mobile%20Cover%20second.png',
     description: 'Handcrafted Heritage Designs',
   },
   {
@@ -33,7 +33,7 @@ const CATEGORY_SLIDES: CategorySlide[] = [
     title: 'Co-ord Sets',
     handle: 'co-ords',
     image: '/images/homepage/Desktop%204.png',
-    mobileImage: '/images/banner%20mobile/4.png',
+    mobileImage: '/images/banner%20mobile/Mobile%20Cover%204%20.png',
     description: 'Modern Fusion & Chic Styles',
   },
   {
