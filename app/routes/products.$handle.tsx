@@ -680,14 +680,18 @@ export default function Product() {
 
           {/* Sizing & In-Stock Status Badge */}
           <div className="av-pdp__stock-status" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', margin: 'var(--space-2) 0 var(--space-4)' }}>
-            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2D6A4F' }} />
-            <span style={{ fontSize: '12px', color: '#2D6A4F', fontWeight: 600, fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-wide)' }}>
-              In Stock (Only 3 left!)
+            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: selectedVariant?.availableForSale !== false ? '#2D6A4F' : '#D32F2F' }} />
+            <span style={{ fontSize: '12px', color: selectedVariant?.availableForSale !== false ? '#2D6A4F' : '#D32F2F', fontWeight: 600, fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-wide)' }}>
+              {selectedVariant?.availableForSale !== false ? 'In Stock' : 'Out of Stock'}
             </span>
-            <span style={{ fontSize: '12px', color: 'var(--color-muted)', margin: '0 var(--space-1)' }}>•</span>
-            <span style={{ fontSize: '12px', color: 'var(--color-secondary)', fontFamily: 'var(--font-body)' }}>
-              ✓ Ready to dispatch
-            </span>
+            {selectedVariant?.availableForSale !== false && (
+              <>
+                <span style={{ fontSize: '12px', color: 'var(--color-muted)', margin: '0 var(--space-1)' }}>•</span>
+                <span style={{ fontSize: '12px', color: 'var(--color-secondary)', fontFamily: 'var(--font-body)' }}>
+                  ✓ Ready to dispatch
+                </span>
+              </>
+            )}
           </div>
 
           {/* Direct from manufacturer badge */}

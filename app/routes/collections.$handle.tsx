@@ -103,6 +103,34 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
+  const getProductCategory = (product: any, collectionHandle: string): string => {
+    if (product.productType && product.productType.trim()) {
+      return product.productType.trim();
+    }
+    const tags = (product.tags || []).map((t: string) => t.toLowerCase());
+    const title = (product.title || '').toLowerCase();
+
+    if (tags.some((t: string) => t.includes('lehenga')) || title.includes('lehenga')) return 'Lehenga';
+    if (tags.some((t: string) => t.includes('anarkali')) || title.includes('anarkali')) return 'Anarkali';
+    if (tags.some((t: string) => t.includes('kurti') || t.includes('kurta')) || title.includes('kurti')) return 'Kurti';
+    if (tags.some((t: string) => t.includes('co-ord') || t.includes('coord')) || title.includes('co-ord')) return 'Co-ord Set';
+    if (tags.some((t: string) => t.includes('saree')) || title.includes('saree')) return 'Saree';
+    if (tags.some((t: string) => t.includes('western') || t.includes('dress') || t.includes('top')) || title.includes('dress')) return 'Western Wear';
+
+    const categoryMap: Record<string, string> = {
+      'lehengas': 'Lehenga',
+      'anarkali': 'Anarkali',
+      'kurtis': 'Kurti',
+      'co-ords': 'Co-ord Set',
+      'bestsellers': 'Bestseller',
+      'new-arrivals': 'New Arrival',
+      'saree': 'Saree',
+      'navratri-kurits': 'Navratri Kurti',
+      'navratri-lehengas': 'Navratri Lehenga',
+    };
+    return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
+  };
+
   const transformedProducts = collection.products.nodes.map((product: any) => {
     const price = parseFloat(product.priceRange.minVariantPrice.amount);
     const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
@@ -132,7 +160,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
         url: product.images.nodes[1].url,
         altText: product.images.nodes[1].altText || product.title,
       } : undefined,
-      category: getCategoryName(handle),
+      category: getProductCategory(product, handle),
       badge,
       rating: undefined,
       reviewCount: undefined,
@@ -140,7 +168,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     };
   });
 
-  const filters = parseFilters(collection.products.nodes);
+  const filters = parseFilters(collection.products.nodes, transformedProducts);
 
   return {
     collection: {
@@ -228,6 +256,15 @@ export default function Collection() {
     Object.entries(activeFilters).forEach(([groupId, values]) => {
       if (values.length > 0) {
         result = result.filter((p) => {
+          if (groupId === 'category') {
+            const pCat = ((p as any).category || '').toLowerCase();
+            const pTitle = ((p as any).title || '').toLowerCase();
+            const pTags = ((p as any).tags || []).map((t: string) => t.toLowerCase());
+            return values.some((val) => {
+              const vLower = val.toLowerCase();
+              return pCat.includes(vLower) || pTitle.includes(vLower) || pTags.some((t: string) => t.includes(vLower));
+            });
+          }
           const productTags = (p as any).tags || [];
           return values.some(filterValue => {
             return productTags.some((tag: string) => {
@@ -540,9 +577,10 @@ function parsePrice(price: string): number {
   return Number(price.replace(/[₹,\s]/g, '')) || 0;
 }
 
-function parseFilters(productsNodes: any[]) {
+function parseFilters(productsNodes: any[], transformedProducts: any[] = []) {
   const tagsByPrefix: Record<string, Set<string>> = {};
   const filterConfig: Record<string, string> = {
+    'category': 'Category',
     'color': 'Color',
     'fabric': 'Fabric',
     'work': 'Work Type',
@@ -553,6 +591,14 @@ function parseFilters(productsNodes: any[]) {
     'size': 'Size',
     'tag': 'Tags',
   };
+
+  // Collect distinct categories from transformed products
+  const categoriesSet = new Set<string>();
+  transformedProducts.forEach((p) => {
+    if (p.category && p.category !== 'Ethnic Wear') {
+      categoriesSet.add(p.category);
+    }
+  });
 
   productsNodes.forEach((p: any) => {
     (p.tags || []).forEach((rawTag: string) => {
@@ -575,7 +621,7 @@ function parseFilters(productsNodes: any[]) {
     });
   });
 
-  return Object.keys(tagsByPrefix)
+  const parsedGroups = Object.keys(tagsByPrefix)
     .sort((a, b) => {
       const iA = Object.keys(filterConfig).indexOf(a);
       const iB = Object.keys(filterConfig).indexOf(b);
@@ -604,6 +650,24 @@ function parseFilters(productsNodes: any[]) {
           }).length,
         })),
     }));
+
+  if (categoriesSet.size > 0) {
+    const categoryOptions = Array.from(categoriesSet)
+      .sort()
+      .map((catName) => ({
+        value: catName,
+        label: catName,
+        count: transformedProducts.filter((p) => p.category === catName).length,
+      }));
+
+    parsedGroups.unshift({
+      id: 'category',
+      label: 'Category',
+      options: categoryOptions,
+    });
+  }
+
+  return parsedGroups;
 }
 
 // ─── GraphQL ──────────────────────────────────────────────────────
