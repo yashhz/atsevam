@@ -152,7 +152,7 @@ export function CategoryBanner() {
             >
               <picture className="av-category-banner__image-wrap">
                 {slide.mobileImage && (
-                  <source media="(max-width: 767px)" srcSet={slide.mobileImage} />
+                  <source media="(max-width: 768px)" srcSet={slide.mobileImage} />
                 )}
                 <img
                   src={slide.image}

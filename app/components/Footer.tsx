@@ -13,11 +13,11 @@ const FOOTER_LINKS = {
     {title: 'Track Order',         url: '/pages/track-order',         icon: 'package' as const},
     {title: 'FAQ',                 url: '/pages/faq',                 icon: 'help-circle' as const},
     {title: 'Contact Us',          url: '/pages/contact',             icon: 'mail' as const},
+    {title: 'Size Guide',          url: '/pages/size-guide',          icon: 'ruler' as const},
   ],
   'Quick Links': [
     {title: 'Our Story',           url: '/pages/our-story',           icon: 'heart' as const},
     {title: 'Wholesale / B2B',     url: '/pages/wholesale',           icon: 'briefcase' as const},
-    {title: 'Size Guide',          url: '/pages/size-guide',          icon: 'ruler' as const},
   ],
   'Shop': [
     {title: 'Lehengas',            url: '/collections/lehengas',      icon: 'star' as const},
@@ -25,6 +25,12 @@ const FOOTER_LINKS = {
     {title: 'Kurtis',              url: '/collections/kurtis',        icon: 'star' as const},
     {title: 'Co-ord Sets',         url: '/collections/co-ords',       icon: 'star' as const},
     {title: 'New Arrivals',        url: '/collections/new-arrivals',  icon: 'sparkles' as const},
+  ],
+  'Policies & Legal': [
+    {title: 'Shipping Policy',     url: '/policies/shipping-policy', icon: 'truck' as const},
+    {title: 'Return & Exchange',   url: '/policies/refund-policy',   icon: 'refresh-cw' as const},
+    {title: 'Privacy Policy',      url: '/policies/privacy-policy',  icon: 'shield' as const},
+    {title: 'Terms of Service',    url: '/policies/terms-of-service',icon: 'file-text' as const},
   ],
 };
 

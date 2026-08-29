@@ -17,14 +17,14 @@ import {
 import {fetchJudgeMeRatingsBulk, applyRatings} from '~/lib/judgeme';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Atsevam — Lehengas, Anarkalis, Kurtis & Western Wear | Premium Ethnic Fashion'},
-  {name: 'description', content: 'Shop premium handcrafted ethnic wear at Atsevam. Explore our collection of Bridal Lehengas, Anarkali Suits, Designer Kurtis, Co-ord Sets, Western Wear, Sarees & Navratri Special. Handcrafted by 5000+ artisans across India. Free shipping on orders above ₹1,999.'},
+  {title: 'Atsevam | Women’s Ethnic Wear, Lehengas, Kurtis & More'},
+  {name: 'description', content: 'Shop women’s ethnic and contemporary fashion online at Atsevam. Explore lehengas, Anarkali suits, kurtis, co-ord sets, sarees, Navratri styles and western wear with free prepaid shipping across India.'},
   {name: 'keywords', content: 'lehengas, anarkali suits, kurtis, ethnic wear, indian wear, bridal lehenga, designer kurtis, co-ord sets, western wear, sarees, navratri collection, handcrafted ethnic wear, indian fashion'},
   
   // Open Graph / Facebook
   {property: 'og:type', content: 'website'},
-  {property: 'og:title', content: 'Atsevam — Premium Ethnic Wear | Lehengas, Anarkalis, Kurtis'},
-  {property: 'og:description', content: 'Shop premium handcrafted ethnic wear. Bridal Lehengas, Anarkali Suits, Designer Kurtis & more. Handcrafted by 5000+ artisans. Free shipping above ₹1,999.'},
+  {property: 'og:title', content: 'Atsevam | Women’s Ethnic Wear, Lehengas, Kurtis & More'},
+  {property: 'og:description', content: 'Shop women’s ethnic and contemporary fashion online at Atsevam. Explore lehengas, Anarkali suits, kurtis, co-ord sets, sarees, Navratri styles and western wear with free prepaid shipping across India.'},
   {property: 'og:image', content: 'https://atsevam.com/images/hero.png'},
   {property: 'og:url', content: 'https://atsevam.com'},
   {property: 'og:site_name', content: 'Atsevam'},
@@ -32,8 +32,8 @@ export const meta: Route.MetaFunction = () => [
   
   // Twitter
   {name: 'twitter:card', content: 'summary_large_image'},
-  {name: 'twitter:title', content: 'Atsevam — Premium Ethnic Wear | Lehengas, Anarkalis, Kurtis'},
-  {name: 'twitter:description', content: 'Shop premium handcrafted ethnic wear. Bridal Lehengas, Anarkali Suits, Designer Kurtis & more. Handcrafted by 5000+ artisans.'},
+  {name: 'twitter:title', content: 'Atsevam | Women’s Ethnic Wear, Lehengas, Kurtis & More'},
+  {name: 'twitter:description', content: 'Shop women’s ethnic and contemporary fashion online at Atsevam. Explore lehengas, Anarkali suits, kurtis, co-ord sets, sarees, Navratri styles and western wear.'},
   {name: 'twitter:image', content: 'https://atsevam.com/images/hero.png'},
   
   // Additional SEO
@@ -288,7 +288,7 @@ export default function Homepage() {
         <div className="container">
           <Link to="/collections/kurtis" className="av-promo-banner__link" prefetch="intent">
             <picture>
-              <source media="(max-width: 767px)" srcSet="/images/banner%20mobile/2.png" />
+              <source media="(max-width: 768px)" srcSet="/images/banner%20mobile/2.png" />
               <img src="/images/homepage/banner%205.jpeg" alt="Shop Kurtis Collection" className="av-promo-banner__img" loading="lazy" />
             </picture>
           </Link>
@@ -324,6 +324,7 @@ export default function Homepage() {
 
       <TrustBar />
       <TestimonialsSection testimonials={testimonials} />
+      <SeoContentSection />
       <InstagramSection />
     </div>
   );
@@ -763,6 +764,188 @@ function InstagramSection() {
               </div>
             </a>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SEO Content Section ──────────────────────────────────────────
+
+function SeoContentSection() {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <section className="av-seo-content section">
+      <div className="container">
+        <div className="av-seo-content__wrapper">
+          <header className="av-seo-content__header">
+            <h1 className="av-seo-content__main-title">Atsevam – Women’s Ethnic &amp; Contemporary Fashion Online</h1>
+            <p className="av-seo-content__lead">
+              Atsevam is a women’s fashion brand bringing together the timeless elegance of Indian ethnic wear and the evolving style of contemporary fashion. With 10+ years of experience in fashion and manufacturing, we create and curate clothing designed for women who want to express their personal style through beautiful, versatile and occasion-ready outfits.
+            </p>
+            <p className="av-seo-content__sublead">
+              From elegant lehengas and Anarkali suits to versatile kurtis, co-ord sets and sarees, Atsevam offers a wide range of women’s fashion for weddings, festivals, celebrations, special occasions and everyday wear. Our collection also includes dedicated Navratri kurtis, Navratri lehengas and western wear, giving you styles for different occasions and fashion preferences.
+            </p>
+          </header>
+
+          {/* Expandable SEO Details */}
+          <div className={`av-seo-content__body${isExpanded ? ' av-seo-content__body--expanded' : ''}`}>
+            <div className="av-seo-content__grid">
+              
+              {/* Category 1: Lehengas */}
+              <div className="av-seo-card">
+                <h3>Lehengas for Weddings and Celebrations</h3>
+                <p>
+                  A lehenga is one of the most loved choices for weddings, festive celebrations and special occasions. Atsevam’s Lehengas Collection features a variety of styles designed for women looking to make a statement at memorable events.
+                </p>
+                <p>
+                  From traditional-inspired designs to contemporary silhouettes, our collection offers options for wedding functions, festive celebrations, parties and other special occasions. Selected designs feature intricate embroidery, detailed embellishments and premium fabrics.
+                </p>
+                <Link to="/collections/lehengas" className="av-seo-card__link">
+                  Shop Lehengas →
+                </Link>
+              </div>
+
+              {/* Category 2: Anarkali */}
+              <div className="av-seo-card">
+                <h3>Elegant Anarkali Suits for Every Occasion</h3>
+                <p>
+                  Anarkali suits are a timeless part of Indian women’s fashion. Their graceful silhouettes make them suitable for festivals, family celebrations, parties, weddings and other special occasions.
+                </p>
+                <p>
+                  Atsevam’s Anarkali Collection brings together different styles for women who appreciate classic ethnic fashion with a contemporary touch. Choose an Anarkali that complements your personal style.
+                </p>
+                <Link to="/collections/anarkali" className="av-seo-card__link">
+                  Shop Anarkali Suits →
+                </Link>
+              </div>
+
+              {/* Category 3: Kurtis */}
+              <div className="av-seo-card">
+                <h3>Kurtis and Kurti Sets for Everyday Elegance</h3>
+                <p>
+                  Kurtis are one of the most versatile pieces in an Indian wardrobe. They can be styled for everyday wear, office looks, casual outings, family gatherings and festive occasions.
+                </p>
+                <p>
+                  Atsevam’s Kurtis Collection offers a variety of designs for different styles and occasions. Choose an easy everyday look or a detailed design for festive occasions.
+                </p>
+                <Link to="/collections/kurtis" className="av-seo-card__link">
+                  Shop Kurtis →
+                </Link>
+              </div>
+
+              {/* Category 4: Co-ord Sets */}
+              <div className="av-seo-card">
+                <h3>Stylish Women’s Co-ord Sets</h3>
+                <p>
+                  Co-ord sets are an effortless choice for women who love coordinated and contemporary fashion. Matching pieces create a polished outfit while making everyday styling simple.
+                </p>
+                <p>
+                  Explore Atsevam’s Co-ord Sets Collection for contemporary looks suitable for casual outings, travel, get-togethers and everyday fashion.
+                </p>
+                <Link to="/collections/co-ords" className="av-seo-card__link">
+                  Shop Co-ord Sets →
+                </Link>
+              </div>
+
+              {/* Category 5: Sarees */}
+              <div className="av-seo-card">
+                <h3>Sarees – Timeless Indian Elegance</h3>
+                <p>
+                  The saree remains one of India’s most iconic and versatile outfits. From weddings and festivals to family celebrations, a saree brings timeless elegance to a woman’s wardrobe.
+                </p>
+                <p>
+                  Atsevam’s Saree Collection features styles for women looking for an elegant Indian outfit for their next occasion.
+                </p>
+                <Link to="/collections/saree" className="av-seo-card__link">
+                  Shop Sarees →
+                </Link>
+              </div>
+
+              {/* Category 6: Navratri */}
+              <div className="av-seo-card">
+                <h3>Navratri Kurtis and Lehengas</h3>
+                <p>
+                  Navratri is a celebration of music, colour, tradition and festive energy. From Garba nights to Dandiya celebrations, choosing the right outfit is an important part of the festive experience.
+                </p>
+                <div className="av-seo-card__dual-links">
+                  <Link to="/collections/navratri-kurits" className="av-seo-card__link">
+                    Shop Navratri Kurtis →
+                  </Link>
+                  <Link to="/collections/navratri-lehengas" className="av-seo-card__link">
+                    Shop Navratri Lehengas →
+                  </Link>
+                </div>
+              </div>
+
+              {/* Category 7: Western Wear */}
+              <div className="av-seo-card">
+                <h3>Contemporary Western Wear</h3>
+                <p>
+                  Fashion is not limited to traditional clothing. Atsevam also brings contemporary western wear for women who enjoy modern silhouettes and versatile styling.
+                </p>
+                <p>
+                  Explore our western collection featuring western dresses, tops, tunics and skirts for casual outings, social occasions and everyday fashion.
+                </p>
+                <Link to="/collections/western-dresses" className="av-seo-card__link">
+                  Shop Western Wear →
+                </Link>
+              </div>
+
+              {/* Category 8: New Arrivals */}
+              <div className="av-seo-card">
+                <h3>New Arrivals at Atsevam</h3>
+                <p>
+                  Fashion keeps evolving, and new styles bring fresh possibilities to your wardrobe. Explore our New Arrivals to discover the latest additions to Atsevam.
+                </p>
+                <Link to="/collections/new-arrivals" className="av-seo-card__link">
+                  Shop New Arrivals →
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Brand Pillars & Experience */}
+            <div className="av-seo-pillars">
+              <div className="av-seo-pillar">
+                <h4>10+ Years of Fashion &amp; Manufacturing</h4>
+                <p>With 10+ years of experience in fashion and manufacturing, Atsevam understands design, quality, craftsmanship and evolving trends.</p>
+              </div>
+              <div className="av-seo-pillar">
+                <h4>Crafted with 5,000+ Artisans</h4>
+                <p>Our collections are supported by a network of 5,000+ artisans, bringing years of traditional skill and handwork into every garment.</p>
+              </div>
+              <div className="av-seo-pillar">
+                <h4>Premium Fabrics &amp; Detailed Craftsmanship</h4>
+                <p>We focus on high quality fabrics, intricate embroidery, detailed embellishments and careful finishing across all collections.</p>
+              </div>
+              <div className="av-seo-pillar">
+                <h4>Made in India Fashion</h4>
+                <p>Proudly Made in India, combining rich fashion heritage with contemporary styling for Indian and international customers.</p>
+              </div>
+            </div>
+
+            {/* Why Shop from Atsevam */}
+            <div className="av-seo-why">
+              <h3 className="av-seo-why__title">Why Shop from Atsevam?</h3>
+              <ul className="av-seo-why__list">
+                <li><strong>Free Shipping on Prepaid Orders:</strong> Enjoy free delivery across India on all prepaid orders.</li>
+                <li><strong>Cash on Delivery Available:</strong> Convenient COD available nationwide.</li>
+                <li><strong>7-Day Easy Returns:</strong> Hassle-free 7-day return window subject to return policy.</li>
+                <li><strong>Quality-Focused Fashion:</strong> Crafted with premium materials and detailed artisanal finishing.</li>
+                <li><strong>Bringing Indian Fashion to the World:</strong> Delivering authentic Indian fashion locally and internationally.</li>
+              </ul>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            className="av-seo-content__toggle-btn"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? 'Show Less ↑' : 'Read Full Fashion & Brand Guide ↓'}
+          </button>
         </div>
       </div>
     </section>
