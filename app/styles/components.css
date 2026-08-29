@@ -13232,48 +13232,73 @@ a {
 /* ─── Scroll To Top Button ─── */
 .av-scroll-to-top {
   position: fixed;
-  bottom: 80px; /* Stay clear of mobile bottom navbar dock (65px) */
-  right: var(--space-4);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--color-brand);
-  color: var(--color-white);
-  border: none;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  width: auto;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  background: var(--color-brand, #7B2D4E);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(123, 45, 78, 0.25);
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wider);
+  box-shadow: 0 4px 16px rgba(123, 45, 78, 0.4);
   cursor: pointer;
   z-index: 999;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(12px);
-  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background 0.2s ease;
 }
 
 .av-scroll-to-top--visible {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 .av-scroll-to-top:hover {
-  background: #90224d;
-  box-shadow: 0 6px 16px rgba(123, 45, 78, 0.35);
+  background: #5a1e38;
+  box-shadow: 0 6px 20px rgba(123, 45, 78, 0.5);
 }
 
 .av-scroll-to-top:active {
-  transform: scale(0.92);
+  transform: translateX(-50%) scale(0.94);
+}
+
+/* ─── PDP Mobile Swipe Pagination Dots ──────────────────────────── */
+.av-pdp__mobile-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 @media (min-width: 768px) {
-  .av-scroll-to-top {
-    bottom: var(--space-6);
-    right: var(--space-6);
-    width: 48px;
-    height: 48px;
+  .av-pdp__mobile-dots {
+    display: none;
   }
+}
+
+.av-pdp__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border-strong, #ccc);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.av-pdp__dot--active {
+  background: var(--color-brand, #7B2D4E);
+  transform: scale(1.3);
 }
 
 /* ─── Homepage SEO Content Section ─────────────────────────────── */

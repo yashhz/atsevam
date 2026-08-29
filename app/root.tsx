@@ -171,6 +171,23 @@ export function Layout({children}: {children?: React.ReactNode}) {
         
         <Meta />
         <Links />
+
+        {/* Google Search Logo & Organization JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Atsevam',
+              url: 'https://atsevam.com',
+              logo: 'https://atsevam.com/images/topbar%20image.jpg',
+              sameAs: [
+                'https://www.instagram.com/atsevaam',
+              ],
+            }),
+          }}
+        />
       </head>
       <body>
         {children}

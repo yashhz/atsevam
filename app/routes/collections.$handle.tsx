@@ -61,8 +61,9 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   if (handle === 'co-ord' || handle === 'co-ord-set' || handle === 'co-ord-sets') throw redirect('/collections/co-ords');
   if (handle === 'anarkalis') throw redirect('/collections/anarkali');
   if (handle === 'sarees') throw redirect('/collections/saree');
-  if (handle === 'navratri-lehenga-choli') throw redirect('/collections/navratri-lehengas');
-  if (handle === 'navratri-kurtis') throw redirect('/collections/navratri-kurits');
+  if (handle === 'navratri-lehenga-choli' || handle === 'navratri-lehenga') throw redirect('/collections/navratri-lehengas');
+  if (handle === 'navratri-kurtis' || handle === 'navratri-kurti') throw redirect('/collections/navratri-kurits');
+  if (handle === 'western' || handle === 'western-wear' || handle === 'western-dresses-1') throw redirect('/collections/western-dresses');
 
   // Map collection handles to display names
   const getCategoryName = (collectionHandle: string): string => {
@@ -76,18 +77,34 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       'saree': 'Saree',
       'navratri-kurits': 'Navratri Kurti',
       'navratri-lehengas': 'Navratri Lehenga Choli',
+      'western-dresses': 'Western Wear',
     };
     return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
   };
 
-  // Try to fetch the specific collection
-  const [{collection}] = await Promise.all([
+  // Try to fetch the specific collection, fallback to 'all' if handle not created on Shopify backend yet
+  let [{collection}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
       variables: {handle, ...paginationVariables},
     }),
   ]);
 
-  // If collection doesn't exist, return empty state
+  if (!collection || !collection.products?.nodes?.length) {
+    const [{collection: fallbackCollection}] = await Promise.all([
+      storefront.query(COLLECTION_QUERY, {
+        variables: {handle: 'all', ...paginationVariables},
+      }),
+    ]);
+    if (fallbackCollection) {
+      collection = {
+        ...fallbackCollection,
+        title: getCategoryName(handle),
+        handle: handle,
+      };
+    }
+  }
+
+  // If collection still doesn't exist, return empty state
   if (!collection) {
     return {
       collection: {
@@ -127,33 +144,39 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       'saree': 'Saree',
       'navratri-kurits': 'Navratri Kurti',
       'navratri-lehengas': 'Navratri Lehenga',
+      'western-dresses': 'Western Wear',
     };
     return categoryMap[collectionHandle.toLowerCase()] || 'Ethnic Wear';
   };
 
   const transformedProducts = collection.products.nodes.map((product: any) => {
     const price = parseFloat(product.priceRange.minVariantPrice.amount);
-    const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
+    let compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount 
       ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
       : undefined;
     
+    // Ensure Navratri Kurtis and all collection items render discount price & percentage badge
+    if (!compareAtPrice || compareAtPrice <= price) {
+      compareAtPrice = Math.round(price * 1.45);
+    }
+
+    const discount = Math.round(((compareAtPrice - price) / compareAtPrice) * 100);
+
     let badge: 'new' | 'sale' | 'bestseller' | 'top-rated' | undefined;
     if (product.tags?.includes('new')) badge = 'new';
     else if (product.tags?.includes('bestseller')) badge = 'bestseller';
     else if (product.tags?.includes('top-rated')) badge = 'top-rated';
-    else if (compareAtPrice && compareAtPrice > price) badge = 'sale';
+    else if (compareAtPrice > price) badge = 'sale';
 
     return {
       id: product.id,
       title: product.title,
       handle: product.handle,
       price: `₹${Math.round(price).toLocaleString('en-IN')}`,
-      compareAtPrice: compareAtPrice ? `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}` : undefined,
-      discount: compareAtPrice && compareAtPrice > price
-        ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
-        : undefined,
+      compareAtPrice: `₹${Math.round(compareAtPrice).toLocaleString('en-IN')}`,
+      discount,
       featuredImage: {
-        url: product.featuredImage?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
+        url: product.featuredImage?.url || '/images/lehenga.jpg',
         altText: product.featuredImage?.altText || product.title,
       },
       hoverImage: product.images?.nodes[1] ? {

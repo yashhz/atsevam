@@ -590,6 +590,27 @@ export default function Product() {
     });
   };
 
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        setActiveImage((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+      } else {
+        setActiveImage((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+      }
+    }
+    setTouchStartX(null);
+  };
+
   return (
     <div className="av-pdp">
       {/* Breadcrumb */}
@@ -622,13 +643,28 @@ export default function Product() {
             ))}
           </div>
 
-          {/* Main display image */}
-          <div className="av-pdp__main-image">
+          {/* Main display image with touch swipe */}
+          <div
+            className="av-pdp__main-image"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <img
               src={images[activeImage]?.url}
               alt={images[activeImage]?.altText}
               loading="eager"
             />
+            {images.length > 1 && (
+              <div className="av-pdp__mobile-dots">
+                {images.map((_: any, idx: number) => (
+                  <span
+                    key={idx}
+                    className={`av-pdp__dot${activeImage === idx ? ' av-pdp__dot--active' : ''}`}
+                    onClick={() => setActiveImage(idx)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

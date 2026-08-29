@@ -78,6 +78,20 @@ export default function Collections() {
   );
 }
 
+const LOCAL_COLLECTION_IMAGES: Record<string, string> = {
+  'lehengas': '/images/lehenga.jpg',
+  'anarkali': '/images/anarkali.jpg',
+  'kurtis': '/images/kurti.jpg',
+  'co-ords': '/images/coord.jpg',
+  'saree': '/images/saree.jpg',
+  'navratri-kurits': '/images/navratri kurtis.jpg',
+  'navratri-kurtis': '/images/navratri kurtis.jpg',
+  'navratri-lehengas': '/images/navratri lehenga.jpg',
+  'western-dresses': '/images/western dresses/image (12).png',
+  'western-wear': '/images/western dresses/image (12).png',
+  'bestsellers': '/images/bestsellers.png',
+};
+
 function CollectionItem({
   collection,
   index,
@@ -85,6 +99,8 @@ function CollectionItem({
   collection: CollectionFragment;
   index: number;
 }) {
+  const fallbackImg = LOCAL_COLLECTION_IMAGES[collection.handle.toLowerCase()] || '/images/lehenga.jpg';
+
   return (
     <Link
       className="av-collection-card"
@@ -104,7 +120,7 @@ function CollectionItem({
           />
         ) : (
           <img
-            src={`https://picsum.photos/seed/${collection.handle}/600/800`}
+            src={fallbackImg}
             alt={collection.title}
             loading={index < 4 ? 'eager' : 'lazy'}
             className="av-collection-card__img"
