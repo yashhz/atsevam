@@ -246,19 +246,82 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   
   redirectIfHandleIsLocalized(request, {handle, data: product});
   
-  // Determine category from productType or tags
+  // 1. Detect Category
   let category = 'Ethnic Wear';
-  if (product.productType) {
-    category = product.productType;
-  } else if (product.tags?.length > 0) {
-    // Only use tag if it matches our known categories
-    const knownCategories = ['Lehenga', 'Anarkali', 'Kurti', 'Co-ord'];
-    const matchedCategory = product.tags.find((tag: string) => 
-      knownCategories.some(cat => tag.toLowerCase().includes(cat.toLowerCase()))
-    );
-    if (matchedCategory) category = matchedCategory;
-  }
+  const tags = (product.tags || []).map((t: string) => t.toLowerCase());
+  const title = (product.title || '').toLowerCase();
   
+  if (product.productType && product.productType.trim()) {
+    category = product.productType.trim();
+  } else if (tags.some((t: string) => t.includes('lehenga')) || title.includes('lehenga')) {
+    category = 'Lehenga';
+  } else if (tags.some((t: string) => t.includes('anarkali')) || title.includes('anarkali')) {
+    category = 'Anarkali';
+  } else if (tags.some((t: string) => t.includes('kurti') || t.includes('kurta')) || title.includes('kurti')) {
+    category = 'Kurti';
+  } else if (tags.some((t: string) => t.includes('co-ord') || t.includes('coord')) || title.includes('co-ord')) {
+    category = 'Co-ord Set';
+  } else if (tags.some((t: string) => t.includes('saree')) || title.includes('saree')) {
+    category = 'Saree';
+  } else if (tags.some((t: string) => t.includes('western') || t.includes('dress')) || title.includes('dress')) {
+    category = 'Western Wear';
+  }
+
+  // 2. Extract Fabric dynamically from tags, title, or description
+  const knownFabrics = ['Georgette', 'Silk', 'Cotton', 'Chiffon', 'Organza', 'Rayon', 'Satin', 'Net', 'Velvet', 'Crepe', 'Jacquard'];
+  let detectedFabric = 'Premium Fabric';
+  for (const fab of knownFabrics) {
+    if (tags.some((t: string) => t.includes(fab.toLowerCase())) || title.includes(fab.toLowerCase()) || (product.description || '').toLowerCase().includes(fab.toLowerCase())) {
+      detectedFabric = fab;
+      break;
+    }
+  }
+
+  // 3. Category-Specific Details & Set Contents
+  let setContents = 'Ethnic Wear Outfit: 1';
+  let stitchingType = 'Ready to Wear';
+  let topLength = 'Standard';
+  let bottomLength = 'Standard';
+
+  const catLower = category.toLowerCase();
+  if (catLower.includes('lehenga')) {
+    setContents = 'Lehenga: 1, Choli: 1, Dupatta: 1';
+    stitchingType = 'Semi-Stitched';
+    topLength = '1 Meter (Unstitched Choli)';
+    bottomLength = '42 Inches (Waist up to 42)';
+  } else if (catLower.includes('anarkali')) {
+    setContents = 'Anarkali Top: 1, Bottom/Pants: 1, Dupatta: 1';
+    stitchingType = 'Stitched / Ready to Wear';
+    topLength = '48-52 Inches';
+    bottomLength = '38-40 Inches';
+  } else if (catLower.includes('kurti') || catLower.includes('kurta')) {
+    setContents = 'Kurti: 1 (Set includes Bottom & Dupatta if specified)';
+    stitchingType = 'Stitched / Ready to Wear';
+    topLength = '42-45 Inches';
+    bottomLength = '38 Inches';
+  } else if (catLower.includes('co-ord')) {
+    setContents = 'Co-ord Top: 1, Co-ord Pants: 1';
+    stitchingType = 'Stitched / Ready to Wear';
+    topLength = '26-30 Inches';
+    bottomLength = '38-40 Inches';
+  } else if (catLower.includes('western') || catLower.includes('dress')) {
+    setContents = 'Western Dress: 1';
+    stitchingType = 'Ready to Wear';
+    topLength = 'Full Dress Length';
+    bottomLength = 'N/A';
+  } else if (catLower.includes('saree')) {
+    setContents = 'Saree: 1 (5.5 Mtr), Unstitched Blouse Piece: 1 (0.8 Mtr)';
+    stitchingType = 'Unstitched Blouse';
+    topLength = '0.8 Meter Blouse Piece';
+    bottomLength = '5.5 Meter Saree';
+  }
+
+  // 4. Extract Real Sizes from Shopify Options
+  const sizeOption = product.options?.find((o: any) => o.name.toLowerCase().includes('size') || o.name.toLowerCase().includes('sizing'));
+  const parsedSizes = sizeOption
+    ? sizeOption.optionValues?.map((v: any) => v.name)
+    : ['Free Size (Up to 42 Inch)'];
+
   // Transform Shopify product to match display structure
   const rawPrice = parseFloat(product.selectedOrFirstAvailableVariant?.price.amount || '0');
   const rawCompare = product.selectedOrFirstAvailableVariant?.compareAtPrice
@@ -279,35 +342,35 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     rating: 4.8,
     reviewCount: 1000,
     featuredImage: {
-      url: product.featuredImage?.url || product.images?.nodes?.[0]?.url || `https://picsum.photos/seed/${product.handle}/600/800`,
+      url: product.featuredImage?.url || product.images?.nodes?.[0]?.url || '/images/lehenga.jpg',
       altText: product.featuredImage?.altText || product.title,
     },
-    description: product.description || '',
+    description: product.descriptionHtml || product.description || '',
     images: product.images?.nodes?.map((img: any) => ({
       url: img.url,
       altText: img.altText || product.title,
     })) || [],
-    sizes: ['Free Size (Up to 42 Inch)'],
+    sizes: parsedSizes && parsedSizes.length > 0 ? parsedSizes : ['Free Size (Up to 42 Inch)'],
     details: {
-      workPattern: product.tags?.find((t: string) => t.includes('Work')) || 'Embroidery Work',
-      stitchingType: 'Semi-Stitched',
-      neckline: 'Round Neck',
+      workPattern: product.tags?.find((t: string) => t.toLowerCase().includes('work')) || 'Artisanal Embroidery',
+      stitchingType,
+      neckline: 'Designer Neckline',
       sleeves: 'Regular Sleeve',
-      closure: 'Zip Closure',
-      setContents: 'Lehenga: 1, Choli: 1, Dupatta: 1',
+      closure: 'Slip-on / Zip Closure',
+      setContents,
     },
     fabric: {
-      top: 'Net',
-      bottom: 'Net',
-      dupatta: 'Net',
-      innerLining: 'Ultra Satin',
-      flairWidth: '3 Mtr',
-      topLength: '1 Meter',
-      bottomLength: '42 inches',
-      dupattaDimensions: '2.20 Meters',
+      top: detectedFabric,
+      bottom: detectedFabric,
+      dupatta: catLower.includes('saree') ? 'N/A' : (detectedFabric === 'Net' ? 'Net' : 'Soft Chiffon / Matching Fabric'),
+      innerLining: 'Comfort Satin / Micro Cotton',
+      flairWidth: catLower.includes('lehenga') || catLower.includes('anarkali') ? '3.5+ Mtr' : 'N/A',
+      topLength,
+      bottomLength,
+      dupattaDimensions: catLower.includes('saree') ? '5.5 Mtr Saree' : '2.2 Mtr',
     },
     care: {
-      washing: 'Dry clean only',
+      washing: 'Dry clean recommended',
       drying: 'Hang dry in shade',
       ironing: 'Steam iron on low heat',
       delivery: '5-7 business days',
@@ -797,7 +860,15 @@ export default function Product() {
       <div className="av-pdp__details container">
         <div className="av-pdp__accordions">
           <Accordion>
-            <AccordionItem title="Product Details" defaultOpen>
+            {mock.description ? (
+              <AccordionItem title="Description & Overview" defaultOpen>
+                <div
+                  className="av-pdp__description-html"
+                  dangerouslySetInnerHTML={{__html: mock.description}}
+                />
+              </AccordionItem>
+            ) : null}
+            <AccordionItem title="Product Specifications" defaultOpen={!mock.description}>
               <ProductDetailsContent details={mock.details} />
             </AccordionItem>
             <AccordionItem title="Fabric & Sizing">
@@ -1139,6 +1210,7 @@ function MockAddToCart() {
 
 function ShareButtons({title, handle, image}: {title: string; handle: string; image: string}) {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   // Close on outside click
@@ -1159,21 +1231,70 @@ function ShareButtons({title, handle, image}: {title: string; handle: string; im
   const encodedTitle = encodeURIComponent(title);
   const encodedImage = encodeURIComponent(image);
 
+  const handleNativeShare = async () => {
+    if (typeof navigator !== 'undefined' && (navigator as any).share) {
+      try {
+        await (navigator as any).share({
+          title,
+          text: `Check out ${title} on Atsevam!`,
+          url,
+        });
+        return;
+      } catch (err) {
+        // User cancelled or share failed, fallback to dropdown
+      }
+    }
+    setOpen((v) => !v);
+  };
+
+  const handleCopyLink = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   const shareLinks = [
     {
       label: 'WhatsApp',
-      icon: '💬',
-      href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+      color: '#25D366',
+      svg: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="#25D366">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      ),
+      href: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
     },
     {
       label: 'Pinterest',
-      icon: '📌',
+      color: '#E60023',
+      svg: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="#E60023">
+          <path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
+        </svg>
+      ),
       href: `https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedImage}&description=${encodedTitle}`,
     },
     {
       label: 'Twitter / X',
-      icon: '🐦',
+      color: '#000000',
+      svg: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="#1DA1F2">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      ),
       href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+    },
+    {
+      label: 'Facebook',
+      color: '#1877F2',
+      svg: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="#1877F2">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      ),
+      href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
     },
   ];
 
@@ -1181,7 +1302,7 @@ function ShareButtons({title, handle, image}: {title: string; handle: string; im
     <div className="av-share" ref={ref}>
       <button
         className={`wishlist-btn${open ? ' active' : ''}`}
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleNativeShare}
         aria-label="Share product"
         aria-expanded={open}
       >
@@ -1189,7 +1310,7 @@ function ShareButtons({title, handle, image}: {title: string; handle: string; im
       </button>
       {open && (
         <div className="av-share__dropdown" role="menu">
-          <p className="av-share__label">Share this product</p>
+          <p className="av-share__label">Share product</p>
           {shareLinks.map((link) => (
             <a
               key={link.label}
@@ -1200,10 +1321,20 @@ function ShareButtons({title, handle, image}: {title: string; handle: string; im
               role="menuitem"
               onClick={() => setOpen(false)}
             >
-              <span className="av-share__icon">{link.icon}</span>
+              <span className="av-share__icon">{link.svg}</span>
               <span>{link.label}</span>
             </a>
           ))}
+          <button
+            type="button"
+            className="av-share__item av-share__item--copy"
+            onClick={handleCopyLink}
+          >
+            <span className="av-share__icon">
+              <Icon name="copy" size={18} strokeWidth={1.5} />
+            </span>
+            <span>{copied ? '✓ Link Copied!' : 'Copy Link'}</span>
+          </button>
         </div>
       )}
     </div>

@@ -14,11 +14,11 @@ type CategorySlide = {
 const CATEGORY_SLIDES: CategorySlide[] = [
   {
     id: '1',
-    title: 'Festive Collection',
-    handle: 'all',
+    title: 'Navratri Festive Special',
+    handle: 'navratri-kurits',
     image: '/images/homepage/Desktop%20Banner.png',
     mobileImage: '/images/banner%20mobile/Mobile%20Cover%20-%201.png',
-    description: 'Exclusive Festive & Summer Collection',
+    description: 'Exclusive Navratri & Festive Collection',
   },
   {
     id: '2',

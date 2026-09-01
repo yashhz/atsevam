@@ -11741,8 +11741,19 @@ a {
 /* Homepage Revamp — Hero Banner Adjustments */
 @media (min-width: 769px) {
   .av-category-banner__container {
-    aspect-ratio: 2.5 / 1 !important;
-    min-height: 440px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    aspect-ratio: 2.7 / 1 !important;
+    max-height: 540px !important;
+  }
+
+  .av-category-banner__image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
   }
 }
 
@@ -12608,6 +12619,79 @@ a {
   padding: 16px 8px;
   gap: 12px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.av-floating-dock--collapsed {
+  padding: 6px 4px;
+}
+
+.av-floating-dock__toggle-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-brand, #7B2D4E);
+  color: #ffffff;
+  border: none;
+  border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(123, 45, 78, 0.35);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.av-floating-dock__toggle-btn:hover {
+  background: #5a1e38;
+  transform: scale(1.05);
+}
+
+.av-floating-dock__pulse-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #25D366;
+  border: 1.5px solid #ffffff;
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(37, 211, 102, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+.av-floating-dock__items-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.av-floating-dock__close-toggle {
+  position: absolute;
+  top: -12px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-brand, #7B2D4E);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease;
+}
+
+.av-floating-dock__close-toggle:hover {
+  background: #5a1e38;
 }
 
 .av-floating-dock__item {
@@ -13514,6 +13598,34 @@ a {
 .av-seo-content__toggle-btn:hover {
   background: #5a1e38;
   transform: translateY(-1px);
+}
+
+/* ─── PDP Dynamic Description HTML ──────────────────────────────── */
+.av-pdp__description-html {
+  font-family: var(--font-body);
+  font-size: var(--text-sm, 14px);
+  line-height: var(--leading-relaxed, 1.7);
+  color: var(--color-text, #2D2529);
+}
+
+.av-pdp__description-html p {
+  margin-bottom: var(--space-3, 12px);
+}
+
+.av-pdp__description-html ul,
+.av-pdp__description-html ol {
+  margin-bottom: var(--space-4, 16px);
+  padding-left: var(--space-5, 20px);
+  list-style-type: disc;
+}
+
+.av-pdp__description-html li {
+  margin-bottom: var(--space-2, 6px);
+}
+
+.av-pdp__description-html strong {
+  color: var(--color-brand, #7B2D4E);
+  font-weight: var(--weight-semibold, 600);
 }
 
 

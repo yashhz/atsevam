@@ -283,13 +283,13 @@ export default function Homepage() {
         />
       )}
 
-      {/* Kurtis Promo Banner (Banner 5) */}
+      {/* Navratri & Festive Promo Banner */}
       <div className="av-promo-banner section">
         <div className="container">
-          <Link to="/collections/kurtis" className="av-promo-banner__link" prefetch="intent">
+          <Link to="/collections/navratri-kurits" className="av-promo-banner__link" prefetch="intent">
             <picture>
               <source media="(max-width: 768px)" srcSet="/images/banner%20mobile/2.png" />
-              <img src="/images/homepage/banner%205.jpeg" alt="Shop Kurtis Collection" className="av-promo-banner__img" loading="lazy" />
+              <img src="/images/homepage/banner%205.jpeg" alt="Navratri & Festive Sale Collection" className="av-promo-banner__img" loading="lazy" />
             </picture>
           </Link>
         </div>
@@ -573,18 +573,15 @@ function VideoReelSection() {
 
 function FeaturedCategoriesGrid() {
   const categories = [
-    { title: 'Bridal Lehengas', handle: 'lehengas', img: '/images/lehenga.jpg' },
-    { title: 'Kurti Sets', handle: 'kurtis', img: '/images/kurti.jpg' },
+    { title: 'Wedding Collection', handle: 'lehengas', img: '/images/lehenga.jpg' },
+    { title: 'Festive Grace Special', handle: 'navratri-kurits', img: '/images/navratri%20kurtis.jpg' },
     { title: 'Anarkali Suits', handle: 'anarkali', img: '/images/anarkali.jpg' },
+    { title: 'Kurti Sets', handle: 'kurtis', img: '/images/kurti.jpg' },
     { title: 'Co-ord Sets', handle: 'co-ords', img: '/images/coord.jpg' },
     { title: 'Festive Sarees', handle: 'saree', img: '/images/saree.jpg' },
-    { title: 'Navratri Kurtis', handle: 'navratri-kurits', img: '/images/navratri%20kurtis.jpg' },
     { title: 'Navratri Lehengas', handle: 'navratri-lehengas', img: '/images/navratri%20lehenga.jpg' },
     { title: 'Western Dresses', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
-    { title: 'Tops & Tunics', handle: 'western-tops-tunics', img: '/images/western tops/western top.png' },
-    { title: 'Skirts & Skorts', handle: 'western-pants-skirts', img: '/images/skirts/image (13).png' },
-    { title: 'Swim & Resort', handle: 'western-swimwear', img: '/images/swim suit/swim suit 2.jpg' },
-    { title: 'New Arrivals', handle: 'new-arrivals', img: '/images/western tops/western top.png' },
+    { title: 'New Arrivals', handle: 'new-arrivals', img: '/images/bestsellers.png' },
   ];
 
   return (

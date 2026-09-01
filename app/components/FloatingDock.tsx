@@ -4,62 +4,99 @@ import {Icon} from '~/components/ui/Icon';
 import {Suspense} from 'react';
 import {useOptimisticCart} from '@shopify/hydrogen';
 
-// ─── Main right-side dock ─────────────────────────────────────────
+import {useState, useEffect} from 'react';
 
 export function FloatingDock() {
   const {open} = useAside();
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  // Auto-collapse after 2 seconds on page load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsExpanded(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="av-floating-dock" aria-label="Quick Actions">
-      <NavLink
-        to="/account"
-        className={({isActive}) =>
-          `av-floating-dock__item ${isActive ? 'is-active' : ''}`
-        }
-        aria-label="Account"
-      >
-        <span className="av-floating-dock__icon-wrapper">
-          <Icon name="user" size={18} strokeWidth={1.25} />
-        </span>
-        <span className="av-floating-dock__tooltip">Account</span>
-      </NavLink>
+    <div className={`av-floating-dock${isExpanded ? ' av-floating-dock--expanded' : ' av-floating-dock--collapsed'}`} aria-label="Quick Actions">
+      {/* Collapsed Single Toggle Icon */}
+      {!isExpanded && (
+        <button
+          type="button"
+          onClick={() => setIsExpanded(true)}
+          className="av-floating-dock__toggle-btn"
+          aria-label="Expand Quick Menu"
+          title="Expand Quick Actions"
+        >
+          <Icon name="grid" size={20} strokeWidth={1.5} />
+          <span className="av-floating-dock__pulse-dot" />
+        </button>
+      )}
 
-      <NavLink
-        to="/collections"
-        className={({isActive}) =>
-          `av-floating-dock__item ${isActive ? 'is-active' : ''}`
-        }
-        aria-label="Collections"
-      >
-        <span className="av-floating-dock__icon-wrapper">
-          <Icon name="grid" size={18} strokeWidth={1.25} />
-        </span>
-        <span className="av-floating-dock__tooltip">Collections</span>
-      </NavLink>
+      {/* 4 Expanded Icons */}
+      {isExpanded && (
+        <div className="av-floating-dock__items-wrap">
+          <button
+            type="button"
+            className="av-floating-dock__close-toggle"
+            onClick={() => setIsExpanded(false)}
+            title="Minimize"
+          >
+            ✕
+          </button>
+          
+          <NavLink
+            to="/account"
+            className={({isActive}) => `av-floating-dock__item ${isActive ? 'is-active' : ''}`}
+            aria-label="Account"
+            onClick={() => setIsExpanded(false)}
+          >
+            <span className="av-floating-dock__icon-wrapper">
+              <Icon name="user" size={18} strokeWidth={1.25} />
+            </span>
+            <span className="av-floating-dock__tooltip">Account</span>
+          </NavLink>
 
-      <NavLink
-        to="/collections/all"
-        className={({isActive}) =>
-          `av-floating-dock__item ${isActive ? 'is-active' : ''}`
-        }
-        aria-label="New Arrivals"
-      >
-        <span className="av-floating-dock__icon-wrapper">
-          <Icon name="tag" size={18} strokeWidth={1.25} />
-        </span>
-        <span className="av-floating-dock__tooltip">New Arrivals</span>
-      </NavLink>
+          <NavLink
+            to="/collections"
+            className={({isActive}) => `av-floating-dock__item ${isActive ? 'is-active' : ''}`}
+            aria-label="Collections"
+            onClick={() => setIsExpanded(false)}
+          >
+            <span className="av-floating-dock__icon-wrapper">
+              <Icon name="grid" size={18} strokeWidth={1.25} />
+            </span>
+            <span className="av-floating-dock__tooltip">Collections</span>
+          </NavLink>
 
-      <button
-        onClick={() => open('cart')}
-        className="av-floating-dock__item av-floating-dock__cart-btn"
-        aria-label="Open Cart"
-      >
-        <span className="av-floating-dock__icon-wrapper">
-          <Icon name="cart" size={18} strokeWidth={1.25} />
-        </span>
-        <span className="av-floating-dock__tooltip">Cart</span>
-      </button>
+          <NavLink
+            to="/collections/all"
+            className={({isActive}) => `av-floating-dock__item ${isActive ? 'is-active' : ''}`}
+            aria-label="New Arrivals"
+            onClick={() => setIsExpanded(false)}
+          >
+            <span className="av-floating-dock__icon-wrapper">
+              <Icon name="tag" size={18} strokeWidth={1.25} />
+            </span>
+            <span className="av-floating-dock__tooltip">New Arrivals</span>
+          </NavLink>
+
+          <button
+            onClick={() => {
+              open('cart');
+              setIsExpanded(false);
+            }}
+            className="av-floating-dock__item av-floating-dock__cart-btn"
+            aria-label="Open Cart"
+          >
+            <span className="av-floating-dock__icon-wrapper">
+              <Icon name="cart" size={18} strokeWidth={1.25} />
+            </span>
+            <span className="av-floating-dock__tooltip">Cart</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
