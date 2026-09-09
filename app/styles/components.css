@@ -11745,8 +11745,8 @@ a {
     max-width: 100% !important;
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 2.3 / 1 !important;
-    max-height: 560px !important;
+    aspect-ratio: 2.4 / 1 !important; /* Perfect 2.4:1 ratio for 2400x1000 desktop banners */
+    max-height: none !important;
   }
 
   .av-category-banner__image {
@@ -11762,7 +11762,7 @@ a {
     width: 100% !important;
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 4 / 5 !important;
+    aspect-ratio: 4 / 5 !important; /* Perfect 4:5 ratio for 1080x1350 mobile banners */
     max-height: none !important;
   }
 
