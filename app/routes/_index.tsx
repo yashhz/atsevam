@@ -288,7 +288,7 @@ export default function Homepage() {
         <div className="container">
           <Link to="/collections/navratri-kurits" className="av-promo-banner__link" prefetch="intent">
             <picture>
-              <source media="(max-width: 768px)" srcSet="/images/banner%20mobile/2.png" />
+              <source media="(max-width: 768px)" srcSet="/images/banner%20mobile/Mobile%20Cover%20second.png" />
               <img src="/images/homepage/banner%205.jpeg" alt="Navratri & Festive Sale Collection" className="av-promo-banner__img" loading="lazy" />
             </picture>
           </Link>

@@ -11745,8 +11745,8 @@ a {
     max-width: 100% !important;
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 2.7 / 1 !important;
-    max-height: 540px !important;
+    aspect-ratio: 2.3 / 1 !important;
+    max-height: 560px !important;
   }
 
   .av-category-banner__image {
@@ -11763,6 +11763,7 @@ a {
     height: auto !important;
     min-height: auto !important;
     aspect-ratio: 4 / 5 !important;
+    max-height: none !important;
   }
 
   .av-category-banner__image-wrap {
