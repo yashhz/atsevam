@@ -13990,3 +13990,50 @@ a {
   font-size: 12px;
   letter-spacing: 0.06em;
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   SEARCH DRAWER — popular searches
+═══════════════════════════════════════════════════════════ */
+
+.av-search-popular {
+  padding-top: var(--space-6);
+}
+
+.av-search-popular__label {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--color-subtle);
+}
+
+.av-search-popular__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.av-search-popular__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background: var(--color-white);
+  color: var(--color-charcoal);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.av-search-popular__chip:hover,
+.av-search-popular__chip:focus-visible {
+  border-color: var(--color-brand);
+  background: var(--color-brand-pale);
+  color: var(--color-brand);
+}
