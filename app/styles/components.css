@@ -14037,3 +14037,34 @@ a {
   background: var(--color-brand-pale);
   color: var(--color-brand);
 }
+
+
+/* ─── Cards on phones: no duplicate "% OFF" line, tighter rhythm ───────── */
+@media (max-width: 767px) {
+  /* the photo badge already says "31% OFF" */
+  .av-card__discount {
+    display: none;
+  }
+
+  .av-card__info {
+    padding-bottom: var(--space-4);
+  }
+
+  .av-card__price-row {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .av-social-dock {
+    transition: transform 0.25s ease, opacity 0.25s ease, bottom 0.25s ease !important;
+  }
+
+  .av-social-dock--hidden {
+    transform: translateY(24px) !important;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
