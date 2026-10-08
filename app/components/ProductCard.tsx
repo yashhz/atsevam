@@ -131,6 +131,18 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
   const [quickViewOpen, setQuickViewOpen] = useState(false);
 
   const hasMultipleImages = !!product.hoverImage;
+  const hasDiscount = !!product.discount && product.discount > 0;
+  const highlight =
+    product.badge === 'bestseller' || product.tags?.includes('bestseller')
+      ? 'bestseller'
+      : product.badge === 'new' || product.tags?.includes('new')
+        ? 'new'
+        : product.badge === 'top-rated'
+          ? 'top-rated'
+          : // lone "sale" badge only when there is no % off pill to show
+            product.badge === 'sale' && !hasDiscount
+            ? 'sale'
+            : null;
   const showSecondImage = (hovered || activeImageIndex === 1) && hasMultipleImages;
 
   // Hover preview is for mouse users only. Touch browsers (notably iOS Safari)
@@ -195,24 +207,16 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
             />
           )}
 
-          {/* Badges Stack */}
+          {/* Badges: discount first, then at most one highlight — never a stack
+              that hides the model's face */}
           <div className="av-card__badges-stack">
             {product.discount && product.discount > 0 ? (
               <Badge variant="sale" label={`${product.discount}% OFF`} />
             ) : null}
-            {(product.badge === 'new' || product.tags?.includes('new')) && (
-              <Badge variant="new" label="NEW ARRIVAL" />
-            )}
-            {(product.badge === 'bestseller' || product.tags?.includes('bestseller')) && (
-              <Badge variant="bestseller" label="BESTSELLER" />
-            )}
-            {/* Fallback for other single badges */}
-            {product.badge && 
-             product.badge !== 'new' && 
-             product.badge !== 'bestseller' && 
-             !(product.discount && product.discount > 0) && (
-              <Badge variant={product.badge} />
-            )}
+            {highlight === 'bestseller' && <Badge variant="bestseller" label="Bestseller" />}
+            {highlight === 'new' && <Badge variant="new" label="New" />}
+            {highlight === 'top-rated' && <Badge variant="top-rated" label="Top Rated" />}
+            {highlight === 'sale' && <Badge variant="sale" />}
           </div>
 
           {/* Image indicators */}

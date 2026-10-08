@@ -1147,13 +1147,21 @@
 
 .av-card__badges-stack {
   position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
+  top: var(--space-2);
+  left: var(--space-2);
   z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1.5);
+  gap: 4px;
   align-items: flex-start;
+  /* leave room for the wishlist heart and never swallow taps meant for the link */
+  max-width: calc(100% - 56px);
+  pointer-events: none;
+}
+
+.av-card__badges-stack .badge {
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
 }
 
 /* Wishlist top-right — cleaner button */
@@ -1304,8 +1312,16 @@
 .av-card__info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-5) var(--space-4) var(--space-5);
+  gap: var(--space-1);
+  /* text lines up with the photo edge on phones */
+  padding: var(--space-3) 2px var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .av-card__info {
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-4) var(--space-5);
+  }
 }
 
 /* Brand / Category name */
@@ -3861,7 +3877,8 @@
 
 .av-collection__main {
   min-width: 0;
-  padding: var(--space-4) var(--gutter) 0;
+  /* the page container already supplies the gutter on mobile */
+  padding: var(--space-4) 0 0;
   background: var(--color-white) !important;
 }
 
@@ -11764,8 +11781,29 @@ a {
     max-width: 100% !important;
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 2.4 / 1 !important; /* Perfect 2.4:1 ratio for 2400x1000 desktop banners */
+    /* Height follows the FIRST banner's own proportions (it is the only in-flow
+       slide), so the hero never crops whatever ratio the banner files have.
+       Other slides fill that box with object-fit: cover. */
+    aspect-ratio: auto !important;
     max-height: none !important;
+  }
+
+  .av-category-banner__slides {
+    height: auto !important;
+  }
+
+  .av-category-banner__slide:first-child {
+    position: relative !important;
+    height: auto !important;
+  }
+
+  .av-category-banner__slide:first-child .av-category-banner__image-wrap {
+    height: auto !important;
+  }
+
+  .av-category-banner__slide:first-child .av-category-banner__image {
+    display: block;
+    height: auto !important;
   }
 
   .av-category-banner__image {
@@ -13120,14 +13158,27 @@ a {
 @media (max-width: 768px) {
   .av-social-dock {
     display: flex !important;
-    left: 12px !important;
-    right: auto !important;
-    bottom: 72px !important; /* Floats perfectly above the mobile bottom nav bar */
+    /* Right edge = thumb zone, and clear of product names/prices on the left */
+    left: auto !important;
+    right: 12px !important;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; /* above the bottom nav */
     gap: 8px !important;
+    transition: bottom 0.25s ease;
+  }
+  /* PDP sticky buy bar sits above the bottom nav: lift the WhatsApp button over it */
+  body:has(.av-pdp-sticky) .av-social-dock {
+    bottom: calc(144px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  /* One floating button is enough on phones; Instagram lives in the footer */
+  .av-social-dock__item--instagram {
+    display: none !important;
+  }
+  .av-scroll-to-top {
+    display: none !important;
   }
   .av-social-dock__item {
-    width: 40px !important;
-    height: 40px !important;
+    width: 46px !important;
+    height: 46px !important;
   }
   .av-social-dock__item svg {
     width: 18px !important;
@@ -13183,7 +13234,8 @@ a {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 60px;
+    height: calc(60px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -13196,12 +13248,9 @@ a {
     gap: 4px;
   }
 
-  /* Safe padding-bottom for the whole page */
-  body,
-  .av-home,
-  .av-pdp,
-  .av-collection {
-    padding-bottom: 60px !important;
+  /* Room for the fixed bar (+ iPhone home indicator) — body only, not nested wrappers */
+  body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .av-mobile-bottom-nav__item {
@@ -13652,3 +13701,155 @@ a {
 }
 
 
+
+
+/* ═══════════════════════════════════════════════════════════
+   PDP STICKY BUY BAR (mobile only)
+═══════════════════════════════════════════════════════════ */
+
+.av-pdp-sticky {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .av-pdp-sticky {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    position: fixed;
+    left: 0;
+    right: 0;
+    /* sits directly on top of the 60px bottom nav */
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    z-index: 9980;
+    padding: 10px var(--gutter);
+    background: var(--color-white);
+    border-top: 1px solid var(--color-border-light);
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(calc(100% + 80px));
+    visibility: hidden;
+    transition: transform 0.3s var(--ease-out), visibility 0s linear 0.3s;
+  }
+
+  .av-pdp-sticky--visible {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 0.3s var(--ease-out), visibility 0s;
+  }
+
+  .av-pdp-sticky__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .av-pdp-sticky__title {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--color-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .av-pdp-sticky__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-family: var(--font-body);
+  }
+
+  .av-pdp-sticky__price {
+    font-size: 17px;
+    font-weight: var(--weight-bold);
+    color: var(--color-charcoal);
+  }
+
+  .av-pdp-sticky__compare {
+    font-size: 12px;
+    color: var(--color-subtle);
+    text-decoration: line-through;
+  }
+
+  .av-pdp-sticky__discount {
+    font-size: 11px;
+    font-weight: var(--weight-semibold);
+    color: var(--color-brand);
+  }
+
+  .av-pdp-sticky__variant {
+    font-size: 11px;
+    color: var(--color-secondary);
+  }
+
+  .av-pdp-sticky__btn {
+    flex: 0 0 auto;
+    height: 46px;
+    padding: 0 22px;
+    border: 0;
+    background: #FFB800;
+    color: #1E1418;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .av-pdp-sticky__btn:disabled {
+    background: var(--color-border);
+    color: var(--color-subtle);
+    cursor: not-allowed;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION PROGRESS BAR
+═══════════════════════════════════════════════════════════ */
+
+.av-nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  z-index: 10050;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--color-brand), #FFB800);
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+}
+
+.av-nav-progress--running {
+  opacity: 1;
+  /* eases toward ~85% and waits for the page to arrive */
+  animation: av-nav-progress-run 8s cubic-bezier(0.1, 0.6, 0.2, 1) forwards;
+}
+
+.av-nav-progress--done {
+  opacity: 0;
+  transform: scaleX(1);
+  transition: transform 0.2s ease-out, opacity 0.3s ease 0.15s;
+}
+
+@keyframes av-nav-progress-run {
+  from { transform: scaleX(0.04); }
+  to   { transform: scaleX(0.88); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER PERFORMANCE — skip layout/paint for off-screen homepage sections
+═══════════════════════════════════════════════════════════ */
+
+.av-home > section:not(:first-child),
+.av-home > .av-promo-banner,
+.av-home > .section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+}

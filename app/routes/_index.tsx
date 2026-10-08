@@ -40,7 +40,6 @@ export const meta: Route.MetaFunction = () => [
   {name: 'robots', content: 'index, follow, max-image-preview:large'},
   {name: 'author', content: 'Atsevam'},
   {name: 'theme-color', content: '#7B2D4E'},
-  {name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5'},
 ];
 
 export async function loader({context}: Route.LoaderArgs) {

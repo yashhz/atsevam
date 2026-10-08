@@ -11,6 +11,7 @@ import {
 } from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductForm} from '~/components/ProductForm';
+import {StickyBuyBar} from '~/components/StickyBuyBar';
 import {ProductPrice} from '~/components/ProductPrice';
 import {Icon} from '~/components/ui/Icon';
 import {shopifyImage, shopifyImageSrcSet} from '~/lib/image';
@@ -823,25 +824,6 @@ export default function Product() {
             <span>Direct from manufacturer — premium quality at best price</span>
           </div>
 
-          {/* Size selector - only show if multiple sizes */}
-          {mock.sizes.length > 1 && (
-            <div className="av-pdp__sizes">
-              <div className="av-pdp__sizes-header">
-                <span className="av-pdp__sizes-label">Size</span>
-                <a href="/pages/size-guide" className="av-pdp__size-guide">
-                  Size Guide <Icon name="arrow-right" size={12} strokeWidth={1.5} />
-                </a>
-              </div>
-              <div className="av-pdp__size-options">
-                {mock.sizes.map((size) => (
-                  <button key={size} className="av-pdp__size-btn av-pdp__size-btn--active">
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Add to cart */}
           {useMock ? (
             <MockAddToCart />
@@ -1159,6 +1141,23 @@ export default function Product() {
           viewAllLabel="View Collection"
           loading="lazy"
           columns={4}
+        />
+      )}
+
+      {!useMock && product && selectedVariant && (
+        <StickyBuyBar
+          title={mock.title}
+          price={mock.price}
+          compareAtPrice={mock.compareAtPrice}
+          discount={mock.discount}
+          variantLabel={
+            productOptions.length > 0 ? selectedVariant.title : undefined
+          }
+          available={selectedVariant.availableForSale}
+          sentinelSelector=".av-pdp__cart-section .av-product-form__actions"
+          lines={[
+            {merchandiseId: selectedVariant.id, quantity: 1, selectedVariant},
+          ]}
         />
       )}
 
