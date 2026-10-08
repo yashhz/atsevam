@@ -13872,3 +13872,121 @@ a {
     scroll-snap-align: start;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   PHOTO LIGHTBOX (PDP)
+═══════════════════════════════════════════════════════════ */
+
+.av-pdp__main-img--zoomable {
+  cursor: zoom-in;
+}
+
+.av-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10100;
+  display: flex;
+  flex-direction: column;
+  background: #0f0a0c;
+  animation: av-lightbox-in 0.2s ease-out;
+}
+
+@keyframes av-lightbox-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.av-lightbox__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 10px;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+.av-lightbox__close,
+.av-lightbox__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.av-lightbox__close:focus:not(:focus-visible),
+.av-lightbox__nav:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+.av-lightbox__close:hover,
+.av-lightbox__nav:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.av-lightbox__stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.av-lightbox__stage--zoomed {
+  display: block;
+  overflow: auto;
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.av-lightbox__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.av-lightbox__stage--zoomed .av-lightbox__img {
+  max-width: none;
+  max-height: none;
+  width: 200%;
+  cursor: zoom-out;
+}
+
+.av-lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.av-lightbox__nav--prev { left: 12px; }
+.av-lightbox__nav--next { right: 12px; }
+
+@media (max-width: 768px) {
+  /* swipe is the gesture on phones */
+  .av-lightbox__nav { display: none; }
+}
+
+.av-lightbox__hint {
+  margin: 0;
+  padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}

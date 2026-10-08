@@ -12,6 +12,7 @@ import {
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductForm} from '~/components/ProductForm';
 import {StickyBuyBar} from '~/components/StickyBuyBar';
+import {ImageLightbox} from '~/components/ImageLightbox';
 import {useWishlist} from '~/hooks/useWishlist';
 import {ProductPrice} from '~/components/ProductPrice';
 import {Icon} from '~/components/ui/Icon';
@@ -628,6 +629,7 @@ export default function Product() {
   const {product, mockProduct, useMock, reviewsData, related} =
     useLoaderData<typeof loader>();
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const {active: wishlisted, toggle: toggleWishlist} = useWishlist(mockProduct.handle);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -685,6 +687,15 @@ export default function Product() {
 
   return (
     <div className="av-pdp">
+      {lightboxOpen && images.length > 0 && (
+        <ImageLightbox
+          images={images}
+          index={activeImage}
+          onIndexChange={setActiveImage}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
       {/* Breadcrumb */}
       <nav className="av-breadcrumb container" aria-label="Breadcrumb">
         <a href="/" className="av-breadcrumb__link">Home</a>
@@ -727,6 +738,9 @@ export default function Product() {
               sizes="(max-width: 768px) 100vw, 50vw"
               alt={images[activeImage]?.altText}
               loading="eager"
+              fetchPriority="high"
+              onClick={() => setLightboxOpen(true)}
+              className="av-pdp__main-img--zoomable"
             />
             {images.length > 1 && (
               <div className="av-pdp__mobile-dots">
