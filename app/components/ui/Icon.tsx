@@ -249,6 +249,13 @@ const icons = {
       d="M12 4.4l2.4 2.4 3.4-.6.6 3.4 2.4 2.4-2.4 2.4-.6 3.4-3.4-.6-2.4 2.4-2.4-2.4-3.4.6-.6-3.4-2.4-2.4 2.4-2.4.6-3.4 3.4.6L12 4.4z"
     />
   ),
+  copy: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9 9h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2zM5 15H4a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1"
+    />
+  ),
   flame: (
     <path
       strokeLinecap="round"
