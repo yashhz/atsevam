@@ -56,6 +56,10 @@ const DEFAULT_DESC = [
 function VideoPlayer({video}: {video: VideoItem}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  // Missing/unsupported video file: render nothing instead of a dead player
+  if (failed) return null;
 
   const toggle = () => {
     if (!videoRef.current) return;
@@ -70,7 +74,10 @@ function VideoPlayer({video}: {video: VideoItem}) {
 
   return (
     <div className="av-video-player">
+      {/* The play/pause <button> below is the keyboard-accessible control */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div className="av-video-player__wrapper" onClick={toggle}>
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption -- brand footage without dialogue */}
         <video
           ref={videoRef}
           className="av-video-player__video"
@@ -82,7 +89,7 @@ function VideoPlayer({video}: {video: VideoItem}) {
           onPlay={() => setPlaying(true)}
           aria-label={video.caption}
         >
-          <source src={video.src} type="video/mp4" />
+          <source src={video.src} type="video/mp4" onError={() => setFailed(true)} />
           Your browser does not support the video tag.
         </video>
 

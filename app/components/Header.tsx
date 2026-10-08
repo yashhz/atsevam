@@ -251,7 +251,13 @@ function CategoryTabBar() {
           onMouseEnter={() => setOpenDropdown('western')}
           onMouseLeave={() => setOpenDropdown(null)}
         >
-          <button className="av-tabs__item av-tabs__item--dropdown">
+          {/* onClick lets touch users open the menu — hover alone never fires there */}
+          <button
+            type="button"
+            className="av-tabs__item av-tabs__item--dropdown"
+            aria-expanded={openDropdown === 'western'}
+            onClick={() => setOpenDropdown('western')}
+          >
             Western Wear
             <Icon name="chevron-down" size={14} strokeWidth={2} />
           </button>
@@ -277,7 +283,13 @@ function CategoryTabBar() {
           onMouseEnter={() => setOpenDropdown('navratri')}
           onMouseLeave={() => setOpenDropdown(null)}
         >
-          <button className="av-tabs__item av-tabs__item--dropdown">
+          {/* onClick lets touch users open the menu — hover alone never fires there */}
+          <button
+            type="button"
+            className="av-tabs__item av-tabs__item--dropdown"
+            aria-expanded={openDropdown === 'navratri'}
+            onClick={() => setOpenDropdown('navratri')}
+          >
             Navratri
             <Icon name="chevron-down" size={14} strokeWidth={2} />
           </button>

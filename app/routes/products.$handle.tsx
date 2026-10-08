@@ -1,6 +1,5 @@
 import {useLoaderData, Form, useNavigation, useFetcher} from 'react-router';
 import {useState, useRef, useEffect} from 'react';
-import {JudgemeReviewWidget} from '@judgeme/shopify-hydrogen';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -14,11 +13,25 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductForm} from '~/components/ProductForm';
 import {ProductPrice} from '~/components/ProductPrice';
 import {Icon} from '~/components/ui/Icon';
+import {shopifyImage, shopifyImageSrcSet} from '~/lib/image';
 import {Badge} from '~/components/ui/Badge';
 import {Accordion, AccordionItem} from '~/components/ui/Accordion';
 import {ProductGrid} from '~/components/ProductGrid';
 import {MOCK_PRODUCT_DETAIL} from '~/lib/mock';
 import type {MockProductDetail} from '~/lib/mock';
+
+/**
+ * Supabase (reviews) config. Set SUPABASE_URL / SUPABASE_ANON_KEY in the
+ * Oxygen environment variables; the previous public (anon) values remain as a
+ * fallback so reviews keep working until they are configured.
+ */
+function getSupabaseConfig(env: Env) {
+  return {
+    url: env.SUPABASE_URL || 'https://ymwnsesccyrngeaxomzr.supabase.co',
+    anonKey:
+      env.SUPABASE_ANON_KEY || 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r',
+  };
+}
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -99,18 +112,17 @@ export async function action({request, context, params}: Route.ActionArgs) {
 
   // 2. Extract form data
   const formData = await request.formData();
-  const author_name = formData.get('author_name')?.toString();
+  const authorName = formData.get('author_name')?.toString();
   const rating = parseInt(formData.get('rating')?.toString() || '5', 10);
   const title = formData.get('title')?.toString();
   const body = formData.get('body')?.toString();
 
-  if (!author_name || !title || !body || isNaN(rating)) {
+  if (!authorName || !title || !body || isNaN(rating)) {
     return {error: 'All fields are required.'};
   }
 
   // 3. Save to Supabase
-  const SUPABASE_URL = 'https://ymwnsesccyrngeaxomzr.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r';
+  const {url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY} = getSupabaseConfig(context.env);
 
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews`, {
@@ -123,7 +135,7 @@ export async function action({request, context, params}: Route.ActionArgs) {
       },
       body: JSON.stringify({
         product_handle: handle,
-        author_name,
+        author_name: authorName,
         rating,
         title,
         body,
@@ -195,15 +207,16 @@ export async function loader(args: Route.LoaderArgs) {
   }
 
   // 3. Fetch reviews from Supabase
-  const SUPABASE_URL = 'https://ymwnsesccyrngeaxomzr.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r';
+  const {url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY} = getSupabaseConfig(args.context.env);
   let reviews: any[] = [];
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?product_handle=eq.${handle}&select=*&order=created_at.desc`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?product_handle=eq.${encodeURIComponent(handle ?? '')}&select=*&order=created_at.desc`, {
       headers: {
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      }
+      },
+      // A slow reviews backend must not hold the whole product page hostage
+      signal: AbortSignal.timeout(3000),
     });
     if (res.ok) {
       reviews = (await res.json()) as any[];
@@ -378,9 +391,13 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     relatedProducts: [] as any[],
   };
   
-  // Fetch related products using smart recommendation logic
-  const relatedProducts = await fetchRelatedProducts(storefront, product);
-  transformedProduct.relatedProducts = relatedProducts;
+  // Fetch related products using smart recommendation logic. These are a
+  // nice-to-have: a failing query must not turn the product page into a 500.
+  try {
+    transformedProduct.relatedProducts = await fetchRelatedProducts(storefront, product);
+  } catch (err) {
+    console.error('Failed to fetch related products:', err);
+  }
   
   return {product, mockProduct: transformedProduct, useMock: false};
 }
@@ -393,7 +410,10 @@ async function fetchRelatedProducts(storefront: any, currentProduct: any) {
   
   // Strategy 1: Try to find products with matching tags
   if (productTags.length > 0) {
-    const tagQuery = productTags.slice(0, 3).map((tag: string) => `tag:${tag}`).join(' OR ');
+    const tagQuery = productTags
+      .slice(0, 3)
+      .map((tag: string) => `tag:"${tag.replace(/["\\]/g, '')}"`)
+      .join(' OR ');
     
     const {products: tagMatches} = await storefront.query(
       `#graphql
@@ -701,7 +721,7 @@ export default function Product() {
                 onClick={() => setActiveImage(i)}
                 aria-label={`View image ${i + 1}`}
               >
-                <img src={img.url} alt={img.altText} loading="lazy" />
+                <img src={shopifyImage(img.url, 160)} alt={img.altText} loading="lazy" />
               </button>
             ))}
           </div>
@@ -713,17 +733,21 @@ export default function Product() {
             onTouchEnd={handleTouchEnd}
           >
             <img
-              src={images[activeImage]?.url}
+              src={shopifyImage(images[activeImage]?.url, 1000)}
+              srcSet={shopifyImageSrcSet(images[activeImage]?.url, [480, 720, 1000, 1400])}
+              sizes="(max-width: 768px) 100vw, 50vw"
               alt={images[activeImage]?.altText}
               loading="eager"
             />
             {images.length > 1 && (
               <div className="av-pdp__mobile-dots">
                 {images.map((_: any, idx: number) => (
-                  <span
+                  <button
+                    type="button"
                     key={idx}
                     className={`av-pdp__dot${activeImage === idx ? ' av-pdp__dot--active' : ''}`}
                     onClick={() => setActiveImage(idx)}
+                    aria-label={`Show image ${idx + 1}`}
                   />
                 ))}
               </div>
@@ -941,7 +965,7 @@ export default function Product() {
                     <h3 className="av-pdp__review-form-title">✍️ Write a Review</h3>
                     
                     <div className="av-pdp__review-input-group">
-                      <label className="av-pdp__review-label">Your Rating</label>
+                      <span className="av-pdp__review-label">Your Rating</span>
                       <div className="av-pdp__stars-selector">
                         {Array.from({length: 5}).map((_, i) => {
                           const currentStar = i + 1;
@@ -1249,9 +1273,14 @@ function ShareButtons({title, handle, image}: {title: string; handle: string; im
 
   const handleCopyLink = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      // Clipboard access is rejected in many in-app browsers / insecure contexts
+      navigator.clipboard.writeText(url).then(
+        () => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        },
+        () => window.prompt('Copy this link', url),
+      );
     }
   };
 
@@ -1302,7 +1331,7 @@ function ShareButtons({title, handle, image}: {title: string; handle: string; im
     <div className="av-share" ref={ref}>
       <button
         className={`wishlist-btn${open ? ' active' : ''}`}
-        onClick={handleNativeShare}
+        onClick={() => void handleNativeShare()}
         aria-label="Share product"
         aria-expanded={open}
       >

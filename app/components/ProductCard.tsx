@@ -2,6 +2,7 @@ import {Link} from 'react-router';
 import {useState, useEffect, useCallback} from 'react';
 import {Icon} from '~/components/ui/Icon';
 import {Badge} from '~/components/ui/Badge';
+import {shopifyImage, shopifyImageSrcSet} from '~/lib/image';
 import type {MockProduct} from '~/lib/mock';
 
 type ProductCardProps = {
@@ -32,6 +33,8 @@ function QuickViewModal({
   }, [onClose]);
 
   return (
+    // Backdrop click closes the modal; keyboard users close it with Escape (handled above)
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <div
       className="av-quick-view-overlay"
       onClick={onClose}
@@ -39,6 +42,7 @@ function QuickViewModal({
       aria-modal="true"
       aria-label={`Quick view: ${product.title}`}
     >
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         className="av-quick-view"
         onClick={(e) => e.stopPropagation()}
@@ -55,7 +59,7 @@ function QuickViewModal({
         {/* Image */}
         <div className="av-quick-view__img-wrap">
           <img
-            src={product.featuredImage.url}
+            src={shopifyImage(product.featuredImage.url, 800)}
             alt={product.featuredImage.altText}
             className="av-quick-view__img"
             loading="eager"
@@ -129,11 +133,22 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
   const hasMultipleImages = !!product.hoverImage;
   const showSecondImage = (hovered || activeImageIndex === 1) && hasMultipleImages;
 
-  const handleImageTap = (e: React.MouseEvent) => {
-    if (window.innerWidth <= 1024 && hasMultipleImages) {
-      e.preventDefault();
-      setActiveImageIndex((prev) => (prev === 0 ? 1 : 0));
-    }
+  // Hover preview is for mouse users only. Touch browsers (notably iOS Safari)
+  // synthesize mouseenter on tap; reacting to it changes the DOM, which makes
+  // iOS swallow the click so the product needs a second tap to open.
+  const handlePointerEnter = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') setHovered(true);
+  };
+  const handlePointerLeave = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') setHovered(false);
+  };
+
+  // Tapping the image must always open the product. Touch users switch
+  // between the two images with the indicator dots instead.
+  const toggleImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveImageIndex((prev) => (prev === 0 ? 1 : 0));
   };
 
   const openQuickView = useCallback((e: React.MouseEvent) => {
@@ -150,19 +165,20 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
     <>
       <div
         className={`av-card${hasMultipleImages ? ' has-multiple-images' : ''}`}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
       >
         {/* Image container */}
         <Link
           to={`/products/${product.handle}`}
           prefetch="intent"
           className="av-card__image-wrap"
-          onClick={handleImageTap}
         >
           {/* Primary image */}
           <img
-            src={product.featuredImage.url}
+            src={shopifyImage(product.featuredImage.url, 600)}
+            srcSet={shopifyImageSrcSet(product.featuredImage.url, [300, 450, 600, 900])}
+            sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
             alt={product.featuredImage.altText}
             loading={loading}
             className={`av-card__img av-card__img--primary${showSecondImage ? ' av-card__img--hidden' : ''}`}
@@ -170,7 +186,9 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
           {/* Hover image */}
           {product.hoverImage && (
             <img
-              src={product.hoverImage.url}
+              src={shopifyImage(product.hoverImage.url, 600)}
+              srcSet={shopifyImageSrcSet(product.hoverImage.url, [300, 450, 600, 900])}
+              sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
               alt={product.hoverImage.altText}
               loading="lazy"
               className={`av-card__img av-card__img--hover${showSecondImage ? ' av-card__img--visible' : ''}`}
@@ -199,10 +217,15 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
 
           {/* Image indicators */}
           {hasMultipleImages && (
-            <div className="av-card__indicators">
+            <button
+              type="button"
+              className="av-card__indicators"
+              onClick={toggleImage}
+              aria-label="Show other photo"
+            >
               <span className={`av-card__indicator-dot${activeImageIndex === 0 ? ' active' : ''}`} />
               <span className={`av-card__indicator-dot${activeImageIndex === 1 ? ' active' : ''}`} />
-            </div>
+            </button>
           )}
 
           {/* Wishlist */}

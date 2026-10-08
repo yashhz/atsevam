@@ -74,7 +74,7 @@ export default function SearchPage() {
         ) : (
           <div className="av-search-page__results">
             <p className="av-search-page__count">
-              Found {result.total} {result.total === 1 ? 'result' : 'results'} for "{term}"
+              Found {result.total} {result.total === 1 ? 'result' : 'results'} for &quot;{term}&quot;
             </p>
             <SearchResults result={result} term={term}>
               {({articles, pages, products, term}) => (

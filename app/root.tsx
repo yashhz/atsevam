@@ -167,7 +167,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         
         {/* Styles */}
         <link rel="stylesheet" href={tailwindCss} />
-        <link rel="stylesheet" href={`${appStyles}?v=${Date.now()}`} />
+        <link rel="stylesheet" href={appStyles} />
         
         <Meta />
         <Links />

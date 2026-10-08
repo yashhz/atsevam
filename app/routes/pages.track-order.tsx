@@ -126,15 +126,15 @@ export default function TrackOrder() {
           <div className="av-track-order-page__faq-list">
             <div className="av-track-order-page__faq-item">
               <h3>When will I receive tracking information?</h3>
-              <p>You'll receive a tracking number via email and SMS within 24 hours of your order being shipped.</p>
+              <p>You&apos;ll receive a tracking number via email and SMS within 24 hours of your order being shipped.</p>
             </div>
             <div className="av-track-order-page__faq-item">
               <h3>How long does delivery take?</h3>
               <p>Standard delivery takes 5-7 business days across India. You can track your order in real-time once it ships.</p>
             </div>
             <div className="av-track-order-page__faq-item">
-              <h3>My tracking hasn't updated in days</h3>
-              <p>Sometimes tracking can have delays during transit. If it's been more than 3 days without an update, please contact us.</p>
+              <h3>My tracking hasn&apos;t updated in days</h3>
+              <p>Sometimes tracking can have delays during transit. If it&apos;s been more than 3 days without an update, please contact us.</p>
             </div>
           </div>
         </div>

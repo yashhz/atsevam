@@ -99,7 +99,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       collection = {
         ...fallbackCollection,
         title: getCategoryName(handle),
-        handle: handle,
+        handle,
       };
     }
   }
@@ -109,7 +109,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     return {
       collection: {
         id: handle,
-        handle: handle,
+        handle,
         title: getCategoryName(handle),
         description: 'Explore our curated collections.',
       },
@@ -504,7 +504,7 @@ function EmptyState({onClear}: {onClear: () => void}) {
       </div>
       <p className="av-collection__empty-title">No products found</p>
       <p className="av-collection__empty-sub">
-        Try adjusting your filters to find what you're looking for.
+        Try adjusting your filters to find what you&apos;re looking for.
       </p>
       <button className="btn btn-secondary" onClick={onClear}>
         Clear All Filters

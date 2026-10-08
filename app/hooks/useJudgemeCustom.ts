@@ -3,6 +3,8 @@ import {useEffect} from 'react';
 declare global {
   interface Window {
     jdgm?: any;
+    // Name is dictated by the Judge.me widget's global
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     jdgm_preloader?: () => void;
     jdgm_rerender?: number;
     jdgmCacheServer?: {
@@ -45,7 +47,10 @@ export function useJudgemeCustom({
     `;
 
     fetch(cdnHost + '/widget_preloader.js')
-      .then((res) => res.text())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Judge.me preloader ${res.status}`);
+        return res.text();
+      })
       .then((text) => {
         const preloaderFunction = `function jdgm_preloader(){${text}}`;
         const shopCredentialsScript = document.createElement('script');
@@ -76,6 +81,10 @@ export function useJudgemeCustom({
             window.jdgm_preloader();
           }
         }, 100);
+      })
+      .catch((error: unknown) => {
+        // Reviews widget is optional — never let it break the page
+        console.error('Judge.me failed to load', error);
       });
   }, [shopDomain, publicToken, cdnHost, nonce]);
 

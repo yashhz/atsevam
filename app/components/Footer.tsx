@@ -58,7 +58,7 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
                 height="45"
               />
               <p className="av-footer__tagline">
-                Handcrafted ethnic wear celebrating India's artisanal heritage.
+                Handcrafted ethnic wear celebrating India&apos;s artisanal heritage.
               </p>
               <div className="av-footer__social">
                 {SOCIAL_LINKS.map((s) => (

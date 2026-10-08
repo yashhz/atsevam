@@ -58,7 +58,7 @@ export default function Wholesale() {
             About Our Manufacturing & Wholesale Services
           </h2>
           <p className="av-wholesale-page__lead">
-            Atsevam is a Surat-based women's wear manufacturer and wholesale supplier specializing in kurtis, co-ord sets, anarkalis, lehengas, and ethnic wear collections. We serve boutiques, retailers, resellers, and fashion businesses across India with premium-quality products, competitive wholesale pricing, and reliable delivery.
+            Atsevam is a Surat-based women&apos;s wear manufacturer and wholesale supplier specializing in kurtis, co-ord sets, anarkalis, lehengas, and ethnic wear collections. We serve boutiques, retailers, resellers, and fashion businesses across India with premium-quality products, competitive wholesale pricing, and reliable delivery.
           </p>
           <p>
             Our experienced team focuses on quality craftsmanship, modern designs, and consistent production standards. Whether you need bulk orders, wholesale sourcing, or private label solutions, Atsevam provides dependable manufacturing support to help grow your fashion business.
@@ -131,7 +131,7 @@ export default function Wholesale() {
             Interested in wholesale partnership? Email us at <a href="mailto:atsevam1@gmail.com">atsevam1@gmail.com</a> with your business details and requirements.
           </p>
           <p className="av-wholesale-page__note">
-            We'll respond within 24-48 hours with pricing information and next steps.
+            We&apos;ll respond within 24-48 hours with pricing information and next steps.
           </p>
         </section>
 
@@ -146,7 +146,7 @@ export default function Wholesale() {
             <strong>Phone:</strong> <a href="tel:+919979905952">+91 99799 05952</a>
           </p>
           <p className="av-wholesale-page__note">
-            We'll respond within 24-48 hours with pricing information and next steps.
+            We&apos;ll respond within 24-48 hours with pricing information and next steps.
           </p>
         </section>
       </div>

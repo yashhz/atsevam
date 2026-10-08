@@ -193,7 +193,7 @@ export default function SizeGuide() {
           <ul className="av-size-guide__tips-list">
             <li>
               <span className="av-size-guide__tip-dot">▪</span>
-              <span>If you're between sizes, we recommend sizing up for a comfortable fit.</span>
+              <span>If you&apos;re between sizes, we recommend sizing up for a comfortable fit.</span>
             </li>
             <li>
               <span className="av-size-guide__tip-dot">▪</span>
