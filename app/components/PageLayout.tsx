@@ -16,6 +16,7 @@ import {
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {Icon} from '~/components/ui/Icon';
 import {FloatingDock, SocialDock, MobileBottomNavbar} from '~/components/FloatingDock';
+import {NavigationProgress} from '~/components/NavigationProgress';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -41,6 +42,7 @@ export function PageLayout({
         Skip to main content
       </a>
       
+      <NavigationProgress />
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
@@ -133,6 +135,10 @@ function SearchAside() {
               );
             }
 
+            if (!total && !term.current) {
+              return <PopularSearches closeSearch={closeSearch} />;
+            }
+
             if (!total) {
               return <SearchResultsPredictive.Empty term={term} />;
             }
@@ -178,6 +184,40 @@ function SearchAside() {
         </SearchResultsPredictive>
       </div>
     </Aside>
+  );
+}
+
+// ─── Shown in the search drawer before anything is typed ─────────────
+
+const POPULAR_SEARCHES = [
+  {label: 'Lehengas', to: '/collections/lehengas'},
+  {label: 'Anarkali Suits', to: '/collections/anarkali'},
+  {label: 'Kurtis', to: '/collections/kurtis'},
+  {label: 'Co-ord Sets', to: '/collections/co-ords'},
+  {label: 'Sarees', to: '/collections/saree'},
+  {label: 'Navratri Special', to: '/collections/navratri-lehengas'},
+  {label: 'Western Dresses', to: '/collections/western-dresses'},
+  {label: 'New Arrivals', to: '/collections/new-arrivals'},
+];
+
+function PopularSearches({closeSearch}: {closeSearch: () => void}) {
+  return (
+    <div className="av-search-popular">
+      <p className="av-search-popular__label">Popular right now</p>
+      <div className="av-search-popular__chips">
+        {POPULAR_SEARCHES.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            onClick={closeSearch}
+            className="av-search-popular__chip"
+            prefetch="intent"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 

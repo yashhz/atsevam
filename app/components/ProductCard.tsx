@@ -3,6 +3,7 @@ import {useState, useEffect, useCallback} from 'react';
 import {Icon} from '~/components/ui/Icon';
 import {Badge} from '~/components/ui/Badge';
 import {shopifyImage, shopifyImageSrcSet} from '~/lib/image';
+import {useWishlist} from '~/hooks/useWishlist';
 import type {MockProduct} from '~/lib/mock';
 
 type ProductCardProps = {
@@ -126,11 +127,23 @@ function QuickViewModal({
 
 export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
-  const [wishlisted, setWishlisted] = useState(false);
+  const {active: wishlisted, toggle: toggleWishlist} = useWishlist(product.handle);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
 
   const hasMultipleImages = !!product.hoverImage;
+  const hasDiscount = !!product.discount && product.discount > 0;
+  const highlight =
+    product.badge === 'bestseller' || product.tags?.includes('bestseller')
+      ? 'bestseller'
+      : product.badge === 'new' || product.tags?.includes('new')
+        ? 'new'
+        : product.badge === 'top-rated'
+          ? 'top-rated'
+          : // lone "sale" badge only when there is no % off pill to show
+            product.badge === 'sale' && !hasDiscount
+            ? 'sale'
+            : null;
   const showSecondImage = (hovered || activeImageIndex === 1) && hasMultipleImages;
 
   // Hover preview is for mouse users only. Touch browsers (notably iOS Safari)
@@ -195,24 +208,16 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
             />
           )}
 
-          {/* Badges Stack */}
+          {/* Badges: discount first, then at most one highlight — never a stack
+              that hides the model's face */}
           <div className="av-card__badges-stack">
             {product.discount && product.discount > 0 ? (
               <Badge variant="sale" label={`${product.discount}% OFF`} />
             ) : null}
-            {(product.badge === 'new' || product.tags?.includes('new')) && (
-              <Badge variant="new" label="NEW ARRIVAL" />
-            )}
-            {(product.badge === 'bestseller' || product.tags?.includes('bestseller')) && (
-              <Badge variant="bestseller" label="BESTSELLER" />
-            )}
-            {/* Fallback for other single badges */}
-            {product.badge && 
-             product.badge !== 'new' && 
-             product.badge !== 'bestseller' && 
-             !(product.discount && product.discount > 0) && (
-              <Badge variant={product.badge} />
-            )}
+            {highlight === 'bestseller' && <Badge variant="bestseller" label="Bestseller" />}
+            {highlight === 'new' && <Badge variant="new" label="New" />}
+            {highlight === 'top-rated' && <Badge variant="top-rated" label="Top Rated" />}
+            {highlight === 'sale' && <Badge variant="sale" />}
           </div>
 
           {/* Image indicators */}
@@ -234,7 +239,7 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setWishlisted((v) => !v);
+              toggleWishlist();
             }}
             aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
           >

@@ -104,8 +104,33 @@ export function FloatingDock() {
 // ─── Left social dock (WhatsApp + Instagram) ─────────────────────
 
 export function SocialDock() {
+  // Slide out of the way while the shopper scrolls down through products,
+  // come back as soon as they scroll up or pause.
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let idle: ReturnType<typeof setTimeout> | undefined;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y > lastY + 6 && y > 200) setHidden(true);
+      else if (y < lastY - 6) setHidden(false);
+      lastY = y;
+      if (idle) clearTimeout(idle);
+      idle = setTimeout(() => setHidden(false), 900);
+    };
+    window.addEventListener('scroll', onScroll, {passive: true});
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (idle) clearTimeout(idle);
+    };
+  }, []);
+
   return (
-    <div className="av-social-dock" aria-label="Social Links">
+    <div
+      className={`av-social-dock${hidden ? ' av-social-dock--hidden' : ''}`}
+      aria-label="Social Links"
+    >
       <a
         href="https://wa.me/919979905952"
         target="_blank"

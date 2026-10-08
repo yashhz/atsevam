@@ -1,5 +1,5 @@
-import {useLoaderData, Form, useNavigation, useFetcher} from 'react-router';
-import {useState, useRef, useEffect} from 'react';
+import {useLoaderData, Await, useFetcher} from 'react-router';
+import {Suspense, useState, useRef, useEffect} from 'react';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -11,6 +11,10 @@ import {
 } from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductForm} from '~/components/ProductForm';
+import {StickyBuyBar} from '~/components/StickyBuyBar';
+import {ImageLightbox} from '~/components/ImageLightbox';
+import {DeliveryCheck} from '~/components/DeliveryCheck';
+import {useWishlist} from '~/hooks/useWishlist';
 import {ProductPrice} from '~/components/ProductPrice';
 import {Icon} from '~/components/ui/Icon';
 import {shopifyImage, shopifyImageSrcSet} from '~/lib/image';
@@ -157,32 +161,62 @@ export async function action({request, context, params}: Route.ActionArgs) {
 }
 
 export async function loader(args: Route.LoaderArgs) {
-  const deferredData = loadDeferredData(args);
+  // Only the product itself blocks rendering. Reviews, the login/purchase check
+  // and "You may also like" stream in afterwards, so the page appears as soon
+  // as Shopify answers instead of waiting on four extra network calls.
   const criticalData = await loadCriticalData(args);
-  const {handle} = args.params;
-  const {customerAccount} = args.context;
 
-  // 1. Check login
-  const isLoggedIn = await customerAccount.isLoggedIn();
+  const reviewsData = loadReviewsData(args);
+  const related = fetchRelatedProducts(
+    args.context.storefront,
+    criticalData.product,
+  ).catch((err: unknown) => {
+    // nice-to-have: a failing query must not break the product page
+    console.error('Failed to fetch related products:', err);
+    return [] as ReturnType<typeof transformProducts>;
+  });
 
-  // 2. Verify purchase if logged in
-  let hasPurchased = false;
-  let customerName = '';
-  if (isLoggedIn) {
+  return {...criticalData, reviewsData, related};
+}
+
+type ReviewsData = {
+  isLoggedIn: boolean;
+  hasPurchased: boolean;
+  customerName: string;
+  reviews: any[];
+  averageRating: number;
+  totalReviews: number;
+};
+
+/** Never rejects: a reviews/login problem must not affect the product page. */
+async function loadReviewsData({
+  context,
+  params,
+}: Route.LoaderArgs): Promise<ReviewsData> {
+  const {handle} = params;
+  const {customerAccount, env} = context;
+
+  const loadAccount = async () => {
+    let isLoggedIn = false;
+    let hasPurchased = false;
+    let customerName = '';
     try {
-      const VERIFY_PURCHASES_QUERY = `
-        query VerifyPurchasesLoader {
-          customer {
-            firstName
-            lastName
-            orders(first: 100) {
-              nodes {
-                lineItems(first: 100) {
-                  nodes {
-                    merchandise {
-                      ... on ProductVariant {
-                        product {
-                          handle
+      isLoggedIn = await customerAccount.isLoggedIn();
+      if (isLoggedIn) {
+        const VERIFY_PURCHASES_QUERY = `
+          query VerifyPurchasesLoader {
+            customer {
+              firstName
+              lastName
+              orders(first: 100) {
+                nodes {
+                  lineItems(first: 100) {
+                    nodes {
+                      merchandise {
+                        ... on ProductVariant {
+                          product {
+                            handle
+                          }
                         }
                       }
                     }
@@ -191,55 +225,48 @@ export async function loader(args: Route.LoaderArgs) {
               }
             }
           }
+        `;
+        const {data} = await customerAccount.query(VERIFY_PURCHASES_QUERY);
+        if (data?.customer) {
+          customerName = `${data.customer.firstName || ''} ${data.customer.lastName || ''}`.trim();
+          const purchasedHandles = data.customer.orders?.nodes?.flatMap((order: any) =>
+            order.lineItems?.nodes?.map((item: any) => item.merchandise?.product?.handle)
+          ).filter(Boolean) || [];
+          hasPurchased = purchasedHandles.includes(handle);
         }
-      `;
-      const {data} = await customerAccount.query(VERIFY_PURCHASES_QUERY);
-      if (data?.customer) {
-        customerName = `${data.customer.firstName || ''} ${data.customer.lastName || ''}`.trim();
-        const purchasedHandles = data.customer.orders?.nodes?.flatMap((order: any) => 
-          order.lineItems?.nodes?.map((item: any) => item.merchandise?.product?.handle)
-        ).filter(Boolean) || [];
-        hasPurchased = purchasedHandles.includes(handle);
       }
     } catch (err) {
       console.error('Failed to verify purchase in loader:', err);
     }
-  }
+    return {isLoggedIn, hasPurchased, customerName};
+  };
 
-  // 3. Fetch reviews from Supabase
-  const {url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY} = getSupabaseConfig(args.context.env);
-  let reviews: any[] = [];
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?product_handle=eq.${encodeURIComponent(handle ?? '')}&select=*&order=created_at.desc`, {
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      },
-      // A slow reviews backend must not hold the whole product page hostage
-      signal: AbortSignal.timeout(3000),
-    });
-    if (res.ok) {
-      reviews = (await res.json()) as any[];
+  const loadReviews = async () => {
+    const {url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY} = getSupabaseConfig(env);
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?product_handle=eq.${encodeURIComponent(handle ?? '')}&select=*&order=created_at.desc`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        signal: AbortSignal.timeout(3000),
+      });
+      if (res.ok) return (await res.json()) as any[];
+    } catch (err) {
+      console.error('Failed to fetch reviews from Supabase:', err);
     }
-  } catch (err) {
-    console.error('Failed to fetch reviews from Supabase:', err);
-  }
+    return [] as any[];
+  };
+
+  // Independent calls — run them side by side
+  const [account, reviews] = await Promise.all([loadAccount(), loadReviews()]);
 
   const totalReviews = reviews.length;
-  const averageRating = totalReviews > 0 
-    ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews 
+  const averageRating = totalReviews > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
     : 0;
 
-  return {
-    ...deferredData,
-    ...criticalData,
-    isLoggedIn,
-    hasPurchased,
-    customerName,
-    reviews,
-    averageRating,
-    totalReviews,
-  };
+  return {...account, reviews, averageRating, totalReviews};
 }
 
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
@@ -391,19 +418,11 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     relatedProducts: [] as any[],
   };
   
-  // Fetch related products using smart recommendation logic. These are a
-  // nice-to-have: a failing query must not turn the product page into a 500.
-  try {
-    transformedProduct.relatedProducts = await fetchRelatedProducts(storefront, product);
-  } catch (err) {
-    console.error('Failed to fetch related products:', err);
-  }
-  
   return {product, mockProduct: transformedProduct, useMock: false};
 }
 
 // Smart product recommendation function
-async function fetchRelatedProducts(storefront: any, currentProduct: any) {
+async function fetchRelatedProducts(storefront: any, currentProduct: any): Promise<ReturnType<typeof transformProducts>> {
   const productTags = currentProduct.tags || [];
   const productType = currentProduct.productType || '';
   const currentProductId = currentProduct.id;
@@ -605,42 +624,15 @@ function transformProducts(products: any[]) {
   });
 }
 
-function loadDeferredData(_args: Route.LoaderArgs) {
-  return {};
-}
-
 // ─── Page ─────────────────────────────────────────────────────────
 
 export default function Product() {
-  const {
-    product,
-    mockProduct,
-    useMock,
-    isLoggedIn,
-    hasPurchased,
-    customerName,
-    reviews,
-    averageRating,
-    totalReviews,
-  } = useLoaderData<typeof loader>();
+  const {product, mockProduct, useMock, reviewsData, related} =
+    useLoaderData<typeof loader>();
   const [activeImage, setActiveImage] = useState(0);
-  const [wishlisted, setWishlisted] = useState(false);
-  const [showReviewForm, setShowReviewForm] = useState(false);
-  const [showQuestionForm, setShowQuestionForm] = useState(false);
-  const [questionSubmitted, setQuestionSubmitted] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const {active: wishlisted, toggle: toggleWishlist} = useWishlist(mockProduct.handle);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const fetcher = useFetcher();
-  const formRef = useRef<HTMLFormElement>(null);
-  const [userRating, setUserRating] = useState(5);
-
-  useEffect(() => {
-    if (fetcher.data && (fetcher.data as any).success) {
-      formRef.current?.reset();
-      setUserRating(5);
-      setShowReviewForm(false);
-    }
-  }, [fetcher.data]);
 
   // Shopify variant logic — hooks must always be called (React rules)
   const selectedVariant = useOptimisticVariant(
@@ -696,6 +688,15 @@ export default function Product() {
 
   return (
     <div className="av-pdp">
+      {lightboxOpen && images.length > 0 && (
+        <ImageLightbox
+          images={images}
+          index={activeImage}
+          onIndexChange={setActiveImage}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
       {/* Breadcrumb */}
       <nav className="av-breadcrumb container" aria-label="Breadcrumb">
         <a href="/" className="av-breadcrumb__link">Home</a>
@@ -732,13 +733,22 @@ export default function Product() {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <img
-              src={shopifyImage(images[activeImage]?.url, 1000)}
-              srcSet={shopifyImageSrcSet(images[activeImage]?.url, [480, 720, 1000, 1400])}
-              sizes="(max-width: 768px) 100vw, 50vw"
-              alt={images[activeImage]?.altText}
-              loading="eager"
-            />
+            <button
+              type="button"
+              className="av-pdp__zoom-btn"
+              aria-label="Open photo viewer"
+              onClick={() => setLightboxOpen(true)}
+            >
+              <img
+                src={shopifyImage(images[activeImage]?.url, 1000)}
+                srcSet={shopifyImageSrcSet(images[activeImage]?.url, [480, 720, 1000, 1400])}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt={images[activeImage]?.altText}
+                loading="eager"
+                fetchPriority="high"
+                className="av-pdp__main-img--zoomable"
+              />
+            </button>
             {images.length > 1 && (
               <div className="av-pdp__mobile-dots">
                 {images.map((_: any, idx: number) => (
@@ -772,13 +782,19 @@ export default function Product() {
                 {mock.details?.stitchingType || 'Semi-Stitched'}
               </span>
               <span className="av-pdp__tag-chip" style={{ border: '1px solid var(--color-border)', padding: '4px 12px', fontSize: '12px', textTransform: 'uppercase', fontFamily: 'var(--font-body)', color: 'var(--color-brand)', background: 'var(--color-brand-pale)', fontWeight: 'var(--weight-semibold)', letterSpacing: 'var(--tracking-wider)' }}>
-                Rating {(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)} ★
+                <Suspense fallback={<>Rating {(mock.rating ?? 4.8).toFixed(1)} ★</>}>
+                  <Await resolve={reviewsData}>
+                    {({totalReviews, averageRating}) => (
+                      <>Rating {(totalReviews > 0 ? averageRating : mock.rating ?? 4.8).toFixed(1)} ★</>
+                    )}
+                  </Await>
+                </Suspense>
               </span>
             </div>
             <div className="av-pdp__actions-top" style={{ display: 'flex', gap: 'var(--space-2)' }}>
               <button
                 className={`wishlist-btn${wishlisted ? ' active' : ''}`}
-                onClick={() => setWishlisted((v) => !v)}
+                onClick={toggleWishlist}
                 aria-label="Add to wishlist"
               >
                 <Icon name={wishlisted ? 'heart-filled' : 'heart'} size={18} strokeWidth={1.5} />
@@ -823,25 +839,6 @@ export default function Product() {
             <span>Direct from manufacturer — premium quality at best price</span>
           </div>
 
-          {/* Size selector - only show if multiple sizes */}
-          {mock.sizes.length > 1 && (
-            <div className="av-pdp__sizes">
-              <div className="av-pdp__sizes-header">
-                <span className="av-pdp__sizes-label">Size</span>
-                <a href="/pages/size-guide" className="av-pdp__size-guide">
-                  Size Guide <Icon name="arrow-right" size={12} strokeWidth={1.5} />
-                </a>
-              </div>
-              <div className="av-pdp__size-options">
-                {mock.sizes.map((size) => (
-                  <button key={size} className="av-pdp__size-btn av-pdp__size-btn--active">
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Add to cart */}
           {useMock ? (
             <MockAddToCart />
@@ -856,6 +853,8 @@ export default function Product() {
             )
           )}
 
+          <DeliveryCheck deliveryWindow={mock.care.delivery} />
+
           {/* B2B link */}
           <p className="av-pdp__b2b">
             Looking for wholesale / B2B pricing?{' '}
@@ -869,11 +868,11 @@ export default function Product() {
               <span>Free shipping above ₹1,999</span>
             </div>
             <div className="av-pdp__trust-item">
-              <Icon name="heart" size={16} strokeWidth={1.25} />
+              <Icon name="package" size={16} strokeWidth={1.25} />
               <span>Easy 7-day returns</span>
             </div>
             <div className="av-pdp__trust-item">
-              <Icon name="user" size={16} strokeWidth={1.25} />
+              <Icon name="banknote" size={16} strokeWidth={1.25} />
               <span>Cash on delivery available</span>
             </div>
           </div>
@@ -905,6 +904,107 @@ export default function Product() {
         </div>
       </div>
 
+      {/* ── Verified Customer Reviews (streams in) ───────────────── */}
+      <Suspense fallback={<ReviewsSkeleton />}>
+        <Await resolve={reviewsData}>
+          {(data) => <CustomerReviews mock={mock} data={data} />}
+        </Await>
+      </Suspense>
+
+      {/* You May Also Like (streams in) */}
+      <Suspense fallback={null}>
+        <Await resolve={related}>
+          {(items) =>
+            items.length > 0 ? (
+              <ProductGrid
+                eyebrow="Curated For You"
+                title="You May Also Like"
+                products={items}
+                viewAllHref={`/collections/${mock.category.toLowerCase().replace(/\s+/g, '-')}`}
+                viewAllLabel="View Collection"
+                loading="lazy"
+                columns={4}
+              />
+            ) : null
+          }
+        </Await>
+      </Suspense>
+
+      {!useMock && product && selectedVariant && (
+        <StickyBuyBar
+          title={mock.title}
+          price={mock.price}
+          compareAtPrice={mock.compareAtPrice}
+          discount={mock.discount}
+          variantLabel={
+            productOptions.length > 0 ? selectedVariant.title : undefined
+          }
+          available={selectedVariant.availableForSale}
+          sentinelSelector=".av-pdp__cart-section .av-product-form__actions"
+          lines={[
+            {merchandiseId: selectedVariant.id, quantity: 1, selectedVariant},
+          ]}
+        />
+      )}
+
+      {product && (
+        <Analytics.ProductView
+          data={{
+            products: [{
+              id: product.id,
+              title: product.title,
+              price: selectedVariant?.price.amount || '0',
+              vendor: product.vendor,
+              variantId: selectedVariant?.id || '',
+              variantTitle: selectedVariant?.title || '',
+              quantity: 1,
+            }],
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── Customer reviews (rendered once reviews + account data arrive) ─────
+
+function ReviewsSkeleton() {
+  return (
+    <div className="av-pdp__reviews container" id="customer-reviews" aria-busy="true">
+      <div className="av-pdp__reviews-header">
+        <span className="av-pdp__reviews-eyebrow">Customer Reviews</span>
+        <h2 className="av-pdp__reviews-title">What Our Customers Say</h2>
+      </div>
+      <div className="av-skeleton" style={{height: 96, maxWidth: 960, margin: '0 auto var(--space-6)'}} />
+    </div>
+  );
+}
+
+function CustomerReviews({
+  mock,
+  data,
+}: {
+  mock: MockProductDetail;
+  data: ReviewsData;
+}) {
+  const {isLoggedIn, hasPurchased, customerName, reviews, averageRating, totalReviews} = data;
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showQuestionForm, setShowQuestionForm] = useState(false);
+  const [questionSubmitted, setQuestionSubmitted] = useState(false);
+  const fetcher = useFetcher();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [userRating, setUserRating] = useState(5);
+
+  useEffect(() => {
+    if (fetcher.data && (fetcher.data as any).success) {
+      formRef.current?.reset();
+      setUserRating(5);
+      setShowReviewForm(false);
+    }
+  }, [fetcher.data]);
+
+  return (
+    <>
       {/* ── Verified Customer Reviews ──────────────────────────────── */}
       <div className="av-pdp__reviews container" id="customer-reviews">
         <div className="av-pdp__reviews-header">
@@ -1148,36 +1248,7 @@ export default function Product() {
           </div>
         </div>
       </div>
-
-      {/* You May Also Like */}
-      {mock.relatedProducts && mock.relatedProducts.length > 0 && (
-        <ProductGrid
-          eyebrow="Curated For You"
-          title="You May Also Like"
-          products={mock.relatedProducts}
-          viewAllHref={`/collections/${mock.category.toLowerCase().replace(/\s+/g, '-')}`}
-          viewAllLabel="View Collection"
-          loading="lazy"
-          columns={4}
-        />
-      )}
-
-      {product && (
-        <Analytics.ProductView
-          data={{
-            products: [{
-              id: product.id,
-              title: product.title,
-              price: selectedVariant?.price.amount || '0',
-              vendor: product.vendor,
-              variantId: selectedVariant?.id || '',
-              variantTitle: selectedVariant?.title || '',
-              quantity: 1,
-            }],
-          }}
-        />
-      )}
-    </div>
+    </>
   );
 }
 

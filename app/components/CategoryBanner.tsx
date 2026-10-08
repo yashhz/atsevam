@@ -159,6 +159,8 @@ export function CategoryBanner() {
                   alt={slide.title}
                   className="av-category-banner__image"
                   loading={index === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={index === 0 ? 'high' : undefined}
+                  decoding="async"
                 />
               </picture>
             </Link>

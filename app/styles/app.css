@@ -230,3 +230,17 @@ aside:has(.av-cart) main {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+
+/* Drawer close button: visually small ✕, but a proper 44px thumb target */
+aside header .close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-right: -10px;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}

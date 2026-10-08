@@ -25,6 +25,8 @@ type ProductGridProps = {
   loading?: 'eager' | 'lazy';
   /** Optional column override – defaults to responsive 2→4 col grid */
   columns?: 2 | 3 | 4;
+  /** On phones show one swipeable row instead of a tall 2-column grid */
+  mobileRail?: boolean;
 };
 
 export function ProductGrid({
@@ -36,6 +38,7 @@ export function ProductGrid({
   viewAllLabel = 'View All',
   loading = 'lazy',
   columns = 4,
+  mobileRail = false,
 }: ProductGridProps) {
   if (!products || products.length === 0) return null;
 
@@ -67,7 +70,9 @@ export function ProductGrid({
       </div>
 
       {/* Grid */}
-      <div className={`av-product-grid container av-product-grid--cols-${columns}`}>
+      <div
+        className={`av-product-grid container av-product-grid--cols-${columns}${mobileRail ? ' av-product-grid--rail' : ''}`}
+      >
         {products.map((product, i) => (
           <ProductCard
             key={product.id}
