@@ -89,7 +89,7 @@ const LOCAL_COLLECTION_IMAGES: Record<string, string> = {
   'navratri-lehengas': '/images/navratri lehenga.jpg',
   'western-dresses': '/images/western dresses/image (12).png',
   'western-wear': '/images/western dresses/image (12).png',
-  'bestsellers': '/images/bestsellers.png',
+  'bestsellers': '/images/lehenga.jpg',
 };
 
 function CollectionItem({

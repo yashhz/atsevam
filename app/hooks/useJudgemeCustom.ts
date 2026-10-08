@@ -3,6 +3,8 @@ import {useEffect} from 'react';
 declare global {
   interface Window {
     jdgm?: any;
+    // Name is dictated by the Judge.me widget's global
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     jdgm_preloader?: () => void;
     jdgm_rerender?: number;
     jdgmCacheServer?: {

@@ -33,6 +33,8 @@ function QuickViewModal({
   }, [onClose]);
 
   return (
+    // Backdrop click closes the modal; keyboard users close it with Escape (handled above)
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <div
       className="av-quick-view-overlay"
       onClick={onClose}
@@ -40,6 +42,7 @@ function QuickViewModal({
       aria-modal="true"
       aria-label={`Quick view: ${product.title}`}
     >
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         className="av-quick-view"
         onClick={(e) => e.stopPropagation()}

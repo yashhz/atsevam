@@ -525,6 +525,7 @@ function VideoReelSection() {
             
             <div className="av-video-reel__stage">
               {VIDEO_REELS.map((reel, i) => (
+                // eslint-disable-next-line jsx-a11y/media-has-caption -- muted brand reel, no dialogue
                 <video
                   key={i}
                   ref={(el) => {
@@ -581,7 +582,7 @@ function FeaturedCategoriesGrid() {
     { title: 'Festive Sarees', handle: 'saree', img: '/images/saree.jpg' },
     { title: 'Navratri Lehengas', handle: 'navratri-lehengas', img: '/images/navratri%20lehenga.jpg' },
     { title: 'Western Dresses', handle: 'western-dresses', img: '/images/western dresses/image (12).png' },
-    { title: 'New Arrivals', handle: 'new-arrivals', img: '/images/bestsellers.png' },
+    { title: 'New Arrivals', handle: 'new-arrivals', img: '/images/lehenga.jpg' },
   ];
 
   return (
@@ -696,7 +697,7 @@ function TestimonialsSection({testimonials}: {testimonials: typeof MOCK_TESTIMON
                   <Icon key={i} name="star-filled" size={16} strokeWidth={0} />
                 ))}
               </div>
-              <p className="av-testimonial__text">"{t.text}"</p>
+              <p className="av-testimonial__text">&quot;{t.text}&quot;</p>
               <div className="av-testimonial__author">
                 <div className="av-testimonial__author-initial">
                   {t.name.charAt(0)}

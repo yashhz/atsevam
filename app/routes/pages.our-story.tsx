@@ -47,7 +47,7 @@ export default function OurStory() {
       <section className="av-story__hero">
         <div className="av-story__hero-bg">
           <img
-            src="/images/story-model.png"
+            src="/images/lehenga.jpg"
             alt="Beautiful handcrafted bridal couture"
             className="av-story__hero-img"
             loading="eager"
@@ -70,7 +70,7 @@ export default function OurStory() {
             Made in Surat by skilled karigars, every piece tells a story of dedication and artistry. In a world of fast fashion and mass production, we chose a different path. We went to the villages of Rajasthan, the workshops of Gujarat, and the ateliers of Lucknow — and we listened. We listened to artisans who had spent decades perfecting the art of zari embroidery, thread chain stitch, and block printing. We heard their stories, learned their techniques, and made a promise: to give their craft the audience it deserves.
           </p>
           <p className="av-story__body">
-            Today, Atsevam is more than a clothing brand. It is a bridge between the hands that create and the women who wear — a celebration of India's living textile heritage, reimagined for the modern wardrobe.
+            Today, Atsevam is more than a clothing brand. It is a bridge between the hands that create and the women who wear — a celebration of India&apos;s living textile heritage, reimagined for the modern wardrobe.
           </p>
           
           <div className="av-story__divider">
@@ -86,7 +86,7 @@ export default function OurStory() {
         <div className="container">
           <div className="av-story__split-inner">
             <div className="av-story__split-image">
-              <img src="/images/story-artisan.png" alt="Karigar meticulously embroidering luxury fabric" loading="lazy" />
+              <img src="/images/anarkali.jpg" alt="Karigar meticulously embroidering luxury fabric" loading="lazy" />
             </div>
             <div className="av-story__split-content">
               <p className="av-story__section-tag">The Craft</p>
@@ -147,13 +147,13 @@ export default function OurStory() {
         <div className="container">
           <div className="av-story__split-inner">
             <div className="av-story__split-image">
-              <img src="/images/story-detail.png" alt="Macro detail of luxury zari gold embroidery" loading="lazy" />
+              <img src="/images/kurti.jpg" alt="Macro detail of luxury zari gold embroidery" loading="lazy" />
             </div>
             <div className="av-story__split-content">
               <p className="av-story__section-tag">The Detail</p>
               <h2 className="av-story__section-title">Designed for Real Life</h2>
               <p className="av-story__body">
-                Our collections span the full spectrum of a woman's life — from the grandeur of a bridal lehenga to the ease of an everyday kurti. We believe that beautiful clothing shouldn't be reserved for special occasions alone.
+                Our collections span the full spectrum of a woman&apos;s life — from the grandeur of a bridal lehenga to the ease of an everyday kurti. We believe that beautiful clothing shouldn&apos;t be reserved for special occasions alone.
               </p>
               <p className="av-story__body">
                 Every silhouette is designed with comfort in mind. Our fabrics breathe, our cuts flatter, and our sizing is inclusive — because every woman deserves to feel extraordinary.

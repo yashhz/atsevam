@@ -52,7 +52,7 @@ ${formData.message}
         <header className="av-contact-page__header">
           <h1 className="av-contact-page__title">Get in Touch</h1>
           <p className="av-contact-page__subtitle">
-            We'd love to hear from you. Our team is here to help.
+            We&apos;d love to hear from you. Our team is here to help.
           </p>
         </header>
 
@@ -61,7 +61,7 @@ ${formData.message}
           <div className="av-contact-page__form-section">
             <h2 className="av-contact-page__section-title">Send us a message</h2>
             <p className="av-contact-page__form-note">
-              Fill out the form below and we'll connect with you on WhatsApp
+              Fill out the form below and we&apos;ll connect with you on WhatsApp
             </p>
             <form className="av-contact-form" onSubmit={handleSubmit}>
               <div className="av-contact-form__row">

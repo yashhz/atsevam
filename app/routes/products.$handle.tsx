@@ -20,6 +20,19 @@ import {ProductGrid} from '~/components/ProductGrid';
 import {MOCK_PRODUCT_DETAIL} from '~/lib/mock';
 import type {MockProductDetail} from '~/lib/mock';
 
+/**
+ * Supabase (reviews) config. Set SUPABASE_URL / SUPABASE_ANON_KEY in the
+ * Oxygen environment variables; the previous public (anon) values remain as a
+ * fallback so reviews keep working until they are configured.
+ */
+function getSupabaseConfig(env: Env) {
+  return {
+    url: env.SUPABASE_URL || 'https://ymwnsesccyrngeaxomzr.supabase.co',
+    anonKey:
+      env.SUPABASE_ANON_KEY || 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r',
+  };
+}
+
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
   if (!product) return [{title: 'Product Not Found — Atsevam'}];
@@ -99,18 +112,17 @@ export async function action({request, context, params}: Route.ActionArgs) {
 
   // 2. Extract form data
   const formData = await request.formData();
-  const author_name = formData.get('author_name')?.toString();
+  const authorName = formData.get('author_name')?.toString();
   const rating = parseInt(formData.get('rating')?.toString() || '5', 10);
   const title = formData.get('title')?.toString();
   const body = formData.get('body')?.toString();
 
-  if (!author_name || !title || !body || isNaN(rating)) {
+  if (!authorName || !title || !body || isNaN(rating)) {
     return {error: 'All fields are required.'};
   }
 
   // 3. Save to Supabase
-  const SUPABASE_URL = 'https://ymwnsesccyrngeaxomzr.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r';
+  const {url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY} = getSupabaseConfig(context.env);
 
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews`, {
@@ -123,7 +135,7 @@ export async function action({request, context, params}: Route.ActionArgs) {
       },
       body: JSON.stringify({
         product_handle: handle,
-        author_name,
+        author_name: authorName,
         rating,
         title,
         body,
@@ -195,8 +207,7 @@ export async function loader(args: Route.LoaderArgs) {
   }
 
   // 3. Fetch reviews from Supabase
-  const SUPABASE_URL = 'https://ymwnsesccyrngeaxomzr.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_qYDd2q32eK8xx949ICV6pg_1FD0k_1r';
+  const {url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY} = getSupabaseConfig(args.context.env);
   let reviews: any[] = [];
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?product_handle=eq.${encodeURIComponent(handle ?? '')}&select=*&order=created_at.desc`, {
@@ -954,7 +965,7 @@ export default function Product() {
                     <h3 className="av-pdp__review-form-title">✍️ Write a Review</h3>
                     
                     <div className="av-pdp__review-input-group">
-                      <label className="av-pdp__review-label">Your Rating</label>
+                      <span className="av-pdp__review-label">Your Rating</span>
                       <div className="av-pdp__stars-selector">
                         {Array.from({length: 5}).map((_, i) => {
                           const currentStar = i + 1;
