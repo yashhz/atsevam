@@ -13843,13 +13843,32 @@ a {
   to   { transform: scaleX(0.88); }
 }
 
+
+
 /* ═══════════════════════════════════════════════════════════
-   RENDER PERFORMANCE — skip layout/paint for off-screen homepage sections
+   MOBILE PRODUCT RAIL — swipe sideways instead of a very tall grid
 ═══════════════════════════════════════════════════════════ */
 
-.av-home > section:not(:first-child),
-.av-home > .av-promo-banner,
-.av-home > .section {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 700px;
+@media (max-width: 767px) {
+  .av-product-grid--rail {
+    display: flex !important;
+    gap: 12px !important;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-padding-inline: var(--gutter);
+    padding-bottom: var(--space-2);
+  }
+
+  .av-product-grid--rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .av-product-grid--rail > .av-card {
+    flex: 0 0 44%;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
 }

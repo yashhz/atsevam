@@ -12,6 +12,7 @@ import {
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductForm} from '~/components/ProductForm';
 import {StickyBuyBar} from '~/components/StickyBuyBar';
+import {useWishlist} from '~/hooks/useWishlist';
 import {ProductPrice} from '~/components/ProductPrice';
 import {Icon} from '~/components/ui/Icon';
 import {shopifyImage, shopifyImageSrcSet} from '~/lib/image';
@@ -627,7 +628,7 @@ export default function Product() {
   const {product, mockProduct, useMock, reviewsData, related} =
     useLoaderData<typeof loader>();
   const [activeImage, setActiveImage] = useState(0);
-  const [wishlisted, setWishlisted] = useState(false);
+  const {active: wishlisted, toggle: toggleWishlist} = useWishlist(mockProduct.handle);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Shopify variant logic — hooks must always be called (React rules)
@@ -772,7 +773,7 @@ export default function Product() {
             <div className="av-pdp__actions-top" style={{ display: 'flex', gap: 'var(--space-2)' }}>
               <button
                 className={`wishlist-btn${wishlisted ? ' active' : ''}`}
-                onClick={() => setWishlisted((v) => !v)}
+                onClick={toggleWishlist}
                 aria-label="Add to wishlist"
               >
                 <Icon name={wishlisted ? 'heart-filled' : 'heart'} size={18} strokeWidth={1.5} />

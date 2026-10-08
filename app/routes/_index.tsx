@@ -263,6 +263,7 @@ export default function Homepage() {
           viewAllHref="/collections/bestsellers"
           loading="lazy"
           columns={3}
+          mobileRail
         />
       )}
 
@@ -279,6 +280,7 @@ export default function Homepage() {
           viewAllHref="/collections/lehengas"
           loading="lazy"
           columns={3}
+          mobileRail
         />
       )}
 
@@ -304,6 +306,7 @@ export default function Homepage() {
           viewAllHref="/collections/kurtis"
           loading="lazy"
           columns={3}
+          mobileRail
         />
       )}
 
@@ -416,7 +419,7 @@ function PriceDropSection({ products }: { products: MockProduct[] }) {
           </div>
         </div>
       </div>
-      <div className="av-product-grid container av-product-grid--cols-3">
+      <div className="av-product-grid container av-product-grid--cols-3 av-product-grid--rail">
         {products.map((product, i) => (
           <ProductCard
             key={product.id}

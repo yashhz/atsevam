@@ -3,6 +3,7 @@ import {useState, useEffect, useCallback} from 'react';
 import {Icon} from '~/components/ui/Icon';
 import {Badge} from '~/components/ui/Badge';
 import {shopifyImage, shopifyImageSrcSet} from '~/lib/image';
+import {useWishlist} from '~/hooks/useWishlist';
 import type {MockProduct} from '~/lib/mock';
 
 type ProductCardProps = {
@@ -126,7 +127,7 @@ function QuickViewModal({
 
 export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
-  const [wishlisted, setWishlisted] = useState(false);
+  const {active: wishlisted, toggle: toggleWishlist} = useWishlist(product.handle);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
 
@@ -238,7 +239,7 @@ export function ProductCard({product, loading = 'lazy'}: ProductCardProps) {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setWishlisted((v) => !v);
+              toggleWishlist();
             }}
             aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
           >
