@@ -98,13 +98,19 @@ export function ImageLightbox({
           setTouchStartX(null);
         }}
       >
-        <img
-          src={shopifyImage(current.url, 1600)}
-          alt={current.altText || ''}
-          className="av-lightbox__img"
-          draggable={false}
+        <button
+          type="button"
+          className="av-lightbox__zoom-btn"
+          aria-label={zoomed ? 'Zoom out' : 'Zoom in'}
           onClick={() => setZoomed((z) => !z)}
-        />
+        >
+          <img
+            src={shopifyImage(current.url, 1600)}
+            alt={current.altText || ''}
+            className="av-lightbox__img"
+            draggable={false}
+          />
+        </button>
       </div>
 
       {total > 1 && (

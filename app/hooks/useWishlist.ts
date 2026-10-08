@@ -10,16 +10,21 @@ function read(): string[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
-    cache = Array.isArray(parsed) ? parsed.filter((x) => typeof x === 'string') : [];
+    const list = Array.isArray(parsed)
+      ? parsed.filter((x): x is string => typeof x === 'string')
+      : [];
+    cache = list.length ? list : EMPTY;
   } catch {
     // storage blocked (private mode / in-app browser): keep it in memory only
-    cache = [];
+    cache = EMPTY;
   }
   return cache;
 }
 
 function write(next: string[]) {
-  cache = next;
+  // Keep ONE shared empty array: useSyncExternalStore compares snapshots by
+  // identity, and a different [] right after hydration forces a re-render.
+  cache = next.length ? next : EMPTY;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {

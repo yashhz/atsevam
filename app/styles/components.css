@@ -14068,3 +14068,119 @@ a {
     pointer-events: none;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   PDP DELIVERY CHECK
+═══════════════════════════════════════════════════════════ */
+
+.av-delivery {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.av-delivery__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-charcoal);
+}
+
+.av-delivery__form {
+  display: flex;
+  max-width: 360px;
+}
+
+.av-delivery__input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-right: 0;
+  border-radius: 0;
+  background: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 16px; /* 16px stops iOS from zooming the page on focus */
+  letter-spacing: 0.08em;
+  color: var(--color-charcoal);
+}
+
+.av-delivery__input:focus {
+  outline: none;
+  border-color: var(--color-brand);
+}
+
+.av-delivery__input[aria-invalid='true'] {
+  border-color: var(--color-accent-red);
+}
+
+.av-delivery__btn {
+  height: 46px;
+  padding: 0 22px;
+  border: 1px solid var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.av-delivery__btn:hover {
+  background: var(--color-brand-dark, #5a1e38);
+}
+
+.av-delivery__msg {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-accent-green);
+}
+
+.av-delivery__msg--error {
+  color: var(--color-accent-red);
+}
+
+
+/* Photo → button wrappers (keyboard accessible zoom) */
+.av-pdp__zoom-btn,
+.av-lightbox__zoom-btn {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.av-pdp__zoom-btn {
+  width: 100%;
+  height: 100%;
+}
+
+.av-lightbox__zoom-btn {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.av-lightbox__stage--zoomed .av-lightbox__zoom-btn {
+  width: 200%;
+  max-width: none;
+  max-height: none;
+  cursor: zoom-out;
+}
+
+.av-lightbox__stage--zoomed .av-lightbox__img {
+  width: 100%;
+}

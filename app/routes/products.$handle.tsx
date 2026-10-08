@@ -13,6 +13,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductForm} from '~/components/ProductForm';
 import {StickyBuyBar} from '~/components/StickyBuyBar';
 import {ImageLightbox} from '~/components/ImageLightbox';
+import {DeliveryCheck} from '~/components/DeliveryCheck';
 import {useWishlist} from '~/hooks/useWishlist';
 import {ProductPrice} from '~/components/ProductPrice';
 import {Icon} from '~/components/ui/Icon';
@@ -732,16 +733,22 @@ export default function Product() {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <img
-              src={shopifyImage(images[activeImage]?.url, 1000)}
-              srcSet={shopifyImageSrcSet(images[activeImage]?.url, [480, 720, 1000, 1400])}
-              sizes="(max-width: 768px) 100vw, 50vw"
-              alt={images[activeImage]?.altText}
-              loading="eager"
-              fetchPriority="high"
+            <button
+              type="button"
+              className="av-pdp__zoom-btn"
+              aria-label="Open photo viewer"
               onClick={() => setLightboxOpen(true)}
-              className="av-pdp__main-img--zoomable"
-            />
+            >
+              <img
+                src={shopifyImage(images[activeImage]?.url, 1000)}
+                srcSet={shopifyImageSrcSet(images[activeImage]?.url, [480, 720, 1000, 1400])}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt={images[activeImage]?.altText}
+                loading="eager"
+                fetchPriority="high"
+                className="av-pdp__main-img--zoomable"
+              />
+            </button>
             {images.length > 1 && (
               <div className="av-pdp__mobile-dots">
                 {images.map((_: any, idx: number) => (
@@ -846,6 +853,8 @@ export default function Product() {
             )
           )}
 
+          <DeliveryCheck deliveryWindow={mock.care.delivery} />
+
           {/* B2B link */}
           <p className="av-pdp__b2b">
             Looking for wholesale / B2B pricing?{' '}
@@ -859,11 +868,11 @@ export default function Product() {
               <span>Free shipping above ₹1,999</span>
             </div>
             <div className="av-pdp__trust-item">
-              <Icon name="heart" size={16} strokeWidth={1.25} />
+              <Icon name="package" size={16} strokeWidth={1.25} />
               <span>Easy 7-day returns</span>
             </div>
             <div className="av-pdp__trust-item">
-              <Icon name="user" size={16} strokeWidth={1.25} />
+              <Icon name="banknote" size={16} strokeWidth={1.25} />
               <span>Cash on delivery available</span>
             </div>
           </div>
